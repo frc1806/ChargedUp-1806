@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -15,7 +14,9 @@ import frc.robot.shuffleboard.tabs.tabsUtil.XboxControllerConfigValues;
 
 /*
  * The XboxController class is a wrapper of the joystick class,
- * auto applies deadzones and makes nice methods for us
+ * auto applies deadzones and makes nice methods for us.
+ * If you are having issues with joystick axises not being correct (usually something to do with right stick becoming triggers, or noticing that your trigers are mapped to the same axis)
+ * Open device manager, find the XINPUT Compatible HID Device and try uninstalling/reinstalling the driver or installing the default XINPUT driver from your computer.
  */
 public class SWATXboxController extends edu.wpi.first.wpilibj.XboxController {
 	private static Map<String, Object> AXIS_DISPLAY_BAR_PROPS = new HashMap<>();
@@ -73,41 +74,41 @@ public class SWATXboxController extends edu.wpi.first.wpilibj.XboxController {
 
 	@Override
 	public double getRightTriggerAxis() {
-			return applyConfig( getRawAxis(3), mConfigValues.getTriggerDeadzone(), mConfigValues.getTriggerMinimumOutput(), mConfigValues.getTriggerLinearity());
+			return applyConfig( super.getRightTriggerAxis(), mConfigValues.getTriggerDeadzone(), mConfigValues.getTriggerMinimumOutput(), mConfigValues.getTriggerLinearity());
 	}
 
 	@Override
 	public double getLeftTriggerAxis() {
-			return applyConfig(getRawAxis(2), mConfigValues.getTriggerDeadzone(), mConfigValues.getTriggerMinimumOutput(), mConfigValues.getTriggerLinearity());
+			return applyConfig(super.getLeftTriggerAxis(), mConfigValues.getTriggerDeadzone(), mConfigValues.getTriggerMinimumOutput(), mConfigValues.getTriggerLinearity());
 	}
 
 	@Override
 	public double getRightX() {
-			return applyConfig(getRawAxis(4), mConfigValues.getRightXDeadzone(), mConfigValues.getRightXMinimumOutput(), mConfigValues.getRightXLinearity());
+			return applyConfig(super.getRightX(), mConfigValues.getRightXDeadzone(), mConfigValues.getRightXMinimumOutput(), mConfigValues.getRightXLinearity());
 	}
 
 	@Override
 	public double getRightY() {
-			return applyConfig(-getRawAxis(5), mConfigValues.getRightYDeadzone(), mConfigValues.getRightYMinimumOutput(), mConfigValues.getRightYLinearity());
+			return applyConfig(-super.getRightY(), mConfigValues.getRightYDeadzone(), mConfigValues.getRightYMinimumOutput(), mConfigValues.getRightYLinearity());
 	}
 
 	@Override
 	public double getLeftX() {
-			return applyConfig(getRawAxis(0), mConfigValues.getLeftXDeadzone(), mConfigValues.getLeftXMinimumOutput(), mConfigValues.getLeftXLinearity());
+			return applyConfig(super.getLeftX(), mConfigValues.getLeftXDeadzone(), mConfigValues.getLeftXMinimumOutput(), mConfigValues.getLeftXLinearity());
 	}
 
 	@Override
 	public double getLeftY() {
-			return applyConfig(-getRawAxis(1), mConfigValues.getLeftYDeadzone(), mConfigValues.getLeftYMinimumOutput(), mConfigValues.getLeftYLinearity());
+			return applyConfig(-super.getLeftY(), mConfigValues.getLeftYDeadzone(), mConfigValues.getLeftYMinimumOutput(), mConfigValues.getLeftYLinearity());
 	}
 	
 
 	public boolean getLeftTriggerDigital(){
-		return getRawAxis(2) > mConfigValues.getTriggerAsDigitalDeadzone();
+		return super.getLeftTriggerAxis() > mConfigValues.getTriggerAsDigitalDeadzone();
 	}
 
 	public boolean getRightTriggerDigital(){
-		return getRawAxis(3) > mConfigValues.getTriggerAsDigitalDeadzone();
+		return super.getRightTriggerAxis() > mConfigValues.getTriggerAsDigitalDeadzone();
 	}
 
 	public void updateConfig()
@@ -169,15 +170,5 @@ public class SWATXboxController extends edu.wpi.first.wpilibj.XboxController {
 				return getRightTriggerAxis();
 			}
 		}).withWidget(BuiltInWidgets.kNumberBar).withProperties(AXIS_DISPLAY_BAR_PROPS).withSize(2, 1).withPosition(8, 4);
-	}
-
-	/**
-	 * Makes the controller rumble.
-	 * @param l The left rumble value.
-	 * @param r The right rumble value.
-	 */
-	public void rumble(double l, double r) {
-		setRumble(RumbleType.kLeftRumble, l);
-		setRumble(RumbleType.kRightRumble, r);
 	}
 }

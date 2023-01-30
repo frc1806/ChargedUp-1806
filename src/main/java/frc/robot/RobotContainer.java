@@ -8,23 +8,27 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.commands.OI;
+import frc.robot.commands.Drive;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.DriverControls;
+import frc.robot.subsystems.VisionSubsystem;
 
 public class RobotContainer {
   
+  public static final DriverControls S_DRIVECONTROLS = new DriverControls();
   public static final DriveTrain S_DRIVETRAIN = new DriveTrain();
+  public static final VisionSubsystem S_VISION_SUBSYSTEM = new VisionSubsystem("limelight");
 
   public RobotContainer() {
     DriverStation.silenceJoystickConnectionWarning(true);
     configureBindings();
-    CommandScheduler.getInstance().setDefaultCommand(S_DRIVETRAIN, new OI(S_DRIVETRAIN));
+    CommandScheduler.getInstance().setDefaultCommand(S_DRIVETRAIN, new Drive(S_DRIVETRAIN, S_DRIVECONTROLS));
 
     
   }
 
   private void configureBindings() {
-
+    S_DRIVECONTROLS.registerTriggers(S_DRIVETRAIN, S_VISION_SUBSYSTEM);
   }
 
   public Command getAutonomousCommand() {
