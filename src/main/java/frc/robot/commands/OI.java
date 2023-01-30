@@ -19,7 +19,7 @@ public class OI extends CommandBase {
     private SendableChooser<DriverControls> controllerConfigChooser;
     private enum DriverControls {
         Classic,
-        Forza
+        Forza,
     }
 
     public OI(DriveTrain driveTrain){
