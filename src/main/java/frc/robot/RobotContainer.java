@@ -4,7 +4,14 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.commands.PPRamseteCommand;
+
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -14,24 +21,56 @@ import frc.robot.subsystems.DriverControls;
 import frc.robot.subsystems.VisionSubsystem;
 
 public class RobotContainer {
+
+  private final SendableChooser mSendableChooser = new SendableChooser<>();
   
+  //DEFINE SUBSYSTEM INSTANCES
   public static final DriverControls S_DRIVECONTROLS = new DriverControls();
   public static final DriveTrain S_DRIVETRAIN = new DriveTrain();
   public static final VisionSubsystem S_VISION_SUBSYSTEM = new VisionSubsystem("limelight");
 
   public RobotContainer() {
     DriverStation.silenceJoystickConnectionWarning(true);
-    configureBindings();
-    CommandScheduler.getInstance().setDefaultCommand(S_DRIVETRAIN, new Drive(S_DRIVETRAIN, S_DRIVECONTROLS));
-
+  
+    //SET DEFAULT COMMANDS
+    setDefaultCommands();
     
+    configureBindings();
+    configureAutonomousOptions();
   }
 
+  /**
+   * Set default commands for the subsystems.
+   * Default commands run when a subsystem has no other commands running.
+   * Example: drivetrain should default to joysticks when not being used by
+   * automatic driving classes.
+   */
+  private void setDefaultCommands(){
+    CommandScheduler.getInstance().setDefaultCommand(S_DRIVETRAIN, new Drive(S_DRIVETRAIN, S_DRIVECONTROLS));
+  }
+
+  /**
+   * Set button bindings for the driver in {@link DriverControls}, but set operator bindings here.
+   */
   private void configureBindings() {
     S_DRIVECONTROLS.registerTriggers(S_DRIVETRAIN, S_VISION_SUBSYSTEM);
   }
 
+  /**
+   * Configure the {@link SendableChooser} for our autononomous options here.
+   */
+  private void configureAutonomousOptions(){
+    mSendableChooser.addOption("DeadReckoning No Obstacle Auto", S_DRIVETRAIN.followTrajectoryCommand(PathPlanner.loadPath("NoObstacleDeadReckoning", new PathConstraints(4.2, 3.1)), true));
+
+    //TODO: Put on main comp tab
+    SmartDashboard.putData("Auto Chooser", mSendableChooser);
+  }
+
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    if(mSendableChooser.getSelected() == null)
+    {
+      return Commands.print("No autonomous command selected");
+    }
+    return (Command) mSendableChooser.getSelected();
   }
 }

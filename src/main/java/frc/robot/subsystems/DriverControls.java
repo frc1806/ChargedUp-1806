@@ -22,6 +22,9 @@ public class DriverControls extends SubsystemBase{
         Forza,
     }
 
+    /**
+     * Creates a DriverControls subsystem. The subsystem used to keep track of the driver's controls based on the status of a sendable chooser.
+     */
     public DriverControls(){
         driverController = new SWATXboxController(Constants.kDriverPort, "Driver", XboxControllerConfigValues.kDriverControllerDefaultConfig);
         operatorController = new SWATXboxController(Constants.kOperatorPort, "Operator", XboxControllerConfigValues.kOperatorControllerDefaultConfig);
@@ -70,6 +73,10 @@ public class DriverControls extends SubsystemBase{
         }
     }
 
+    /**
+     * 
+     * @return Whether or not to turn quickly and/or allow turn in place.
+     */
     public boolean getQuickTurn(){
         switch(selectedControls){
             default:
@@ -80,6 +87,10 @@ public class DriverControls extends SubsystemBase{
         }
     }
 
+    /**
+     * 
+     * @return Whether or not to drive in creep mode
+     */
     public boolean getCreepMode(){
         switch(selectedControls){
             default:
@@ -90,6 +101,12 @@ public class DriverControls extends SubsystemBase{
         }
     }
 
+
+    /**
+     * Register all the controls for the robot. Note that selected controls updates won't happen without a roborio reboot due to the way that triggers work.
+     * @param driveTrain Our one and only drivetrain
+     * @param visionSubsystem our (currently) one and only vision subsystem representing the limelight
+     */
     public void registerTriggers(DriveTrain driveTrain, VisionSubsystem visionSubsystem){
         
         switch(selectedControls){
