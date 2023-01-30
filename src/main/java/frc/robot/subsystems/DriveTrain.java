@@ -28,7 +28,6 @@ import frc.robot.util.NavX;
 
 public class DriveTrain extends SubsystemBase{
 
-    private DriveTrain mDriveTrain;
     private DifferentialDrive mDifferentialDrive;
     private DifferentialDriveOdometry mDifferentialDriveOdometry;
     private DifferentialDriveKinematics mDifferentialDriveKinematics;
@@ -40,8 +39,7 @@ public class DriveTrain extends SubsystemBase{
 
     private double leftEncoderDistance, rightEncoderDistance, leftVelocity, rightVelocity;
 
-    private DriveTrain(){
-        mDriveTrain = new DriveTrain();
+    public DriveTrain(){
 
         leftLeader = new CANSparkMax(RobotMap.leftLeaderID, MotorType.kBrushless);
         leftFollower = new CANSparkMax(RobotMap.leftFollowerID, MotorType.kBrushless);
@@ -67,7 +65,7 @@ public class DriveTrain extends SubsystemBase{
         rightFollower.setSmartCurrentLimit(Constants.kDriveTrainCurrentLimit);
 
         leftEncoder = new Encoder(RobotMap.leftDriveEncoderA, RobotMap.leftDriveEncoderB);
-        leftEncoder = new Encoder(RobotMap.rightDriveEncoderA, RobotMap.rightDriveEncoderB);
+        rightEncoder = new Encoder(RobotMap.rightDriveEncoderA, RobotMap.rightDriveEncoderB);
 
         mNavX = new NavX(SPI.Port.kMXP);
 
@@ -77,10 +75,6 @@ public class DriveTrain extends SubsystemBase{
         rightVelocity = 0;
 
         mDifferentialDriveOdometry = new DifferentialDriveOdometry(getYaw(), 0, 0);
-    }
-
-    public DriveTrain getInstance(){
-        return mDriveTrain;
     }
 
     /**

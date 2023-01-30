@@ -31,7 +31,7 @@ public class OI extends CommandBase {
         controllerConfigChooser.addOption("Forza", DriverControls.Forza);
         controllerConfigChooser.addOption("Classic", DriverControls.Classic);
 
-        mDriveTrain = mDriveTrain.getInstance();
+        mDriveTrain = driveTrain;
         addRequirements(driveTrain);
     }
 

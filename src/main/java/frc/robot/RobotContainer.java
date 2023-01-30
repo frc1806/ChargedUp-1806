@@ -12,17 +12,19 @@ import frc.robot.commands.OI;
 import frc.robot.subsystems.DriveTrain;
 
 public class RobotContainer {
-  private DriveTrain mDriveTrain;
+  
+  public static final DriveTrain S_DRIVETRAIN = new DriveTrain();
 
   public RobotContainer() {
     DriverStation.silenceJoystickConnectionWarning(true);
     configureBindings();
-    mDriveTrain = mDriveTrain.getInstance();
-    CommandScheduler.getInstance().setDefaultCommand(mDriveTrain, new OI(mDriveTrain));
+    CommandScheduler.getInstance().setDefaultCommand(S_DRIVETRAIN, new OI(S_DRIVETRAIN));
+
+    
   }
 
   private void configureBindings() {
-    
+
   }
 
   public Command getAutonomousCommand() {
