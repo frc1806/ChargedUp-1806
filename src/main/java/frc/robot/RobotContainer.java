@@ -21,7 +21,9 @@ public class RobotContainer {
     CommandScheduler.getInstance().setDefaultCommand(mDriveTrain, new OI(mDriveTrain));
   }
 
-  private void configureBindings() {}
+  private void configureBindings() {
+    
+  }
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");

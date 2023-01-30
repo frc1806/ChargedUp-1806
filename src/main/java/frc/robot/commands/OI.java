@@ -7,12 +7,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.shuffleboard.tabs.tabsUtil.XboxControllerConfigValues;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.util.XboxController;
+import frc.robot.util.SWATXboxController;
 
 public class OI extends CommandBase {
-    private XboxController DriverController;
-    private XboxController OperatorController;
-    private XboxController DebugController;
+    private SWATXboxController DriverController;
+    private SWATXboxController OperatorController;
+    private SWATXboxController DebugController;
 
     private DriveTrain mDriveTrain;
 
@@ -23,9 +23,9 @@ public class OI extends CommandBase {
     }
 
     public OI(DriveTrain driveTrain){
-        DriverController = new XboxController(Constants.kDriverPort, "Driver", XboxControllerConfigValues.kDriverControllerDefaultConfig);
-        OperatorController = new XboxController(Constants.kOperatorPort, "Operator", XboxControllerConfigValues.kOperatorControllerDefaultConfig);
-        DebugController = new XboxController(Constants.kOperatorPort, "Debug", XboxControllerConfigValues.kOperatorControllerDefaultConfig);
+        DriverController = new SWATXboxController(Constants.kDriverPort, "Driver", XboxControllerConfigValues.kDriverControllerDefaultConfig);
+        OperatorController = new SWATXboxController(Constants.kOperatorPort, "Operator", XboxControllerConfigValues.kOperatorControllerDefaultConfig);
+        DebugController = new SWATXboxController(Constants.kOperatorPort, "Debug", XboxControllerConfigValues.kOperatorControllerDefaultConfig);
 
         controllerConfigChooser = new SendableChooser<DriverControls>();
         controllerConfigChooser.addOption("Forza", DriverControls.Forza);
@@ -60,14 +60,14 @@ public class OI extends CommandBase {
                 return;
             default:
             case Classic:
-                throttle = DriverController.getLeftJoyY();
-                turn = DriverController.getRightJoyX();
-                quickTurn = DriverController.getRightTriggerAsDigital();
-                creep = DriverController.getLeftTriggerAsDigital();
+                throttle = DriverController.getLeftY();
+                turn = DriverController.getRightX();
+                quickTurn = DriverController.getRightTriggerDigital();
+                creep = DriverController.getLeftTriggerDigital();
         }
 
 
-        if(DriverController.getLeftTriggerAsDigital()){
+        if(DriverController.getLeftTriggerDigital()){
             mDriveTrain.setCreepMode(throttle, turn, quickTurn);
         } else {
             mDriveTrain.setDriveMode(throttle, turn, quickTurn);

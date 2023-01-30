@@ -11,6 +11,12 @@ public class Constants {
 
     //Drive Train Constants
     public static final int kDriveTrainCurrentLimit = 80;
-    public final static double kCountsPerInch = 168.359374;
-    public final static double kDriveInchesPerCount = 1/kCountsPerInch;
+    public static final double kDriveTrainTrackWidthMeters = .6858; //~ 27"
+    public final static double kDriveCountsPerMeter = 6628.32202312992;
+    public final static double kDriveMetersPerCount = 1/kDriveCountsPerMeter;
+
+    //Drive feed forwards
+    public static final double kDriveTrainKs = 0.0;
+    public static final double kDriveTrainKv = 0.0;
+    public static final double kDriveTrainKa = 0.0;
 }

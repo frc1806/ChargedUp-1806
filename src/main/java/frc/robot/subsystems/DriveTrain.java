@@ -1,14 +1,26 @@
 package frc.robot.subsystems;
 
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.PPRamseteCommand;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
@@ -18,6 +30,8 @@ public class DriveTrain extends SubsystemBase{
 
     private DriveTrain mDriveTrain;
     private DifferentialDrive mDifferentialDrive;
+    private DifferentialDriveOdometry mDifferentialDriveOdometry;
+    private DifferentialDriveKinematics mDifferentialDriveKinematics;
     private MotorControllerGroup leftMotorGroup, rightMotorGroup;
 
     private CANSparkMax leftLeader, rightLeader, leftFollower, rightFollower;
@@ -44,6 +58,8 @@ public class DriveTrain extends SubsystemBase{
         rightMotorGroup.setInverted(false);
 
         mDifferentialDrive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
+        mDifferentialDriveKinematics = new DifferentialDriveKinematics(Constants.kDriveTrainTrackWidthMeters);
+        
 
         leftLeader.setSmartCurrentLimit(Constants.kDriveTrainCurrentLimit);
         leftFollower.setSmartCurrentLimit(Constants.kDriveTrainCurrentLimit);
@@ -59,6 +75,8 @@ public class DriveTrain extends SubsystemBase{
         rightEncoderDistance = 0;
         leftVelocity = 0;
         rightVelocity = 0;
+
+        mDifferentialDriveOdometry = new DifferentialDriveOdometry(getYaw(), 0, 0);
     }
 
     public DriveTrain getInstance(){
@@ -92,21 +110,72 @@ public class DriveTrain extends SubsystemBase{
         rightLeader.setVoltage(0);
     }
 
-    public double getLeftDistanceInches() {
-		return leftEncoderDistance * Constants.kDriveInchesPerCount;
+    public double getLeftDistanceMeters() {
+		return leftEncoderDistance * Constants.kDriveMetersPerCount;
 	}
 
-	public double getLeftVelocityInchesPerSec() {
-		return leftVelocity * Constants.kDriveInchesPerCount / 60;
+	public double getLeftVelocityMetersPerSec() {
+		return leftVelocity * Constants.kDriveMetersPerCount / 60;
 	}
 
-	public double getRightDistanceInches() {
-		return rightEncoderDistance * Constants.kDriveInchesPerCount;
+	public double getRightDistanceMeters() {
+		return rightEncoderDistance * Constants.kDriveMetersPerCount;
 	}
 
-	public double getRightVelocityInchesPerSec() {
-		return rightVelocity * Constants.kDriveInchesPerCount / 60;
+	public double getRightVelocityMetersPerSec() {
+		return rightVelocity * Constants.kDriveMetersPerCount / 60;
 	}
+
+    public DifferentialDriveKinematics getKinematics(){
+        return mDifferentialDriveKinematics;
+    }
+
+    public DifferentialDriveWheelSpeeds getWheelSpeeds(){
+        return new DifferentialDriveWheelSpeeds(getLeftVelocityMetersPerSec(), getRightVelocityMetersPerSec());
+    }
+
+    public void outputVolts(double leftVolts, double rightVolts){
+        leftLeader.setVoltage(leftVolts);
+        rightLeader.setVoltage(rightVolts);
+    }
+
+    public void resetOdometry(Pose2d newPose){
+        mDifferentialDriveOdometry.resetPosition(getYaw(), getLeftDistanceMeters(), getRightDistanceMeters(), newPose);
+    }
+
+    public Pose2d getPose(){
+        return mDifferentialDriveOdometry.getPoseMeters();
+    }
+
+    /**
+     * Follow a PathPlanner Trajectory
+     * @param traj the trajectory to follow
+     * @param isFirstPath is this the first path being run?
+     * @return a {@link Command} representing the action to follow the path
+     */
+public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> {
+          // Reset odometry for the first path you run during auto
+          if(isFirstPath){
+              this.resetOdometry(traj.getInitialPose());
+          }
+        }),
+        new PPRamseteCommand(
+            traj, 
+            this::getPose, // Pose supplier
+            new RamseteController(),
+            new SimpleMotorFeedforward(Constants.kDriveTrainKs, Constants.kDriveTrainKv, Constants.kDriveTrainKa),
+            this.mDifferentialDriveKinematics, // DifferentialDriveKinematics
+            this::getWheelSpeeds, // DifferentialDriveWheelSpeeds supplier
+            new PIDController(0, 0, 0), // Left controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+            new PIDController(0, 0, 0), // Right controller (usually the same values as left controller)
+            this::outputVolts, // Voltage biconsumer
+            true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+            this // Requires this drive subsystem
+        )
+    );
+}
 
     public Rotation2d getYaw(){
         return mNavX.getYaw();
@@ -127,6 +196,7 @@ public class DriveTrain extends SubsystemBase{
         leftEncoderDistance = leftEncoder.getDistance();
         rightEncoderDistance = rightEncoder.getDistance();
         outputToSmartDashboard();
+        mDifferentialDriveOdometry.update(getYaw(), getLeftDistanceMeters(), getRightDistanceMeters());
         super.periodic();
     }
 
