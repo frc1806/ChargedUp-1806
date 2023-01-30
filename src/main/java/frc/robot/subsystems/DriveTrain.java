@@ -83,15 +83,27 @@ public class DriveTrain extends SubsystemBase{
         return mDriveTrain;
     }
 
-    public void setDriveMode(double leftY, double rightX, boolean quickTurn){
-        mDifferentialDrive.curvatureDrive(leftY * 12, rightX * 12, quickTurn);
+    /**
+     * Drive in teleop as normal
+     * @param throttle Desired movement forward/backward (1 is full forward, -1 is full backward, 0 is no movement)
+     * @param steer Desired turning (-1 is full left, 1 is full right, 0 is no turning )
+     * @param quickTurn Turn fast?
+     */
+    public void setDriveMode(double throttle, double steer, boolean quickTurn){
+        mDifferentialDrive.curvatureDrive(throttle * 12, steer * 12, quickTurn);
     }
 
-    public void setCreepMode(double leftY, double rightX, boolean quickTurn){
-        mDifferentialDrive.curvatureDrive(leftY * 3, rightX * 6, quickTurn);
+    /**
+     * Drive in teleop but slowly
+     * @param throttle Desired movement forward/backward (1 is full forward, -1 is full backward, 0 is no movement)
+     * @param steer Desired turning (-1 is full left, 1 is full right, 0 is no turning )
+     * @param quickTurn Turn fast?
+     */
+    public void setCreepMode(double throttle, double steer, boolean quickTurn){
+        mDifferentialDrive.curvatureDrive(throttle * 3, steer * 6, quickTurn);
     }
 
-    public void setIdleMode(){
+    public void setBrakeMode(){
         leftLeader.setIdleMode(CANSparkMax.IdleMode.kBrake);
         leftFollower.setIdleMode(CANSparkMax.IdleMode.kBrake);
         rightLeader.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -189,12 +201,18 @@ public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFir
     public void outputToSmartDashboard(){
         SmartDashboard.putNumber("Left Encoder Distance", leftEncoderDistance);
         SmartDashboard.putNumber("Right Encoder Distance", rightEncoderDistance);
+        SmartDashboard.putNumber("Navx Yaw(Degrees):", mNavX.getYaw().getDegrees());
+        SmartDashboard.putNumber("Pose X:", getPose().getX());
+        SmartDashboard.putNumber("Pose Y:", getPose().getY());
+        SmartDashboard.putNumber("Pose Rotation(Degrees):", getPose().getRotation().getDegrees());
     }
 
     @Override
     public void periodic() {
         leftEncoderDistance = leftEncoder.getDistance();
         rightEncoderDistance = rightEncoder.getDistance();
+        leftVelocity = leftEncoder.getRate();
+        rightVelocity = rightEncoder.getRate();
         outputToSmartDashboard();
         mDifferentialDriveOdometry.update(getYaw(), getLeftDistanceMeters(), getRightDistanceMeters());
         super.periodic();
