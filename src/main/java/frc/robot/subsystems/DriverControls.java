@@ -60,16 +60,16 @@ public class DriverControls extends SubsystemBase{
     }
 
     /**
-     * Get drivetrain turn control value
+     * Get drivetrain turn control value For curvature drive, 1 is counterclockwise.
      * @return a {@link double} between -1 and 1
      */
     public double getTurn(){
         switch(selectedControls){
             default:
             case Classic:
-                return driverController.getRightX();
+                return -driverController.getRightX();
             case Forza:
-                return driverController.getLeftX();
+                return -driverController.getLeftX();
         }
     }
 

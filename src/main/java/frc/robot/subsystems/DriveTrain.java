@@ -47,8 +47,6 @@ public class DriveTrain extends SubsystemBase{
     private Encoder leftEncoder, rightEncoder;
     private NavX mNavX;
 
-    private double leftEncoderDistance, rightEncoderDistance, leftVelocity, rightVelocity;
-
     private Field2d mField;
 
     //Simulation
@@ -85,14 +83,11 @@ public class DriveTrain extends SubsystemBase{
 
         leftEncoder = new Encoder(RobotMap.leftDriveEncoderA, RobotMap.leftDriveEncoderB);
         leftEncoder.setReverseDirection(true);
+        leftEncoder.setDistancePerPulse(Constants.kDriveMetersPerCount);
         rightEncoder = new Encoder(RobotMap.rightDriveEncoderA, RobotMap.rightDriveEncoderB);
+        rightEncoder.setDistancePerPulse(Constants.kDriveMetersPerCount);
 
         mNavX = new NavX(SPI.Port.kMXP);
-
-        leftEncoderDistance = 0;
-        rightEncoderDistance = 0;
-        leftVelocity = 0;
-        rightVelocity = 0;
 
         mField = new Field2d();
 
@@ -102,7 +97,7 @@ public class DriveTrain extends SubsystemBase{
         leftEncoderSim = new EncoderSim(leftEncoder);
         rightEncoderSim = new EncoderSim(rightEncoder);
         navXYaw = new SimDouble(SimDeviceDataJNI.getSimValueHandle(SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]"), "Yaw"));
-        differentialDrivetrainSim = new DifferentialDrivetrainSim(DCMotor.getNEO(2), 9, 7.5, Units.lbsToKilograms(150.0), Units.inchesToMeters(6), Units.inchesToMeters(27.0), VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005));
+        differentialDrivetrainSim = new DifferentialDrivetrainSim(DCMotor.getNEO(2), 9.9, 7.5, Units.lbsToKilograms(150.0), Units.inchesToMeters(3), Constants.kDriveTrainTrackWidthMeters, VecBuilder.fill(0.0000, 0.0000, 0.001, 0.00, 0.00, 0.0000, 0.0000));
     }
 
     /**
@@ -112,7 +107,7 @@ public class DriveTrain extends SubsystemBase{
      * @param quickTurn Turn fast?
      */
     public void setDriveMode(double throttle, double steer, boolean quickTurn){
-        mDifferentialDrive.curvatureDrive(throttle, steer, quickTurn);
+        mDifferentialDrive.curvatureDrive(throttle, steer / 1.33, quickTurn);
     }
 
     /**
@@ -122,7 +117,7 @@ public class DriveTrain extends SubsystemBase{
      * @param quickTurn Turn fast?
      */
     public void setCreepMode(double throttle, double steer, boolean quickTurn){
-        mDifferentialDrive.curvatureDrive(throttle /4 , steer / 2, quickTurn);
+        mDifferentialDrive.curvatureDrive(throttle / 3.33 , steer / 1.875, quickTurn);
     }
 
     public void setBrakeMode(){
@@ -140,42 +135,37 @@ public class DriveTrain extends SubsystemBase{
     }
 
     public void stop(){
-        leftLeader.setVoltage(0);
-        rightLeader.setVoltage(0);
+        mDifferentialDrive.curvatureDrive(0.0, 0.0, false);
     }
-
-    public double getLeftDistanceMeters() {
-		return leftEncoderDistance * Constants.kDriveMetersPerCount;
-	}
-
-	public double getLeftVelocityMetersPerSec() {
-		return leftVelocity * Constants.kDriveMetersPerCount / 60;
-	}
-
-	public double getRightDistanceMeters() {
-		return rightEncoderDistance * Constants.kDriveMetersPerCount;
-	}
-
-	public double getRightVelocityMetersPerSec() {
-		return rightVelocity * Constants.kDriveMetersPerCount / 60;
-	}
 
     public DifferentialDriveKinematics getKinematics(){
         return mDifferentialDriveKinematics;
     }
 
     public DifferentialDriveWheelSpeeds getWheelSpeeds(){
-        return new DifferentialDriveWheelSpeeds(getLeftVelocityMetersPerSec(), getRightVelocityMetersPerSec());
+        return new DifferentialDriveWheelSpeeds(-leftEncoder.getRate(), -rightEncoder.getRate());
     }
 
     public void outputVolts(double leftVolts, double rightVolts){
-        leftLeader.setVoltage(leftVolts);
-        rightLeader.setVoltage(rightVolts);
+        mDifferentialDrive.tankDrive(leftVolts/RobotController.getInputVoltage(), rightVolts/RobotController.getInputVoltage(), false);
     }
 
-    public void resetOdometry(Pose2d newPose){
-        mDifferentialDriveOdometry.resetPosition(getYaw(), getLeftDistanceMeters(), getRightDistanceMeters(), newPose);
+    public synchronized void resetOdometry(Pose2d newPose){
+        resetSensors();
+        mDifferentialDriveOdometry.resetPosition(getYaw(), leftEncoder.getDistance(), rightEncoder.getDistance(), newPose);
         differentialDrivetrainSim.setPose(newPose);
+        
+    }
+
+    public void resetSensors(){
+        mNavX.reset();
+        leftEncoder.reset();
+        rightEncoder.reset();
+
+        //SIM
+        navXYaw.set(0.0);
+        leftEncoderSim.setDistance(0);
+        rightEncoderSim.setDistance(0);
     }
 
     public Pose2d getPose(){
@@ -203,8 +193,8 @@ public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFir
             new SimpleMotorFeedforward(Constants.kDriveTrainKs, Constants.kDriveTrainKv, Constants.kDriveTrainKa),
             this.mDifferentialDriveKinematics, // DifferentialDriveKinematics
             this::getWheelSpeeds, // DifferentialDriveWheelSpeeds supplier
-            new PIDController(0, 0, 0), // Left controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
-            new PIDController(0, 0, 0), // Right controller (usually the same values as left controller)
+            new PIDController(0.2, 0, 0), // Left controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+            new PIDController(0.2, 0, 0), // Right controller (usually the same values as left controller)
             this::outputVolts, // Voltage biconsumer
             true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
             this // Requires this drive subsystem
@@ -222,23 +212,23 @@ public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFir
     }
 
     public void outputToSmartDashboard(){
-        SmartDashboard.putNumber("Left Encoder Distance", leftEncoderDistance);
-        SmartDashboard.putNumber("Right Encoder Distance", rightEncoderDistance);
+        SmartDashboard.putNumber("Left Encoder Distance", leftEncoder.getDistance());
+        SmartDashboard.putNumber("Right Encoder Distance", rightEncoder.getDistance());
+        SmartDashboard.putNumber("Left Encoder Rate", leftEncoder.getRate());
+        SmartDashboard.putNumber("Right Encoder Rate", rightEncoder.getRate());
         SmartDashboard.putNumber("Navx Yaw(Degrees):", mNavX.getYaw().getDegrees());
         SmartDashboard.putNumber("Pose X:", getPose().getX());
         SmartDashboard.putNumber("Pose Y:", getPose().getY());
         SmartDashboard.putNumber("Pose Rotation(Degrees):", getPose().getRotation().getDegrees());
         SmartDashboard.putData("Field", mField);
+        SmartDashboard.putNumber("Left Applied Output %", leftMotorGroup.get());
+        SmartDashboard.putNumber("Right Applied Output %", rightMotorGroup.get());
     }
 
     @Override
     public void periodic() {
-        leftEncoderDistance = leftEncoder.getDistance();
-        rightEncoderDistance = rightEncoder.getDistance();
-        leftVelocity = leftEncoder.getRate();
-        rightVelocity = rightEncoder.getRate();
         outputToSmartDashboard();
-        mDifferentialDriveOdometry.update(getYaw(), getLeftDistanceMeters(), getRightDistanceMeters());
+        mDifferentialDriveOdometry.update(getYaw(), leftEncoder.getDistance(), rightEncoder.getDistance());
         mField.setRobotPose(mDifferentialDriveOdometry.getPoseMeters());
         super.periodic();
     }
@@ -247,13 +237,13 @@ public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFir
     public void simulationPeriodic() {
         // TODO Auto-generated method stub
         super.simulationPeriodic();
-        differentialDrivetrainSim.setInputs(-leftLeader.get() * RobotController.getInputVoltage(), rightLeader.get() * RobotController.getInputVoltage());
+        differentialDrivetrainSim.setInputs(leftMotorGroup.get() * RobotController.getInputVoltage(), rightMotorGroup.get() * RobotController.getInputVoltage());
         differentialDrivetrainSim.update(0.02);
-        leftEncoderSim.setDistance(differentialDrivetrainSim.getLeftPositionMeters() / Constants.kDriveMetersPerCount);
-        leftEncoderSim.setRate((differentialDrivetrainSim.getLeftVelocityMetersPerSecond() * 60) / Constants.kDriveMetersPerCount);
-        rightEncoderSim.setDistance(differentialDrivetrainSim.getRightPositionMeters() / Constants.kDriveMetersPerCount);
-        rightEncoderSim.setRate((differentialDrivetrainSim.getRightVelocityMetersPerSecond() * 60) / Constants.kDriveMetersPerCount);
-        navXYaw.set(differentialDrivetrainSim.getHeading().getDegrees());
+        leftEncoderSim.setDistance(differentialDrivetrainSim.getLeftPositionMeters());
+        leftEncoderSim.setRate(differentialDrivetrainSim.getLeftVelocityMetersPerSecond());
+        rightEncoderSim.setDistance(differentialDrivetrainSim.getRightPositionMeters());
+        rightEncoderSim.setRate(differentialDrivetrainSim.getRightVelocityMetersPerSecond());
+        navXYaw.set(-differentialDrivetrainSim.getHeading().getDegrees()); //this has to be negative because the record odometry command flipps from clockwise positive to ccw positive
 
     }
 }

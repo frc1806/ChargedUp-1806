@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
+
 public class Constants {
     //Controller Ports
     public static final int kDriverPort = 0;
@@ -11,12 +13,12 @@ public class Constants {
 
     //Drive Train Constants
     public static final int kDriveTrainCurrentLimit = 80;
-    public static final double kDriveTrainTrackWidthMeters = .6858; //~ 27"
+    public static final double kDriveTrainTrackWidthMeters = Units.inchesToMeters(25.5); //~ 27"
     public final static double kDriveCountsPerMeter = 6628.32202312992;
     public final static double kDriveMetersPerCount = 1/kDriveCountsPerMeter;
 
     //Drive feed forwards
-    public static final double kDriveTrainKs = 0.0;
-    public static final double kDriveTrainKv = 0.0;
-    public static final double kDriveTrainKa = 0.0;
+    public static final double kDriveTrainKs = 0.3703;
+    public static final double kDriveTrainKv = 1.1603;
+    public static final double kDriveTrainKa = 0.40226;
 }

@@ -66,7 +66,7 @@
   {
     "name": "/Shuffleboard/Driver Controller Configuration/Right X Linearity",
     "type": "double",
-    "value": 0.9652991452991453,
+    "value": 0.07213675213675214,
     "properties": {
       "persistent": true
     }

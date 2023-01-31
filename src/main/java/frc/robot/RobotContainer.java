@@ -60,7 +60,7 @@ public class RobotContainer {
    * Configure the {@link SendableChooser} for our autononomous options here.
    */
   private void configureAutonomousOptions(){
-    mSendableChooser.addOption("DeadReckoning No Obstacle Auto", S_DRIVETRAIN.followTrajectoryCommand(PathPlanner.loadPath("NoObstacleDeadReckoning", new PathConstraints(4.2, 3.1)), true));
+    mSendableChooser.addOption("DeadReckoning No Obstacle Auto", S_DRIVETRAIN.followTrajectoryCommand(PathPlanner.loadPath("NoObstacleDeadReckoning", new PathConstraints(4.0, 3.0)), true));
 
     //TODO: Put on main comp tab
     SmartDashboard.putData("Auto Chooser", mSendableChooser);
