@@ -5,6 +5,10 @@ import com.pathplanner.lib.commands.PPRamseteCommand;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.hal.SimDevice;
+import edu.wpi.first.hal.SimDouble;
+import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -13,10 +17,16 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
+import edu.wpi.first.wpilibj.simulation.EncoderSim;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -38,6 +48,15 @@ public class DriveTrain extends SubsystemBase{
     private NavX mNavX;
 
     private double leftEncoderDistance, rightEncoderDistance, leftVelocity, rightVelocity;
+
+    private Field2d mField;
+
+    //Simulation
+    private EncoderSim leftEncoderSim, rightEncoderSim;
+    DifferentialDrivetrainSim differentialDrivetrainSim;
+    SimDouble navXYaw;
+
+    
 
     public DriveTrain(){
 
@@ -65,6 +84,7 @@ public class DriveTrain extends SubsystemBase{
         rightFollower.setSmartCurrentLimit(Constants.kDriveTrainCurrentLimit);
 
         leftEncoder = new Encoder(RobotMap.leftDriveEncoderA, RobotMap.leftDriveEncoderB);
+        leftEncoder.setReverseDirection(true);
         rightEncoder = new Encoder(RobotMap.rightDriveEncoderA, RobotMap.rightDriveEncoderB);
 
         mNavX = new NavX(SPI.Port.kMXP);
@@ -74,7 +94,15 @@ public class DriveTrain extends SubsystemBase{
         leftVelocity = 0;
         rightVelocity = 0;
 
+        mField = new Field2d();
+
         mDifferentialDriveOdometry = new DifferentialDriveOdometry(getYaw(), 0, 0);
+
+        //SIMULATION
+        leftEncoderSim = new EncoderSim(leftEncoder);
+        rightEncoderSim = new EncoderSim(rightEncoder);
+        navXYaw = new SimDouble(SimDeviceDataJNI.getSimValueHandle(SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]"), "Yaw"));
+        differentialDrivetrainSim = new DifferentialDrivetrainSim(DCMotor.getNEO(2), 9, 7.5, Units.lbsToKilograms(150.0), Units.inchesToMeters(6), Units.inchesToMeters(27.0), VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005));
     }
 
     /**
@@ -84,7 +112,7 @@ public class DriveTrain extends SubsystemBase{
      * @param quickTurn Turn fast?
      */
     public void setDriveMode(double throttle, double steer, boolean quickTurn){
-        mDifferentialDrive.curvatureDrive(throttle * 12, steer * 12, quickTurn);
+        mDifferentialDrive.curvatureDrive(throttle, steer, quickTurn);
     }
 
     /**
@@ -94,7 +122,7 @@ public class DriveTrain extends SubsystemBase{
      * @param quickTurn Turn fast?
      */
     public void setCreepMode(double throttle, double steer, boolean quickTurn){
-        mDifferentialDrive.curvatureDrive(throttle * 3, steer * 6, quickTurn);
+        mDifferentialDrive.curvatureDrive(throttle /4 , steer / 2, quickTurn);
     }
 
     public void setBrakeMode(){
@@ -147,6 +175,7 @@ public class DriveTrain extends SubsystemBase{
 
     public void resetOdometry(Pose2d newPose){
         mDifferentialDriveOdometry.resetPosition(getYaw(), getLeftDistanceMeters(), getRightDistanceMeters(), newPose);
+        differentialDrivetrainSim.setPose(newPose);
     }
 
     public Pose2d getPose(){
@@ -199,6 +228,7 @@ public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFir
         SmartDashboard.putNumber("Pose X:", getPose().getX());
         SmartDashboard.putNumber("Pose Y:", getPose().getY());
         SmartDashboard.putNumber("Pose Rotation(Degrees):", getPose().getRotation().getDegrees());
+        SmartDashboard.putData("Field", mField);
     }
 
     @Override
@@ -209,6 +239,7 @@ public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFir
         rightVelocity = rightEncoder.getRate();
         outputToSmartDashboard();
         mDifferentialDriveOdometry.update(getYaw(), getLeftDistanceMeters(), getRightDistanceMeters());
+        mField.setRobotPose(mDifferentialDriveOdometry.getPoseMeters());
         super.periodic();
     }
 
@@ -216,5 +247,13 @@ public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFir
     public void simulationPeriodic() {
         // TODO Auto-generated method stub
         super.simulationPeriodic();
+        differentialDrivetrainSim.setInputs(-leftLeader.get() * RobotController.getInputVoltage(), rightLeader.get() * RobotController.getInputVoltage());
+        differentialDrivetrainSim.update(0.02);
+        leftEncoderSim.setDistance(differentialDrivetrainSim.getLeftPositionMeters() / Constants.kDriveMetersPerCount);
+        leftEncoderSim.setRate((differentialDrivetrainSim.getLeftVelocityMetersPerSecond() * 60) / Constants.kDriveMetersPerCount);
+        rightEncoderSim.setDistance(differentialDrivetrainSim.getRightPositionMeters() / Constants.kDriveMetersPerCount);
+        rightEncoderSim.setRate((differentialDrivetrainSim.getRightVelocityMetersPerSecond() * 60) / Constants.kDriveMetersPerCount);
+        navXYaw.set(differentialDrivetrainSim.getHeading().getDegrees());
+
     }
 }
