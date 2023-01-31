@@ -3,8 +3,10 @@ package frc.robot.subsystems;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-
-
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
@@ -13,12 +15,16 @@ import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 
 
 public class VisionSubsystem extends SubsystemBase{
 
     private NetworkTable limelightTable;
     private double currentTimestamp;
+
+    //SIMULATION
+    private final Translation2d testNodePose = new Translation2d(15.77, 4.98);
 
     public VisionSubsystem(String hostname) { 
         limelightTable = NetworkTableInstance.getDefault().getTable(hostname);
@@ -51,6 +57,23 @@ public class VisionSubsystem extends SubsystemBase{
     @Override
     public void periodic() {
         currentTimestamp = Timer.getFPGATimestamp();
+    }
+
+    @Override
+    public void simulationPeriodic(){
+
+        double angleToTestGoal = -testNodePose.minus(RobotContainer.S_DRIVETRAIN.getPose().getTranslation()).getAngle().getDegrees() + RobotContainer.S_DRIVETRAIN.getPose().getRotation().minus(new Rotation2d(Units.degreesToRadians(180.0))).getDegrees();
+        if(RobotContainer.S_DRIVETRAIN.getPose().getTranslation().getDistance(testNodePose) < 8.0 && Math.abs(angleToTestGoal) < 27.0)
+        {
+            limelightTable.getEntry("tv").setBoolean(true);
+            limelightTable.getEntry("tx").setDouble(angleToTestGoal);
+            //limelightTable.getEntry("tx").setDouble(RobotContainer.S_DRIVETRAIN.getPose().relativeTo(testNodePose).getRotation().getDegrees());
+        }
+        else
+        {
+            limelightTable.getEntry("tv").setBoolean(false);
+            limelightTable.getEntry("tx").setDouble(0.0);
+        }
     }
 
     /* TODO: Port to new smart dashboard tab setup

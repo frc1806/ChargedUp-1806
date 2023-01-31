@@ -27,7 +27,7 @@ public class RobotContainer {
   //DEFINE SUBSYSTEM INSTANCES
   public static final DriverControls S_DRIVECONTROLS = new DriverControls();
   public static final DriveTrain S_DRIVETRAIN = new DriveTrain();
-  public static final VisionSubsystem S_VISION_SUBSYSTEM = new VisionSubsystem("limelight");
+  public static final VisionSubsystem S_REAR_VISION_SUBSYSTEM = new VisionSubsystem("limelight");
 
   public RobotContainer() {
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -53,7 +53,7 @@ public class RobotContainer {
    * Set button bindings for the driver in {@link DriverControls}, but set operator bindings here.
    */
   private void configureBindings() {
-    S_DRIVECONTROLS.registerTriggers(S_DRIVETRAIN, S_VISION_SUBSYSTEM);
+    S_DRIVECONTROLS.registerTriggers(S_DRIVETRAIN, S_REAR_VISION_SUBSYSTEM);
   }
 
   /**

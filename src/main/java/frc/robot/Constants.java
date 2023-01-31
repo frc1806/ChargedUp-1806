@@ -18,7 +18,7 @@ public class Constants {
     public final static double kDriveMetersPerCount = 1/kDriveCountsPerMeter;
 
     //Drive feed forwards
-    public static final double kDriveTrainKs = 0.3703;
+    public static final double kDriveTrainKs = 0.2703;
     public static final double kDriveTrainKv = 1.1603;
     public static final double kDriveTrainKa = 0.40226;
 }

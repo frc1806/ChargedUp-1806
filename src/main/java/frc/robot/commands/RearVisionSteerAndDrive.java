@@ -5,12 +5,12 @@ import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.DriverControls;
 import frc.robot.subsystems.VisionSubsystem;
 
-public class VisionSteerAndDrive extends CommandBase{
+public class RearVisionSteerAndDrive extends CommandBase{
     private DriveTrain mDriveTrain;
     private DriverControls mDriveControls;
     private VisionSubsystem mVisionSubsystem;
 
-    public VisionSteerAndDrive(DriveTrain drivetrain, DriverControls driveControls, VisionSubsystem visionSubsystem) {
+    public RearVisionSteerAndDrive(DriveTrain drivetrain, DriverControls driveControls, VisionSubsystem visionSubsystem) {
         // Use addRequirements() here to declare subsystem dependencies.
         mDriveTrain = drivetrain;
         mDriveControls = driveControls;
@@ -28,7 +28,7 @@ public class VisionSteerAndDrive extends CommandBase{
   public void execute() {
     
 
-    mDriveTrain.setDriveMode(mDriveControls.getThrottle(), mVisionSubsystem.getTarget() * .01, mDriveControls.getQuickTurn());
+    mDriveTrain.setDriveMode(mDriveControls.getThrottle(), -mVisionSubsystem.getTarget() * .015, true);
     
   }
 

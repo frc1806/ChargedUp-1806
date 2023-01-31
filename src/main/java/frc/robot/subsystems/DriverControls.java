@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
-import frc.robot.commands.VisionSteerAndDrive;
+import frc.robot.commands.RearVisionSteerAndDrive;
 import frc.robot.shuffleboard.tabs.tabsUtil.XboxControllerConfigValues;
 import frc.robot.util.SWATXboxController;
 
@@ -112,7 +112,7 @@ public class DriverControls extends SubsystemBase{
         switch(selectedControls){
             default:
             case Classic:
-                new Trigger(driverController::getAButton).whileTrue(new VisionSteerAndDrive(driveTrain, this, visionSubsystem));
+                new Trigger(driverController::getAButton).whileTrue(new RearVisionSteerAndDrive(driveTrain, this, visionSubsystem));
                 break;
             case Forza:
                 break;
