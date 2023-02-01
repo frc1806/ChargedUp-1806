@@ -10,4 +10,10 @@ public class RobotMap {
     public static final int leftDriveEncoderB = 1;
     public static final int rightDriveEncoderA = 2;
     public static final int rightDriveEncoderB = 3;
+
+    
+
+
+    public static final int leftSolenoid = 20;
+    public static final int rightSolenoid = 21;
 }

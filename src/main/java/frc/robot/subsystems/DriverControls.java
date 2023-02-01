@@ -1,9 +1,7 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.commands.RearVisionSteerAndDrive;
@@ -99,6 +97,26 @@ public class DriverControls extends SubsystemBase{
             case Forza:
                 return driverController.getBButton();
         }
+    }
+
+    public boolean getIntakeMode(){
+        switch(selectedControls){
+            default:
+            case Classic:
+                return driverController.getBButton();
+            case Forza:
+                return driverController.getBButton();
+        }
+    }
+
+    //Debug Controls
+
+    public boolean getIntakeLeft(){
+        return debugController.getLeftTriggerDigital();
+    }
+
+    public boolean getIntakeRight(){
+        return debugController.getRightTriggerDigital();
     }
 
 

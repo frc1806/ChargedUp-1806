@@ -10,12 +10,12 @@ public abstract class ShuffleboardTabBase {
 
     public abstract void createEntries();
 
-    protected GenericEntry createNumberEntry(String name, int width, int height, int posX, int posY) {
-        return mTab.add(name, "").withSize(width, height).withPosition(posX, posY).getEntry();
+    protected GenericEntry createNumberEntry(String name) {
+        return mTab.add(name, "").getEntry();
     }
 
-    protected GenericEntry createStringEntry(String name, int width, int height, int posX, int posY) {
-        return mTab.add(name, "").withSize(width, height).withPosition(posX, posY).getEntry();
+    protected GenericEntry createStringEntry(String name){
+        return mTab.add(name, "").getEntry();
     }
 
     public abstract void update();

@@ -6,10 +6,10 @@ package frc.robot;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.commands.PPRamseteCommand;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -29,9 +29,12 @@ public class RobotContainer {
   public static final DriveTrain S_DRIVETRAIN = new DriveTrain();
   public static final VisionSubsystem S_REAR_VISION_SUBSYSTEM = new VisionSubsystem("limelight");
 
+  //Compressor
+  public Compressor compressor;
+
   public RobotContainer() {
     DriverStation.silenceJoystickConnectionWarning(true);
-  
+    compressor = new Compressor(PneumaticsModuleType.CTREPCM);
     //SET DEFAULT COMMANDS
     setDefaultCommands();
     
