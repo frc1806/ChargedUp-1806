@@ -16,4 +16,9 @@ public class RobotMap {
 
     public static final int leftSolenoid = 20;
     public static final int rightSolenoid = 21;
+
+    // Protruder
+    public static final int protrusionMotor = 30;
+    public static final int protrusionMotorA = 31;
+    public static final int ProtrusionMotorB = 32;
 }

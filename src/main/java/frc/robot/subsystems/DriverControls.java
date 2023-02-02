@@ -109,6 +109,20 @@ public class DriverControls extends SubsystemBase{
         }
     }
 
+    public boolean getConfirmPlacement(){
+        switch(selectedControls){
+            default:
+            case Classic:
+                return driverController.getYButton();
+            case Forza:
+                return driverController.getYButton();
+        }
+    }
+
+    //Operator Controls
+
+    
+
     //Debug Controls
 
     public boolean getIntakeLeft(){
