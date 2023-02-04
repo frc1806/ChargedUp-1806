@@ -18,16 +18,18 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.Drive;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.DriverControls;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.VisionSubsystem;
 
 public class RobotContainer {
 
-  private final SendableChooser mSendableChooser = new SendableChooser<>();
+  private final SendableChooser<Command> mSendableChooser = new SendableChooser<>();
   
   //DEFINE SUBSYSTEM INSTANCES
   public static final DriverControls S_DRIVECONTROLS = new DriverControls();
   public static final DriveTrain S_DRIVETRAIN = new DriveTrain();
   public static final VisionSubsystem S_REAR_VISION_SUBSYSTEM = new VisionSubsystem("limelight");
+  public static final Intake S_INTAKE = new Intake();
 
   //Compressor
   public Compressor compressor;
@@ -56,7 +58,7 @@ public class RobotContainer {
    * Set button bindings for the driver in {@link DriverControls}, but set operator bindings here.
    */
   private void configureBindings() {
-    S_DRIVECONTROLS.registerTriggers(S_DRIVETRAIN, S_REAR_VISION_SUBSYSTEM);
+    S_DRIVECONTROLS.registerTriggers(S_DRIVETRAIN, S_REAR_VISION_SUBSYSTEM, S_INTAKE);
   }
 
   /**

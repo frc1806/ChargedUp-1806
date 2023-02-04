@@ -1,12 +1,11 @@
 package frc.robot.subsystems;
 
-import java.util.function.BooleanSupplier;
-
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.commands.RearVisionSteerAndDrive;
+import frc.robot.commands.ToggleIntake;
 import frc.robot.shuffleboard.tabs.tabsUtil.XboxControllerConfigValues;
 import frc.robot.util.SWATXboxController;
 
@@ -156,9 +155,9 @@ public class DriverControls extends SubsystemBase{
      * @param driveTrain Our one and only drivetrain
      * @param visionSubsystem our (currently) one and only vision subsystem representing the limelight
      */
-    public void registerTriggers(DriveTrain driveTrain, VisionSubsystem visionSubsystem){
+    public void registerTriggers(DriveTrain driveTrain, VisionSubsystem visionSubsystem, Intake intake){
         new Trigger(this::getVisionLineup).whileTrue(new RearVisionSteerAndDrive(driveTrain, this, visionSubsystem));
-        
+        new Trigger(this::getIntakeMode).whileTrue(new ToggleIntake(intake));
     }
     
 
