@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -52,8 +54,13 @@ public class DriverControls extends SubsystemBase{
             case Classic:
                 return driverController.getLeftY();
             case Forza:
-                return driverController.getRightTriggerAxis();
-            
+                if(driverController.getLeftTriggerAxis() > 0){
+                    return driverController.getLeftTriggerAxis();
+                } else if (driverController.getRightTriggerAxis() > 0){
+                    return -driverController.getRightTriggerAxis();
+                } else {
+                    return 0.0;
+                }
         }
     }
 
@@ -81,7 +88,7 @@ public class DriverControls extends SubsystemBase{
             case Classic:
                 return driverController.getRightTriggerDigital();
             case Forza:
-                return driverController.getAButton();
+                return driverController.getRightBumper();
         }
     }
 
@@ -95,7 +102,17 @@ public class DriverControls extends SubsystemBase{
             case Classic:
                 return driverController.getLeftTriggerDigital();
             case Forza:
-                return driverController.getBButton();
+                return driverController.getLeftBumper();
+        }
+    }
+
+    public boolean getVisionLineup(){
+        switch(selectedControls){
+            default:
+            case Classic:
+                return driverController.getAButton();
+            case Forza:
+                return driverController.getAButton();
         }
     }
 
@@ -140,18 +157,8 @@ public class DriverControls extends SubsystemBase{
      * @param visionSubsystem our (currently) one and only vision subsystem representing the limelight
      */
     public void registerTriggers(DriveTrain driveTrain, VisionSubsystem visionSubsystem){
+        new Trigger(this::getVisionLineup).whileTrue(new RearVisionSteerAndDrive(driveTrain, this, visionSubsystem));
         
-        switch(selectedControls){
-            default:
-            case Classic:
-                new Trigger(driverController::getAButton).whileTrue(new RearVisionSteerAndDrive(driveTrain, this, visionSubsystem));
-                break;
-            case Forza:
-                break;
-
-        }
-        
-
     }
     
 

@@ -105,7 +105,7 @@ public class DriveTrain extends SubsystemBase{
      * @param quickTurn Turn fast?
      */
     public void setDriveMode(double throttle, double steer, boolean quickTurn){
-        mDifferentialDrive.curvatureDrive(throttle, steer / 1.33, quickTurn);
+        mDifferentialDrive.curvatureDrive(throttle, steer / Constants.kDriveTurningSensitivity, quickTurn);
     }
 
     /**
@@ -115,7 +115,7 @@ public class DriveTrain extends SubsystemBase{
      * @param quickTurn Turn fast?
      */
     public void setCreepMode(double throttle, double steer, boolean quickTurn){
-        mDifferentialDrive.curvatureDrive(throttle / 3.33 , steer / 1.875, quickTurn);
+        mDifferentialDrive.curvatureDrive(throttle / 3.33 , steer / Constants.kDriveTurningSensitivity + 0.5, quickTurn);
     }
 
     public void setBrakeMode(){

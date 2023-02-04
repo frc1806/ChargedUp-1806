@@ -11,3 +11,12 @@
  - Left Drive Encoder B: 1
  - Right Drive Encoder A: 2
  - Right Drive Encoder B: 3
+
+## Solenoid Ports
+ - Left Claw Solenoid: 20
+ - Right Claw Solenoid: 21
+
+## Telescope Arm Ports
+ - Telescope Motor: 30
+ - Telescope Encoder A: 31
+ - Telescope Encoder B: 32

@@ -16,6 +16,7 @@ public class Constants {
     public static final double kDriveTrainTrackWidthMeters = Units.inchesToMeters(25.5); //~ 27"
     public final static double kDriveCountsPerMeter = 6628.32202312992;
     public final static double kDriveMetersPerCount = 1/kDriveCountsPerMeter;
+    public final static double kDriveTurningSensitivity = 0.75;
 
     //Drive feed forwards
     public static final double kDriveTrainKs = 0.2703;
