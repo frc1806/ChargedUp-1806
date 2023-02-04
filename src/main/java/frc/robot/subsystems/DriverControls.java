@@ -15,7 +15,7 @@ public class DriverControls extends SubsystemBase{
     private SWATXboxController debugController;
     DriverControlType selectedControls;
 
-    private SendableChooser<DriverControlType> controllerConfigChooser;
+    public static SendableChooser<DriverControlType> controllerConfigChooser;
     private enum DriverControlType {
         Classic,
         Forza,
@@ -87,7 +87,7 @@ public class DriverControls extends SubsystemBase{
             case Classic:
                 return driverController.getRightTriggerDigital();
             case Forza:
-                return driverController.getRightBumper();
+                return driverController.getBButton();
         }
     }
 
@@ -99,9 +99,9 @@ public class DriverControls extends SubsystemBase{
         switch(selectedControls){
             default:
             case Classic:
-                return driverController.getLeftTriggerDigital();
+                return driverController.getXButton();
             case Forza:
-                return driverController.getLeftBumper();
+                return driverController.getXButton();
         }
     }
 
@@ -121,7 +121,7 @@ public class DriverControls extends SubsystemBase{
             case Classic:
                 return driverController.getBButton();
             case Forza:
-                return driverController.getBButton();
+                return driverController.getLeftBumper();
         }
     }
 
@@ -157,13 +157,11 @@ public class DriverControls extends SubsystemBase{
      */
     public void registerTriggers(DriveTrain driveTrain, VisionSubsystem visionSubsystem, Intake intake){
         new Trigger(this::getVisionLineup).whileTrue(new RearVisionSteerAndDrive(driveTrain, this, visionSubsystem));
-        new Trigger(this::getIntakeMode).whileTrue(new ToggleIntake(intake));
+        new Trigger(this::getIntakeMode).onTrue(new ToggleIntake(intake));
     }
-    
 
     @Override
     public void periodic() {
-        
         if(controllerConfigChooser.getSelected() != null){
             if(selectedControls != controllerConfigChooser.getSelected()){
                 selectedControls = controllerConfigChooser.getSelected();

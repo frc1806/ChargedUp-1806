@@ -52,8 +52,6 @@ public class DriveTrain extends SubsystemBase{
     DifferentialDrivetrainSim mDifferentialDrivetrainSim;
     SimDouble mNavXYawSim;
 
-    
-
     public DriveTrain(){
 
         mLeftLeader = new CANSparkMax(RobotMap.leftLeaderID, MotorType.kBrushless);
@@ -166,6 +164,14 @@ public class DriveTrain extends SubsystemBase{
 
     public Pose2d getPose(){
         return mDifferentialDriveOdometry.getPoseMeters();
+    }
+
+    public Double getLeftDrivePower(){
+        return mLeftMotorGroup.get();
+    }
+
+    public Double getRightDrivePower(){
+        return mRightMotorGroup.get();
     }
 
     /**

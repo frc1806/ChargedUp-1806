@@ -8,9 +8,6 @@ public class Constants {
     public static final int kOperatorPort = 1;
     public static final int kDebugPort = 2;
 
-    //Smart Dashboard Keys
-    public static final String kDriveTrainKey = "DriveTrain";
-
     //Drive Train Constants
     public static final int kDriveTrainCurrentLimit = 80;
     public static final double kDriveTrainTrackWidthMeters = Units.inchesToMeters(25.5); //~ 27"

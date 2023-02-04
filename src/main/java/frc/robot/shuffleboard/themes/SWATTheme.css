@@ -1,0 +1,12 @@
+@import "/edu/wpi/first/shuffleboard/app/midnight.css";
+
+.root {
+    -fx-text-base-color: #fefefe;
+    /* Swatch Colors - Red */
+
+    -swatch-100: #33dc00;
+    -swatch-200: #2bb700;
+    -swatch-300: #26a200;
+    -swatch-400: #228802;
+    -swatch-500: #176300;
+}

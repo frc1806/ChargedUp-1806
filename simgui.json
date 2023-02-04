@@ -6,11 +6,17 @@
           "open": true
         }
       }
+    },
+    "Solenoids": {
+      "window": {
+        "visible": true
+      }
     }
   },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Main Competiton Tab/Driver Controls": "String Chooser",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Field": "Field2d"
     }
