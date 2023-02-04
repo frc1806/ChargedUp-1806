@@ -99,7 +99,7 @@ public class DriverControls extends SubsystemBase{
         switch(selectedControls){
             default:
             case Classic:
-                return driverController.getXButton();
+                return driverController.getLeftTriggerDigital();
             case Forza:
                 return driverController.getXButton();
         }

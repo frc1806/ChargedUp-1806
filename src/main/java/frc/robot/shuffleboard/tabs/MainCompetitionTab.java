@@ -14,9 +14,14 @@ public class MainCompetitionTab extends ShuffleboardTabBase{
     @Override
     public void createEntries() {
         mTab = Shuffleboard.getTab("Main Competiton Tab");
+        Shuffleboard.selectTab("Main Competition Tab");
         
         mTab.add("Driver Controls", DriverControls.controllerConfigChooser)
             .withPosition(0, 0)
+            .withSize(2,1);
+        
+        mTab.add("Auto Chooser", RobotContainer.mSendableChooser)
+            .withPosition(8,0)
             .withSize(2,1);
         
         leftDrivePower = mTab.add("Left Drive Power", RobotContainer.S_DRIVETRAIN.getLeftDrivePower())
@@ -30,6 +35,8 @@ public class MainCompetitionTab extends ShuffleboardTabBase{
             .withSize(2,1)
             .withWidget(BuiltInWidgets.kNumberBar)
             .getEntry();
+
+        
     }
 
     @Override

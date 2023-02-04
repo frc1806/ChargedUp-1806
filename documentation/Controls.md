@@ -15,7 +15,7 @@ Controls come in 2 configurations for driver and 1 configuration for operator. D
     - Throttle: `Left Trigger` (forward throttle) `Right Trigger` (backwards throttle)
     - Turn: `Left thumbstick` (x-axis)
     - Quick Turn: `Right Bumper`
-    - Creep Mode: `Left Bumper`
+    - Creep Mode: `X Button`
     - Vision Lineup: `A Button`
     - Intake Mode: `B Button`
     - Confirm Placement: `Y Button`

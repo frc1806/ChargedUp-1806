@@ -23,7 +23,7 @@ import frc.robot.subsystems.VisionSubsystem;
 
 public class RobotContainer {
 
-  private final SendableChooser<Command> mSendableChooser = new SendableChooser<>();
+  public static final SendableChooser<Command> mSendableChooser = new SendableChooser<>();
   
   //DEFINE SUBSYSTEM INSTANCES
   public static final DriverControls S_DRIVECONTROLS = new DriverControls();
