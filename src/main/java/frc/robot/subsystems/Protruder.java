@@ -29,14 +29,21 @@ public class Protruder extends SubsystemBase{
         currentPlacement = new Placement(0.0,0.0,0.0,0.0);
     }
 
+    public Placement getCurrentPlacement(){
+        return currentPlacement;
+    }
+
+    public void setCurrentPlacement(Placement placement){
+        currentPlacement = placement;
+    }
+
     public void goToExtension(Placement placement) {
         mProtruderStates = ProtruderStates.Extending;
-        zeroSensors();
         setMotor(placement.getExtendSpeed());
         mProtruderStates = ProtruderStates.Calculating;
     }
 
-    private boolean checkIfAtPosition(Placement placement){
+    public boolean checkIfAtPosition(Placement placement){
         if(getEncoderDistance() > placement.getExtendDistance()){
             return true;
         }
@@ -80,8 +87,6 @@ public class Protruder extends SubsystemBase{
 
     @Override
     public void simulationPeriodic() {
-        // TODO Auto-generated method stub
-        super.simulationPeriodic();
     }
     
 

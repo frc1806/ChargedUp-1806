@@ -19,6 +19,7 @@ import frc.robot.commands.Drive;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.DriverControls;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Protruder;
 import frc.robot.subsystems.VisionSubsystem;
 
 public class RobotContainer {
@@ -30,6 +31,7 @@ public class RobotContainer {
   public static final DriveTrain S_DRIVETRAIN = new DriveTrain();
   public static final VisionSubsystem S_REAR_VISION_SUBSYSTEM = new VisionSubsystem("limelight");
   public static final Intake S_INTAKE = new Intake();
+  public static final Protruder S_PROTRUDER = new Protruder();
 
   //Compressor
   public Compressor compressor;
@@ -58,7 +60,7 @@ public class RobotContainer {
    * Set button bindings for the driver in {@link DriverControls}, but set operator bindings here.
    */
   private void configureBindings() {
-    S_DRIVECONTROLS.registerTriggers(S_DRIVETRAIN, S_REAR_VISION_SUBSYSTEM, S_INTAKE);
+    S_DRIVECONTROLS.registerTriggers(S_DRIVETRAIN, S_REAR_VISION_SUBSYSTEM, S_INTAKE, S_PROTRUDER);
   }
 
   /**

@@ -13,8 +13,7 @@ public class MainCompetitionTab extends ShuffleboardTabBase{
 
     @Override
     public void createEntries() {
-        mTab = Shuffleboard.getTab("Main Competiton Tab");
-        Shuffleboard.selectTab("Main Competition Tab");
+        mTab = Shuffleboard.getTab("Competition Tab");
         
         mTab.add("Driver Controls", DriverControls.controllerConfigChooser)
             .withPosition(0, 0)

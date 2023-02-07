@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
+import frc.robot.commands.Extend;
 import frc.robot.commands.RearVisionSteerAndDrive;
 import frc.robot.commands.ToggleIntake;
 import frc.robot.shuffleboard.tabs.tabsUtil.XboxControllerConfigValues;
@@ -125,27 +126,39 @@ public class DriverControls extends SubsystemBase{
         }
     }
 
-    public boolean getConfirmPlacement(){
-        switch(selectedControls){
-            default:
-            case Classic:
-                return driverController.getYButton();
-            case Forza:
-                return driverController.getYButton();
-        }
-    }
-
     //Operator Controls
 
-    
+    public boolean o_lowCubePlacement(){
+        return operatorController.getPOVDown();
+    }
+
+    public boolean o_medCubePlacement(){
+        return operatorController.getPOVLeft();
+    }
+
+    public boolean o_highCubePlacement(){
+        return operatorController.getPOVUp();
+    }
+
+    public boolean o_lowConePlacement(){
+        return operatorController.getAButton();
+    }
+
+    public boolean o_medConePlacement(){
+        return operatorController.getBButton();
+    }
+
+    public boolean o_highConePlacement(){
+        return operatorController.getYButton();
+    }
 
     //Debug Controls
 
-    public boolean getIntakeLeft(){
+    public boolean d_getIntakeLeft(){
         return debugController.getLeftTriggerDigital();
     }
 
-    public boolean getIntakeRight(){
+    public boolean d_getIntakeRight(){
         return debugController.getRightTriggerDigital();
     }
 
@@ -155,9 +168,10 @@ public class DriverControls extends SubsystemBase{
      * @param driveTrain Our one and only drivetrain
      * @param visionSubsystem our (currently) one and only vision subsystem representing the limelight
      */
-    public void registerTriggers(DriveTrain driveTrain, VisionSubsystem visionSubsystem, Intake intake){
+    public void registerTriggers(DriveTrain driveTrain, VisionSubsystem visionSubsystem, Intake intake, Protruder protruder){
         new Trigger(this::getVisionLineup).whileTrue(new RearVisionSteerAndDrive(driveTrain, this, visionSubsystem));
         new Trigger(this::getIntakeMode).onTrue(new ToggleIntake(intake));
+        new Trigger(this::o_lowConePlacement).onTrue(new Extend(protruder));
     }
 
     @Override

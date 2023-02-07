@@ -102,6 +102,21 @@ public class SWATXboxController extends edu.wpi.first.wpilibj.XboxController {
 			return applyConfig(-super.getLeftY(), mConfigValues.getLeftYDeadzone(), mConfigValues.getLeftYMinimumOutput(), mConfigValues.getLeftYLinearity());
 	}
 	
+	public boolean getPOVUp(){
+		return this.getPOV() == 0;
+	}
+
+	public boolean getPOVRight(){
+		return this.getPOV() == 90;
+	}
+
+	public boolean getPOVDown(){
+		return this.getPOV() == 180;
+	}
+
+	public boolean getPOVLeft(){
+		return this.getPOV() == 270;
+	}
 
 	public boolean getLeftTriggerDigital(){
 		return super.getLeftTriggerAxis() > mConfigValues.getTriggerAsDigitalDeadzone();
