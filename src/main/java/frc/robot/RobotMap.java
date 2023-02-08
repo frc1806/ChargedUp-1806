@@ -11,6 +11,11 @@ public class RobotMap {
     public static final int rightDriveEncoderA = 2;
     public static final int rightDriveEncoderB = 3;
 
+
+    //ArmPivot
+    public static final int armPivotMotor = 11;
+    public static final int armPivotEncoder = 10;
+
     
 
 
