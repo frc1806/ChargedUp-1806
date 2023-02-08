@@ -174,6 +174,22 @@ public class DriveTrain extends SubsystemBase{
         return mRightMotorGroup.get();
     }
 
+    public CANSparkMax getLeftLeader(){
+        return mLeftLeader;
+    }
+
+    public CANSparkMax getRightLeader(){
+        return mRightLeader;
+    }
+
+    public CANSparkMax getLeftFollower(){
+        return mLeftFollower;
+    }
+
+    public CANSparkMax getRightFollower(){
+        return mRightFollower;
+    }
+
     /**
      * Follow a PathPlanner Trajectory
      * @param traj the trajectory to follow

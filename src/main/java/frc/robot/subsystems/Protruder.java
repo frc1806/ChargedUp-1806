@@ -3,9 +3,11 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.RobotMap;
 import frc.robot.game.Placement;
 
@@ -19,14 +21,17 @@ public class Protruder extends SubsystemBase{
         Calculating
     };
     private Placement currentPlacement;
-
+    private PIDController mPidController;
     private ProtruderStates mProtruderStates;
+    private Double encoderSnapshot;
     
     public Protruder(){
         mProtrusionMotor = new CANSparkMax(RobotMap.protrusionMotor, MotorType.kBrushless);
         mEncoder = new Encoder(RobotMap.protrusionMotorA, RobotMap.ProtrusionMotorB);
         mProtruderStates = ProtruderStates.Idle;
-        currentPlacement = new Placement(0.0,0.0,0.0,0.0);
+        currentPlacement = new Placement(0.0,0.0);
+        mPidController = new PIDController(Constants.kProtruderkP, Constants.kProtruderkI, Constants.kProtruderkD);
+        encoderSnapshot = 0.0;
     }
 
     public Placement getCurrentPlacement(){
@@ -39,12 +44,13 @@ public class Protruder extends SubsystemBase{
 
     public void goToExtension(Placement placement) {
         mProtruderStates = ProtruderStates.Extending;
-        setMotor(placement.getExtendSpeed());
+        encoderSnapshot = getEncoderDistance();
+        mProtrusionMotor.set(mPidController.calculate(placement.getExtendDistance()));
         mProtruderStates = ProtruderStates.Calculating;
     }
 
     public boolean checkIfAtPosition(Placement placement){
-        if(getEncoderDistance() > placement.getExtendDistance()){
+        if((getEncoderDistance() - encoderSnapshot) >= placement.getExtendDistance()){
             return true;
         }
         return false;

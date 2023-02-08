@@ -19,4 +19,9 @@ public class Constants {
     public static final double kDriveTrainKs = 0.2703;
     public static final double kDriveTrainKv = 1.1603;
     public static final double kDriveTrainKa = 0.40226;
+
+    // Protruder
+    public static final double kProtruderkP = 1/6;
+    public static final double kProtruderkI = 0;
+    public static final double kProtruderkD = 0;
 }
