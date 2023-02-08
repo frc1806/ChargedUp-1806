@@ -19,4 +19,7 @@ public class Constants {
     public static final double kDriveTrainKs = 0.2703;
     public static final double kDriveTrainKv = 1.1603;
     public static final double kDriveTrainKa = 0.40226;
+
+    //Arm Angle Constants
+    public static final double kArmGearRatio = 333 + (1/3);
 }
