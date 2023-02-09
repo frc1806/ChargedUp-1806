@@ -48,6 +48,10 @@ public class DriverControls extends SubsystemBase{
      * Get drivetrain throttle control value
      * @return a {@link double} between -1 and 1
      */
+    public SWATXboxController getDriverController(){
+        return driverController;
+    }
+
     public double getThrottle(){
         switch(selectedControls){
             default:
