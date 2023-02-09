@@ -20,6 +20,10 @@ public class Constants {
     public static final double kDriveTrainKv = 1.1603;
     public static final double kDriveTrainKa = 0.40226;
 
+    // Protruder
+    public static final double kProtruderkP = 1/6;
+    public static final double kProtruderkI = 0;
+    public static final double kProtruderkD = 0;
     //Arm Angle Constants
     public static final double kArmGearRatio = 333.0 + (1.0/3.0);
     public static final double kPivotArmAngleKp = 1.0/20.0;

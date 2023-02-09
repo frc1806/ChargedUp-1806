@@ -1,31 +1,32 @@
 package frc.robot;
 
 public class RobotMap {
-    public static final int leftLeaderID = 1;
-    public static final int leftFollowerID = 2;
-    public static final int rightLeaderID = 4;
-    public static final int rightFollowerID = 5;
-
-    public static final int leftDriveEncoderA = 0;
-    public static final int leftDriveEncoderB = 1;
-    public static final int rightDriveEncoderA = 2;
-    public static final int rightDriveEncoderB = 3;
-
+    //Drive Train
+    public static final int leftLeader = 1;
+    public static final int leftFollower = 2;
+    public static final int rightLeader = 4;
+    public static final int rightFollower = 5;
 
     //ArmPivot
     public static final int armPivotMotor = 11;
     public static final int armPivotEncoder = 10;
 
-    
-
-
     // Protruder
     public static final int protrusionMotor = 20;
-    public static final int protrusionMotorA = 21;
-    public static final int ProtrusionMotorB = 22;
-
+    public static final int protrusionMotorB = 21;
 
     //Solenoids
     public static final int leftSolenoid = 0;
     public static final int rightSolenoid = 1;
+
+    //Digital
+    public static final int leftDriveEncoderA = 0;
+    public static final int leftDriveEncoderB = 1;
+    public static final int rightDriveEncoderA = 2;
+    public static final int rightDriveEncoderB = 3;
+    public static final int protrusionBeamBreak = 4;
+
+    //Analog
+    public static final int protrusionStringPotentiometer = 4;
+
 }
