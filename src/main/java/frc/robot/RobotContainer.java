@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.Drive;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.DriverControls;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Protruder;
 import frc.robot.subsystems.VisionSubsystem;
 
@@ -30,7 +30,7 @@ public class RobotContainer {
   public static final DriverControls S_DRIVECONTROLS = new DriverControls();
   public static final DriveTrain S_DRIVETRAIN = new DriveTrain();
   public static final VisionSubsystem S_REAR_VISION_SUBSYSTEM = new VisionSubsystem("limelight");
-  public static final Intake S_INTAKE = new Intake();
+  public static final Claw S_INTAKE = new Claw();
   public static final Protruder S_PROTRUDER = new Protruder();
 
   //Compressor

@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 
-public class Intake extends SubsystemBase{
+public class Claw extends SubsystemBase{
 
     private Solenoid mLeftSolenoid, mRightSolenoid;
     public enum IntakeStates {
@@ -19,7 +19,7 @@ public class Intake extends SubsystemBase{
     }
     private IntakeStates mIntakeStates;
 
-    public Intake(){
+    public Claw(){
         mLeftSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, RobotMap.leftSolenoid);
         mRightSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, RobotMap.rightSolenoid);
         mIntakeStates = IntakeStates.Closed;

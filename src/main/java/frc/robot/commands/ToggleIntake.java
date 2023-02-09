@@ -1,15 +1,15 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Intake.IntakeStates;
+import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.Claw.IntakeStates;
 
 public class ToggleIntake extends CommandBase{
 
-    private Intake mIntake;
+    private Claw mIntake;
     boolean isOpen;
 
-    public ToggleIntake(Intake intake){
+    public ToggleIntake(Claw intake){
         mIntake = intake;
         addRequirements(intake);
     }

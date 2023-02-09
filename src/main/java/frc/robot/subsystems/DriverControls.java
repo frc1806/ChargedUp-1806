@@ -168,7 +168,7 @@ public class DriverControls extends SubsystemBase{
      * @param driveTrain Our one and only drivetrain
      * @param visionSubsystem our (currently) one and only vision subsystem representing the limelight
      */
-    public void registerTriggers(DriveTrain driveTrain, VisionSubsystem visionSubsystem, Intake intake, Protruder protruder){
+    public void registerTriggers(DriveTrain driveTrain, VisionSubsystem visionSubsystem, Claw intake, Protruder protruder){
         new Trigger(this::getVisionLineup).whileTrue(new RearVisionSteerAndDrive(driveTrain, this, visionSubsystem));
         new Trigger(this::getIntakeMode).onTrue(new ToggleIntake(intake));
         new Trigger(this::o_lowConePlacement).onTrue(new Extend(protruder));
