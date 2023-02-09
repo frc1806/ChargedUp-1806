@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -9,13 +11,14 @@ import frc.robot.RobotMap;
 public class Claw extends SubsystemBase{
 
     private Solenoid mLeftSolenoid, mRightSolenoid;
+    private TalonSRX mCymbalSpinner;
     public enum IntakeStates {
         Opened,
         Closed,
         LeftOpen,
         LeftClosed,
         RightOpened,
-        RightClosed
+        RightClosed,
     }
     private IntakeStates mIntakeStates;
 
