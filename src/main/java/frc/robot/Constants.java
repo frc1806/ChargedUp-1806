@@ -31,4 +31,9 @@ public class Constants {
     public static final double  kPivotArmAngleKd = 0.0;
     public static final double kAcceptableAngleDelta = 1.0/2.0;
 
+    //ClawSpinner
+    public static final int kClawSpinnerBufferSize = 20;
+    public static final double kClawSpinnerStalledCurrent = 6.0;
+    public static final double kClawSpinnerSpeed = 0.7;
+
 }

@@ -15,6 +15,9 @@ public class RobotMap {
     public static final int protrusionMotor = 20;
     public static final int protrusionMotorB = 21;
 
+    //Claw Spinner
+    public static final int clawSpinMotor = 30;
+
     //Solenoids
     public static final int leftSolenoid = 0;
     public static final int rightSolenoid = 1;
@@ -25,6 +28,7 @@ public class RobotMap {
     public static final int rightDriveEncoderA = 2;
     public static final int rightDriveEncoderB = 3;
     public static final int protrusionBeamBreak = 4;
+    public static final int clawBeamBreak = 5;
 
     //Analog
     public static final int protrusionStringPotentiometer = 4;
