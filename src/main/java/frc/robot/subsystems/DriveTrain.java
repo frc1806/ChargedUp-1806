@@ -54,10 +54,10 @@ public class DriveTrain extends SubsystemBase{
 
     public DriveTrain(){
 
-        mLeftLeader = new CANSparkMax(RobotMap.leftLeaderID, MotorType.kBrushless);
-        mLeftFollower = new CANSparkMax(RobotMap.leftFollowerID, MotorType.kBrushless);
-        mRightLeader = new CANSparkMax(RobotMap.rightLeaderID, MotorType.kBrushless);
-        mRightFollower = new CANSparkMax(RobotMap.rightFollowerID, MotorType.kBrushless);
+        mLeftLeader = new CANSparkMax(RobotMap.leftLeader, MotorType.kBrushless);
+        mLeftFollower = new CANSparkMax(RobotMap.leftFollower, MotorType.kBrushless);
+        mRightLeader = new CANSparkMax(RobotMap.rightLeader, MotorType.kBrushless);
+        mRightFollower = new CANSparkMax(RobotMap.rightFollower, MotorType.kBrushless);
 
         mLeftFollower.follow(mLeftLeader);
         mRightFollower.follow(mRightFollower);

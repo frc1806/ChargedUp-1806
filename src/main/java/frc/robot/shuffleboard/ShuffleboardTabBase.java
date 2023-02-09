@@ -1,6 +1,5 @@
 package frc.robot.shuffleboard;
 
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 //Inspired off of 1678's ShuffleboardTabBase from C2022 but added more features that 1806 would like to use (TODO)
@@ -9,14 +8,6 @@ public abstract class ShuffleboardTabBase {
     protected ShuffleboardTab mTab;
 
     public abstract void createEntries();
-
-    protected GenericEntry createNumberEntry(String name) {
-        return mTab.add(name, "").getEntry();
-    }
-
-    protected GenericEntry createStringEntry(String name){
-        return mTab.add(name, "").getEntry();
-    }
 
     public abstract void update();
 

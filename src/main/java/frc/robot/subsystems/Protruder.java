@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Encoder;
@@ -13,7 +13,8 @@ import frc.robot.game.Placement;
 
 public class Protruder extends SubsystemBase{
 
-    private CANSparkMax mProtrusionMotor;
+    private TalonSRX mProtrusionMotor;
+    
     private Encoder mEncoder;
     private enum ProtruderStates {
         Idle,
@@ -26,8 +27,7 @@ public class Protruder extends SubsystemBase{
     private Double encoderSnapshot;
     
     public Protruder(){
-        mProtrusionMotor = new CANSparkMax(RobotMap.protrusionMotor, MotorType.kBrushless);
-        mEncoder = new Encoder(RobotMap.protrusionMotorA, RobotMap.ProtrusionMotorB);
+        mProtrusionMotor = new TalonSRX(RobotMap.protrusionMotor);
         mProtruderStates = ProtruderStates.Idle;
         currentPlacement = new Placement(0.0,0.0);
         mPidController = new PIDController(Constants.kProtruderkP, Constants.kProtruderkI, Constants.kProtruderkD);
@@ -45,7 +45,7 @@ public class Protruder extends SubsystemBase{
     public void goToExtension(Placement placement) {
         mProtruderStates = ProtruderStates.Extending;
         encoderSnapshot = getEncoderDistance();
-        mProtrusionMotor.set(mPidController.calculate(placement.getExtendDistance()));
+        mProtrusionMotor.set(TalonSRXControlMode.PercentOutput, mPidController.calculate(placement.getExtendDistance()));
         mProtruderStates = ProtruderStates.Calculating;
     }
 
@@ -58,7 +58,7 @@ public class Protruder extends SubsystemBase{
 
     public void setMotor(Double number){
         mProtruderStates = ProtruderStates.Extending;
-        mProtrusionMotor.setVoltage(number);
+        mProtrusionMotor.set(TalonSRXControlMode.PercentOutput,number);
     }
 
     public void stop(){
@@ -76,7 +76,7 @@ public class Protruder extends SubsystemBase{
 
     private void outputToSmartDashboard(){
         SmartDashboard.putString("Protruder state: ", mProtruderStates.toString());
-        SmartDashboard.putNumber("Protrusion applied output: ", mProtrusionMotor.getAppliedOutput());
+        SmartDashboard.putNumber("Protrusion applied output: ", mProtrusionMotor.getMotorOutputVoltage());
         SmartDashboard.putNumber("Protrusion encoder distance: ", mEncoder.getDistance());
     }
 
