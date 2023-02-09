@@ -25,5 +25,10 @@ public class Constants {
     public static final double kProtruderkI = 0;
     public static final double kProtruderkD = 0;
     //Arm Angle Constants
-    public static final double kArmGearRatio = 333 + (1/3);
+    public static final double kArmGearRatio = 333.0 + (1.0/3.0);
+    public static final double kPivotArmAngleKp = 1.0/20.0;
+    public static final double  kPivotArmAngleKi = 0.0;
+    public static final double  kPivotArmAngleKd = 0.0;
+    public static final double kAcceptableAngleDelta = 1.0/2.0;
+
 }
