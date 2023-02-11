@@ -3,13 +3,11 @@ package frc.robot.shuffleboard;
 import java.util.Arrays;
 import java.util.List;
 
-import edu.wpi.first.wpilibj.RobotState;
 import frc.robot.RobotContainer;
-import frc.robot.shuffleboard.tabs.DebugTab;
 import frc.robot.shuffleboard.tabs.DrivetrainTab;
-import frc.robot.shuffleboard.tabs.IntakeTab;
+import frc.robot.shuffleboard.tabs.ArmTab;
 import frc.robot.shuffleboard.tabs.MainCompetitionTab;
-import frc.robot.shuffleboard.tabs.ProtruderTab;
+import frc.robot.shuffleboard.tabs.OperatorTab;
 import frc.robot.shuffleboard.tabs.VisionTab;
 import frc.robot.util.SWATXboxController;
 
@@ -18,12 +16,14 @@ public class ShuffleboardManager {
     private List<ShuffleboardTabBase> mDebugTabs;
     private boolean testAdded;
     private static SWATXboxController mController;
+    private static SWATXboxController mDebugController;
 
     public ShuffleboardManager(){
-        mShuffleboardTabs = Arrays.asList(new MainCompetitionTab(), new DebugTab());
-        mDebugTabs = Arrays.asList(new DrivetrainTab(), new IntakeTab(), new ProtruderTab(), new VisionTab());
+        mShuffleboardTabs = Arrays.asList(new MainCompetitionTab(), new OperatorTab());
+        mDebugTabs = Arrays.asList(new DrivetrainTab(), new ArmTab(), new VisionTab());
         testAdded = false;
         mController = RobotContainer.S_DRIVECONTROLS.getDriverController();
+        mDebugController = RobotContainer.S_DRIVECONTROLS.getDebugController();
     }
 
     public void registerTabs(){
@@ -31,7 +31,7 @@ public class ShuffleboardManager {
             tab.createEntries();
         }
 
-        if (mController.getStartButton() && mController.getBackButton() || testAdded){
+        if (mController.getStartButton() && mController.getBackButton() || mDebugController.getStartButton() && mDebugController.getBackButton() || testAdded){
             testAdded=true;
             for (ShuffleboardTabBase dTab : mDebugTabs){
                 dTab.createEntries();
@@ -44,7 +44,7 @@ public class ShuffleboardManager {
             tab.update();
         }
 
-        if (mController.getStartButton() && mController.getBackButton() || testAdded){
+        if (mController.getStartButton() && mController.getBackButton() || mDebugController.getStartButton() && mDebugController.getBackButton() || testAdded){
             if(testAdded==false){
                 testAdded=true;
                 for (ShuffleboardTabBase dTab : mDebugTabs){

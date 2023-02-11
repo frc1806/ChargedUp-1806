@@ -1,12 +1,13 @@
 package frc.robot.shuffleboard.tabs;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.shuffleboard.ShuffleboardTabBase;
 
-public class DebugTab extends ShuffleboardTabBase {
+public class OperatorTab extends ShuffleboardTabBase {
 
     @Override
     public void createEntries() {
-        // TODO Auto-generated method stub
+        mTab = Shuffleboard.getTab("Operator");
         
     }
 

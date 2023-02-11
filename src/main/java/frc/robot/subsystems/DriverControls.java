@@ -7,6 +7,9 @@ import frc.robot.Constants;
 import frc.robot.commands.Extend;
 import frc.robot.commands.RearVisionSteerAndDrive;
 import frc.robot.commands.ToggleIntake;
+import frc.robot.commands.DebugCommands.LeftSolenoid;
+import frc.robot.commands.DebugCommands.ManualRotate;
+import frc.robot.commands.DebugCommands.RightSolenoid;
 import frc.robot.shuffleboard.tabs.tabsUtil.XboxControllerConfigValues;
 import frc.robot.util.SWATXboxController;
 
@@ -28,7 +31,7 @@ public class DriverControls extends SubsystemBase{
     public DriverControls(){
         driverController = new SWATXboxController(Constants.kDriverPort, "Driver", XboxControllerConfigValues.kDriverControllerDefaultConfig);
         operatorController = new SWATXboxController(Constants.kOperatorPort, "Operator", XboxControllerConfigValues.kOperatorControllerDefaultConfig);
-        debugController = new SWATXboxController(Constants.kOperatorPort, "Debug", XboxControllerConfigValues.kOperatorControllerDefaultConfig);
+        debugController = new SWATXboxController(Constants.kDebugPort, "Debug", XboxControllerConfigValues.kOperatorControllerDefaultConfig);
 
         controllerConfigChooser = new SendableChooser<DriverControlType>();
         controllerConfigChooser.addOption("Forza", DriverControlType.Forza);
@@ -50,6 +53,10 @@ public class DriverControls extends SubsystemBase{
      */
     public SWATXboxController getDriverController(){
         return driverController;
+    }
+
+    public SWATXboxController getDebugController(){
+        return debugController;
     }
 
     public double getThrottle(){
@@ -158,6 +165,14 @@ public class DriverControls extends SubsystemBase{
 
     //Debug Controls
 
+    public double d_pivotArmManual(){
+        return debugController.getRightY();
+    }
+
+    public boolean d_wantArmManual(){
+        return d_pivotArmManual() > 0;
+    }
+
     public boolean d_getIntakeLeft(){
         return debugController.getLeftTriggerDigital();
     }
@@ -172,10 +187,16 @@ public class DriverControls extends SubsystemBase{
      * @param driveTrain Our one and only drivetrain
      * @param visionSubsystem our (currently) one and only vision subsystem representing the limelight
      */
-    public void registerTriggers(DriveTrain driveTrain, VisionSubsystem visionSubsystem, Claw intake, Protruder protruder){
+    public void registerTriggers(DriveTrain driveTrain, VisionSubsystem visionSubsystem, Claw intake, Protruder protruder, PivotArm arm){
+        //Driver
         new Trigger(this::getVisionLineup).whileTrue(new RearVisionSteerAndDrive(driveTrain, this, visionSubsystem));
         new Trigger(this::getIntakeMode).onTrue(new ToggleIntake(intake));
         new Trigger(this::o_lowConePlacement).onTrue(new Extend(protruder));
+
+        //Debug
+        new Trigger(this::d_getIntakeLeft).onTrue(new LeftSolenoid(intake));
+        new Trigger(this::d_getIntakeRight).onTrue(new RightSolenoid(intake));
+        new Trigger(this::d_wantArmManual).whileTrue(new ManualRotate(arm, this));
     }
 
     @Override

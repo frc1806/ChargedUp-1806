@@ -5,8 +5,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
@@ -14,9 +12,7 @@ import frc.robot.game.Placement;
 
 public class Protruder extends SubsystemBase{
 
-    private TalonSRX mProtrusionMotor;
-    
-    private Encoder mEncoder;
+    private TalonSRX mProtrusionMotorA, mProtrusionMotorB;
     private enum ProtruderStates {
         Idle,
         Extending,
@@ -29,7 +25,8 @@ public class Protruder extends SubsystemBase{
     private Double encoderSnapshot;
     
     public Protruder(){
-        mProtrusionMotor = new TalonSRX(RobotMap.protrusionMotor);
+        mProtrusionMotorA = new TalonSRX(RobotMap.protrusionMotor);
+        mProtrusionMotorB = new TalonSRX(RobotMap.protrusionMotorB);
         mPotentiometer = new AnalogPotentiometer(RobotMap.protrusionStringPotentiometer);
         mProtruderStates = ProtruderStates.Idle;
         currentPlacement = new Placement(0.0,0.0);
@@ -47,7 +44,7 @@ public class Protruder extends SubsystemBase{
 
     public void goToExtension(Placement placement) {
         encoderSnapshot = getDistance();
-        setMotor(placement.getExtendDistance());
+        setMotors(placement.getExtendDistance());
         mProtruderStates = ProtruderStates.Calculating;
     }
 
@@ -58,29 +55,32 @@ public class Protruder extends SubsystemBase{
         return false;
     }
 
-    public void setMotor(Double number){
+    public void setMotors(Double number){
         mProtruderStates = ProtruderStates.Extending;
-        mProtrusionMotor.set(TalonSRXControlMode.PercentOutput,mPidController.calculate(number));
+        mProtrusionMotorA.set(TalonSRXControlMode.PercentOutput,mPidController.calculate(number));
+        mProtrusionMotorB.set(TalonSRXControlMode.PercentOutput,mPidController.calculate(number));
     }
 
     public void stop(){
         mProtruderStates = ProtruderStates.Idle;
-        mProtrusionMotor.set(TalonSRXControlMode.Disabled, 0.0);
-        setMotor(0.0);
-    }
-
-    public void zeroSensors(){
-        mEncoder.reset();
+        mProtrusionMotorA.set(TalonSRXControlMode.Disabled, 0.0);
+        mProtrusionMotorB.set(TalonSRXControlMode.Disabled, 0.0);
     }
 
     private Double getDistance(){
         return mPotentiometer.get();
     }
 
-    private void outputToSmartDashboard(){
-        SmartDashboard.putString("Protruder state: ", mProtruderStates.toString());
-        SmartDashboard.putNumber("Protrusion applied output: ", mProtrusionMotor.getMotorOutputVoltage());
-        SmartDashboard.putNumber("Protrusion distance: ", getDistance());
+    public AnalogPotentiometer getPotentiometer(){
+        return mPotentiometer;
+    }
+
+    public TalonSRX getMotorA(){
+        return mProtrusionMotorA;
+    }
+
+    public TalonSRX getMotorB(){
+        return mProtrusionMotorB;
     }
 
     @Override
@@ -91,7 +91,6 @@ public class Protruder extends SubsystemBase{
                 stop();
             }
         }
-        outputToSmartDashboard();
     }
 
     @Override

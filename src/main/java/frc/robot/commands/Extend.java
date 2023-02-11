@@ -17,16 +17,16 @@ public class Extend extends CommandBase {
 
     @Override
     public void execute() {
-        mProtruder.goToExtension(mProtruder.getCurrentPlacement());
+        
     }
 
     @Override
     public void initialize() {
+        mProtruder.goToExtension(mProtruder.getCurrentPlacement());
     }
 
     @Override
     public boolean isFinished() {
         return mProtruder.checkIfAtPosition(mProtruder.getCurrentPlacement());
     }
-    
 }

@@ -35,6 +35,7 @@ public class Claw extends SubsystemBase{
         mCymbalSpinner = new TalonSRX(RobotMap.clawSpinMotor);
         mBeamBreak = new BeamBreak(RobotMap.clawBeamBreak);
         mCircularBuffer = new CircularBuffer(Constants.kClawSpinnerBufferSize);
+        mRunningTotal = 0.0;
     }
 
     public void openBoth(){
@@ -45,7 +46,7 @@ public class Claw extends SubsystemBase{
     }
 
     public void openLeft(){
-        mIntakeStates = IntakeStates.LeftClosed;
+        mIntakeStates = IntakeStates.LeftOpen;
         mLeftSolenoid.set(true);
     }
 
@@ -87,6 +88,22 @@ public class Claw extends SubsystemBase{
 
     public IntakeStates getIntakeState(){
         return mIntakeStates;
+    }
+
+    public TalonSRX getSpinner(){
+        return mCymbalSpinner;
+    }
+
+    public BeamBreak getBeamBreak(){
+        return mBeamBreak;
+    }
+
+    public Solenoid getLeftSolenoid(){
+        return mLeftSolenoid;
+    }
+
+    public Solenoid getRightSolenoid(){
+        return mRightSolenoid;
     }
 
     private void outputToSmartDashboard(){

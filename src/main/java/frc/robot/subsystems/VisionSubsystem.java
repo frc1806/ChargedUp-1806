@@ -41,12 +41,6 @@ public class VisionSubsystem extends SubsystemBase{
         return limelightTable.getEntry("tx").getDouble(0);
     }
 
-
-    public void stop() {
-        // TODO Auto-generated method stub
-        
-    }
-
     @Override
     public void periodic() {
         outputToSmartDashboard();
