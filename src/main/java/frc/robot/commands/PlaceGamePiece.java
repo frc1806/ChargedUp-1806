@@ -1,13 +1,22 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.PivotArm;
+import frc.robot.subsystems.Protruder;
 
 public class PlaceGamePiece extends CommandBase{
 
+    private Protruder mProtruder;
+    private PivotArm mArm;
+
+    public PlaceGamePiece(Protruder protruder, PivotArm arm){
+        mArm = arm;
+        mProtruder = protruder;
+    }
+
     @Override
     public void end(boolean interrupted) {
-        // TODO Auto-generated method stub
-        super.end(interrupted);
+
     }
 
     @Override
@@ -17,14 +26,13 @@ public class PlaceGamePiece extends CommandBase{
 
     @Override
     public void initialize() {
-        // TODO Auto-generated method stub
-        super.initialize();
+        mProtruder.Extend();
+        mArm.goToPosition(mProtruder.getCurrentPlacement().getPivotAngle());
     }
 
     @Override
     public boolean isFinished() {
-        // TODO Auto-generated method stub
-        return super.isFinished();
+        return true;
     }
     
 }

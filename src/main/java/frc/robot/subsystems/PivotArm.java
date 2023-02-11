@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
@@ -48,8 +49,8 @@ public class PivotArm extends SubsystemBase{
      * Tells the pivot arm to go to an angle
      * @param angle desired angle to go to, 0 degrees is straight up, 180 is straight down.
      */
-    public void goToPosition(double angle){
-        mCurrentDesiredAngle = angle;
+    public CommandBase goToPosition(double angle){
+        return runOnce(() -> mCurrentDesiredAngle = angle);
     }
 
     public boolean atPosition(){

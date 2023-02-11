@@ -4,18 +4,15 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.Drive;
+import frc.robot.commands.AutoModes.DeadReckoningNoObstacle;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.DriverControls;
 import frc.robot.subsystems.PivotArm;
@@ -69,10 +66,7 @@ public class RobotContainer {
    * Configure the {@link SendableChooser} for our autononomous options here.
    */
   private void configureAutonomousOptions(){
-    mSendableChooser.addOption("DeadReckoning No Obstacle Auto", S_DRIVETRAIN.followTrajectoryCommand(PathPlanner.loadPath("NoObstacleDeadReckoning", new PathConstraints(4.0, 3.0)), true));
-
-    //TODO: Put on main comp tab
-    SmartDashboard.putData("Auto Chooser", mSendableChooser);
+    mSendableChooser.addOption("Dead Reckoning No Obstacle", new DeadReckoningNoObstacle());
   }
 
   public Command getAutonomousCommand() {

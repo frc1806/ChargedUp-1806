@@ -6,7 +6,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.util.CircularBuffer;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
@@ -105,11 +104,6 @@ public class Claw extends SubsystemBase{
     public Solenoid getRightSolenoid(){
         return mRightSolenoid;
     }
-
-    private void outputToSmartDashboard(){
-        SmartDashboard.putBoolean("Left Solenoid Open?", mLeftSolenoid.get());
-        SmartDashboard.putBoolean("Right Solenoid Open?", mRightSolenoid.get());
-    }
     
     private void updateClawRotationCurrentBuffer(){
         if(mCircularBuffer.size() == Constants.kClawSpinnerBufferSize)
@@ -123,7 +117,6 @@ public class Claw extends SubsystemBase{
 
     @Override
     public void periodic() {
-        outputToSmartDashboard();
         updateClawRotationCurrentBuffer();
     }
     

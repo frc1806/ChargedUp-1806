@@ -4,12 +4,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
-import frc.robot.commands.Extend;
+import frc.robot.RobotContainer;
+import frc.robot.commands.PlaceGamePiece;
 import frc.robot.commands.RearVisionSteerAndDrive;
 import frc.robot.commands.ToggleIntake;
 import frc.robot.commands.DebugCommands.LeftSolenoid;
 import frc.robot.commands.DebugCommands.ManualRotate;
 import frc.robot.commands.DebugCommands.RightSolenoid;
+import frc.robot.commands.Intake.GoHome;
+import frc.robot.game.Placement;
 import frc.robot.shuffleboard.tabs.tabsUtil.XboxControllerConfigValues;
 import frc.robot.util.SWATXboxController;
 
@@ -140,27 +143,37 @@ public class DriverControls extends SubsystemBase{
     //Operator Controls
 
     public boolean o_lowCubePlacement(){
+        RobotContainer.S_PROTRUDER.setCurrentPlacement(Placement.LOW_PLACEMENT_CUBE);
         return operatorController.getPOVDown();
     }
 
     public boolean o_medCubePlacement(){
+        RobotContainer.S_PROTRUDER.setCurrentPlacement(Placement.MED_PLACEMENT_CUBE);
         return operatorController.getPOVLeft();
     }
 
     public boolean o_highCubePlacement(){
+        RobotContainer.S_PROTRUDER.setCurrentPlacement(Placement.HIGH_PLACEMENT_CUBE);
         return operatorController.getPOVUp();
     }
 
     public boolean o_lowConePlacement(){
+        RobotContainer.S_PROTRUDER.setCurrentPlacement(Placement.LOW_PLACEMENT_CONE);
         return operatorController.getAButton();
     }
 
     public boolean o_medConePlacement(){
+        RobotContainer.S_PROTRUDER.setCurrentPlacement(Placement.MED_PLACEMENT_CONE);
         return operatorController.getBButton();
     }
 
     public boolean o_highConePlacement(){
+        RobotContainer.S_PROTRUDER.setCurrentPlacement(Placement.HIGH_PLACEMENT_CONE);
         return operatorController.getYButton();
+    }
+
+    public boolean o_goHome(){
+        return !o_highConePlacement() && !o_highCubePlacement() && !o_medConePlacement() && !o_medCubePlacement() && !o_lowConePlacement() && !o_lowCubePlacement();
     }
 
     //Debug Controls
@@ -191,7 +204,15 @@ public class DriverControls extends SubsystemBase{
         //Driver
         new Trigger(this::getVisionLineup).whileTrue(new RearVisionSteerAndDrive(driveTrain, this, visionSubsystem));
         new Trigger(this::getIntakeMode).onTrue(new ToggleIntake(intake));
-        new Trigger(this::o_lowConePlacement).onTrue(new Extend(protruder));
+
+        //Operator
+        new Trigger(this::o_lowCubePlacement).onTrue(new PlaceGamePiece(protruder, arm));
+        new Trigger(this::o_lowConePlacement).onTrue(new PlaceGamePiece(protruder, arm));
+        new Trigger(this::o_medConePlacement).onTrue(new PlaceGamePiece(protruder, arm));
+        new Trigger(this::o_medCubePlacement).onTrue(new PlaceGamePiece(protruder, arm));
+        new Trigger(this::o_highConePlacement).onTrue(new PlaceGamePiece(protruder, arm));
+        new Trigger(this::o_highCubePlacement).onTrue(new PlaceGamePiece(protruder, arm));
+        new Trigger(this::o_goHome).whileTrue(new GoHome(arm, protruder));
 
         //Debug
         new Trigger(this::d_getIntakeLeft).onTrue(new LeftSolenoid(intake));

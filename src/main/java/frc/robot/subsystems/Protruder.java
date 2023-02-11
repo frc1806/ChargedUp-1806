@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
@@ -82,6 +83,10 @@ public class Protruder extends SubsystemBase{
 
     public TalonSRX getMotorB(){
         return mProtrusionMotorB;
+    }
+
+    public CommandBase Extend(){
+        return this.runOnce(() -> goToExtension(getCurrentPlacement()));
     }
 
     @Override
