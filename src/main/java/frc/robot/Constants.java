@@ -35,5 +35,6 @@ public class Constants {
     public static final int kClawSpinnerBufferSize = 20;
     public static final double kClawSpinnerStalledCurrent = 6.0;
     public static final double kClawSpinnerSpeed = 0.7;
+    public static final double kClawTimeFrame = 3.0;
 
 }

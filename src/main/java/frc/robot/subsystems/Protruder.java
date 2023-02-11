@@ -20,8 +20,8 @@ public class Protruder extends SubsystemBase{
     };
     private Placement currentPlacement;
     private PIDController mPidController;
-    private AnalogPotentiometer mPotentiometer;
     private ProtruderStates mProtruderStates;
+    private AnalogPotentiometer mPotentiometer;
     private Double encoderSnapshot;
     
     public Protruder(){
@@ -43,6 +43,7 @@ public class Protruder extends SubsystemBase{
     }
 
     public void goToExtension(Placement placement) {
+        mProtruderStates = ProtruderStates.Extending;
         encoderSnapshot = getDistance();
         setMotors(placement.getExtendDistance());
         mProtruderStates = ProtruderStates.Calculating;
