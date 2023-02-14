@@ -28,7 +28,7 @@ public class RearVisionSteerAndDrive extends CommandBase{
   public void execute() {
     
 
-    mDriveTrain.setDriveMode(mDriveControls.getThrottle(), -mVisionSubsystem.getTarget() * .015, true);
+    mDriveTrain.setDriveMode(mDriveControls.getThrottle(), -mVisionSubsystem.getTargetYaw() * .015, true);
     
   }
 

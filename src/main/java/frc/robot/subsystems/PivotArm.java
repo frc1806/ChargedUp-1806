@@ -15,12 +15,10 @@ public class PivotArm extends SubsystemBase{
 
     private CANSparkMax mArmPivotMotor;
     private DutyCycleEncoder mArmPivotEncoder;
-    private Double mInternalMotorEncoderOffset;
     private PIDController mPidController;
     private double mCurrentDesiredAngle; //the angle the rest of the robot wants this at.
     
     public PivotArm() {
-        mInternalMotorEncoderOffset = 0.0;
 
         mArmPivotMotor = new CANSparkMax(RobotMap.armPivotMotor, MotorType.kBrushless);
         mArmPivotMotor.getEncoder().setPositionConversionFactor((1/Constants.kArmGearRatio) * 360);
