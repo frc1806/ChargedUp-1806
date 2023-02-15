@@ -4,12 +4,16 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
+import frc.robot.util.TelescopingRotatingArmFeedForwards;
 
 public class PivotArm extends SubsystemBase{
 
@@ -46,6 +50,7 @@ public class PivotArm extends SubsystemBase{
     /**
      * Tells the pivot arm to go to an angle
      * @param angle desired angle to go to, 0 degrees is straight up, 180 is straight down.
+     * This arrangement allows us to use cosine for feedforwards.
      */
     public CommandBase goToPosition(double angle){
         return runOnce(() -> mCurrentDesiredAngle = angle);
@@ -67,6 +72,12 @@ public class PivotArm extends SubsystemBase{
         return mArmPivotEncoder;
     }
 
+    public double calculateCustomArmFeedForwarad()
+    {
+        return 0.0; //TODO? UNIMPLEMENTED UNTIL NEEDED
+        //return TelescopingRotatingArmFeedForwards.CalculateArmFeedForward(RobotContainer.S_PROTRUDER.getExtensionDistance(), getAngle(), Constants.kPivotFeedForwardGain); //UNIMPLEMENTED
+    }
+
     @Override
     public void periodic(){
 
@@ -77,6 +88,10 @@ public class PivotArm extends SubsystemBase{
         else{
             //false stuff here
             mArmPivotMotor.setVoltage(mPidController.calculate(getAngle(), mCurrentDesiredAngle) * 12);
+        }
+        if(RobotState.isDisabled())
+        {
+            resetMotorEncoderToAbsoluteEncoder();
         }
 
     }

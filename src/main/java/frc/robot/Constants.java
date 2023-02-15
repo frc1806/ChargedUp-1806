@@ -24,12 +24,18 @@ public class Constants {
     public static final double kProtruderkP = 1/6;
     public static final double kProtruderkI = 0;
     public static final double kProtruderkD = 0;
+    public static final double kProtruderFeedFowardGain = 0.012;
+    public static final double kProtruderAcceptableDistanceDelta = 0.5;
+    public static final double kProtruderDistanceAtFullRetract = 10; //TODO: Make number for actual robot and implement
+    public static final double kProtruderDistanceAtFullExtend = 50; //TODO Measure
     //Arm Angle Constants
     public static final double kArmGearRatio = 333.0 + (1.0/3.0);
     public static final double kPivotArmAngleKp = 1.0/20.0;
     public static final double  kPivotArmAngleKi = 0.0;
     public static final double  kPivotArmAngleKd = 0.0;
-    public static final double kAcceptableAngleDelta = 1.0/2.0;
+    public static final double kAcceptableAngleDelta = 1.0;
+
+    public static final double kPivotFeedForwardGain = 0.006;
 
     //ClawSpinner
     public static final int kClawSpinnerBufferSize = 20;

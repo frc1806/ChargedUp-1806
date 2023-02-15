@@ -8,8 +8,10 @@ import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
 import frc.robot.game.Placement;
+import frc.robot.util.TelescopingRotatingArmFeedForwards;
 
 public class Protruder extends SubsystemBase{
 
@@ -88,6 +90,12 @@ public class Protruder extends SubsystemBase{
     public CommandBase Extend(){
         return this.runOnce(() -> goToExtension(getCurrentPlacement()));
     }
+
+    private double calculateFeedForward(){
+        return TelescopingRotatingArmFeedForwards.CalculateTelescopeFeedForward(RobotContainer.S_PIVOTARM.getAngle(), Constants.kProtruderFeedFowardGain);
+    }
+
+
 
     @Override
     public void periodic() {
