@@ -6,7 +6,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.util.CircularBuffer;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
@@ -35,6 +34,7 @@ public class Claw extends SubsystemBase{
         mCymbalSpinner = new TalonSRX(RobotMap.clawSpinMotor);
         mBeamBreak = new BeamBreak(RobotMap.clawBeamBreak);
         mCircularBuffer = new CircularBuffer(Constants.kClawSpinnerBufferSize);
+        mRunningTotal = 0.0;
     }
 
     public void openBoth(){
@@ -45,7 +45,7 @@ public class Claw extends SubsystemBase{
     }
 
     public void openLeft(){
-        mIntakeStates = IntakeStates.LeftClosed;
+        mIntakeStates = IntakeStates.LeftOpen;
         mLeftSolenoid.set(true);
     }
 
@@ -89,9 +89,20 @@ public class Claw extends SubsystemBase{
         return mIntakeStates;
     }
 
-    private void outputToSmartDashboard(){
-        SmartDashboard.putBoolean("Left Solenoid Open?", mLeftSolenoid.get());
-        SmartDashboard.putBoolean("Right Solenoid Open?", mRightSolenoid.get());
+    public TalonSRX getSpinner(){
+        return mCymbalSpinner;
+    }
+
+    public BeamBreak getBeamBreak(){
+        return mBeamBreak;
+    }
+
+    public Solenoid getLeftSolenoid(){
+        return mLeftSolenoid;
+    }
+
+    public Solenoid getRightSolenoid(){
+        return mRightSolenoid;
     }
     
     private void updateClawRotationCurrentBuffer(){
@@ -106,7 +117,6 @@ public class Claw extends SubsystemBase{
 
     @Override
     public void periodic() {
-        outputToSmartDashboard();
         updateClawRotationCurrentBuffer();
     }
     

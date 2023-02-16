@@ -4,20 +4,18 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.Drive;
+import frc.robot.commands.AutoModes.DeadReckoningNoObstacle;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.DriverControls;
+import frc.robot.subsystems.PivotArm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Protruder;
 import frc.robot.subsystems.VisionSubsystem;
@@ -32,6 +30,7 @@ public class RobotContainer {
   public static final VisionSubsystem S_REAR_VISION_SUBSYSTEM = new VisionSubsystem("limelight");
   public static final Claw S_INTAKE = new Claw();
   public static final Protruder S_PROTRUDER = new Protruder();
+  public static final PivotArm S_PIVOTARM = new PivotArm();
 
   //Compressor
   public Compressor compressor;
@@ -60,17 +59,14 @@ public class RobotContainer {
    * Set button bindings for the driver in {@link DriverControls}, but set operator bindings here.
    */
   private void configureBindings() {
-    S_DRIVECONTROLS.registerTriggers(S_DRIVETRAIN, S_REAR_VISION_SUBSYSTEM, S_INTAKE, S_PROTRUDER);
+    S_DRIVECONTROLS.registerTriggers(S_DRIVETRAIN, S_REAR_VISION_SUBSYSTEM, S_INTAKE, S_PROTRUDER, S_PIVOTARM);
   }
 
   /**
    * Configure the {@link SendableChooser} for our autononomous options here.
    */
   private void configureAutonomousOptions(){
-    mSendableChooser.addOption("DeadReckoning No Obstacle Auto", S_DRIVETRAIN.followTrajectoryCommand(PathPlanner.loadPath("NoObstacleDeadReckoning", new PathConstraints(4.0, 3.0)), true));
-
-    //TODO: Put on main comp tab
-    SmartDashboard.putData("Auto Chooser", mSendableChooser);
+    mSendableChooser.addOption("Dead Reckoning No Obstacle", new DeadReckoningNoObstacle());
   }
 
   public Command getAutonomousCommand() {

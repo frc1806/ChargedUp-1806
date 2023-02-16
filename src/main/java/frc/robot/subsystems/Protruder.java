@@ -4,18 +4,18 @@ import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
 import frc.robot.game.Placement;
+import frc.robot.util.TelescopingRotatingArmFeedForwards;
 
 public class Protruder extends SubsystemBase{
 
-    private TalonSRX mProtrusionMotor;
-    
-    private Encoder mEncoder;
+    private TalonSRX mProtrusionMotorA, mProtrusionMotorB;
     private enum ProtruderStates {
         Idle,
         Extending,
@@ -24,10 +24,13 @@ public class Protruder extends SubsystemBase{
     private Placement currentPlacement;
     private PIDController mPidController;
     private ProtruderStates mProtruderStates;
+    private AnalogPotentiometer mPotentiometer;
     private Double encoderSnapshot;
     
     public Protruder(){
-        mProtrusionMotor = new TalonSRX(RobotMap.protrusionMotor);
+        mProtrusionMotorA = new TalonSRX(RobotMap.protrusionMotor);
+        mProtrusionMotorB = new TalonSRX(RobotMap.protrusionMotorB);
+        mPotentiometer = new AnalogPotentiometer(RobotMap.protrusionStringPotentiometer);
         mProtruderStates = ProtruderStates.Idle;
         currentPlacement = new Placement(0.0,0.0);
         mPidController = new PIDController(Constants.kProtruderkP, Constants.kProtruderkI, Constants.kProtruderkD);
@@ -44,41 +47,55 @@ public class Protruder extends SubsystemBase{
 
     public void goToExtension(Placement placement) {
         mProtruderStates = ProtruderStates.Extending;
-        encoderSnapshot = getEncoderDistance();
-        mProtrusionMotor.set(TalonSRXControlMode.PercentOutput, mPidController.calculate(placement.getExtendDistance()));
+        encoderSnapshot = getDistance();
+        setMotors(placement.getExtendDistance());
         mProtruderStates = ProtruderStates.Calculating;
     }
 
     public boolean checkIfAtPosition(Placement placement){
-        if((getEncoderDistance() - encoderSnapshot) >= placement.getExtendDistance()){
+        if((getDistance() - encoderSnapshot) >= placement.getExtendDistance()){
             return true;
         }
         return false;
     }
 
-    public void setMotor(Double number){
+    public void setMotors(Double number){
         mProtruderStates = ProtruderStates.Extending;
-        mProtrusionMotor.set(TalonSRXControlMode.PercentOutput,number);
+        mProtrusionMotorA.set(TalonSRXControlMode.PercentOutput,mPidController.calculate(number));
+        mProtrusionMotorB.set(TalonSRXControlMode.PercentOutput,mPidController.calculate(number));
     }
 
     public void stop(){
         mProtruderStates = ProtruderStates.Idle;
-        setMotor(0.0);
+        mProtrusionMotorA.set(TalonSRXControlMode.Disabled, 0.0);
+        mProtrusionMotorB.set(TalonSRXControlMode.Disabled, 0.0);
     }
 
-    public void zeroSensors(){
-        mEncoder.reset();
+    private Double getDistance(){
+        return mPotentiometer.get();
     }
 
-    private Double getEncoderDistance(){
-        return mEncoder.getDistance();
+    public AnalogPotentiometer getPotentiometer(){
+        return mPotentiometer;
     }
 
-    private void outputToSmartDashboard(){
-        SmartDashboard.putString("Protruder state: ", mProtruderStates.toString());
-        SmartDashboard.putNumber("Protrusion applied output: ", mProtrusionMotor.getMotorOutputVoltage());
-        SmartDashboard.putNumber("Protrusion encoder distance: ", mEncoder.getDistance());
+    public TalonSRX getMotorA(){
+        return mProtrusionMotorA;
     }
+
+    public TalonSRX getMotorB(){
+        return mProtrusionMotorB;
+    }
+
+    public CommandBase Extend(){
+        return this.runOnce(() -> goToExtension(getCurrentPlacement()));
+    }
+
+    private double calculateFeedForward(){
+        return TelescopingRotatingArmFeedForwards.CalculateTelescopeFeedForward(RobotContainer.S_PIVOTARM.getAngle(), Constants.kProtruderFeedFowardGain);
+    }
+
+
 
     @Override
     public void periodic() {
@@ -88,7 +105,6 @@ public class Protruder extends SubsystemBase{
                 stop();
             }
         }
-        outputToSmartDashboard();
     }
 
     @Override

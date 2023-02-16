@@ -10,6 +10,7 @@ public class Placement {
     }
 
     // TODO (preset placements)
+    public static Placement Home = new Placement(0.0,0.0);
     public static Placement LOW_PLACEMENT_CUBE = new Placement(0.0,0.0);
     public static Placement LOW_PLACEMENT_CONE = new Placement(0.0,0.0);
     public static Placement MED_PLACEMENT_CUBE = new Placement(0.0,0.0);

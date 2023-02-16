@@ -4,24 +4,25 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.revrobotics.AbsoluteEncoder;
 
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
+import frc.robot.util.TelescopingRotatingArmFeedForwards;
 
-public class PivotArmSubsytem extends SubsystemBase{
+public class PivotArm extends SubsystemBase{
 
     private CANSparkMax mArmPivotMotor;
     private DutyCycleEncoder mArmPivotEncoder;
-    private Double mInternalMotorEncoderOffset;
     private PIDController mPidController;
     private double mCurrentDesiredAngle; //the angle the rest of the robot wants this at.
     
-    public PivotArmSubsytem() {
-        mInternalMotorEncoderOffset = 0.0;
-
+    public PivotArm() {
 
         mArmPivotMotor = new CANSparkMax(RobotMap.armPivotMotor, MotorType.kBrushless);
         mArmPivotMotor.getEncoder().setPositionConversionFactor((1/Constants.kArmGearRatio) * 360);
@@ -49,16 +50,32 @@ public class PivotArmSubsytem extends SubsystemBase{
     /**
      * Tells the pivot arm to go to an angle
      * @param angle desired angle to go to, 0 degrees is straight up, 180 is straight down.
+     * This arrangement allows us to use cosine for feedforwards.
      */
-    public void goToPosition(double angle){
-        mCurrentDesiredAngle = angle;
+    public CommandBase goToPosition(double angle){
+        return runOnce(() -> mCurrentDesiredAngle = angle);
     }
 
     public boolean atPosition(){
-
         return Math.abs(getAngle()-mCurrentDesiredAngle) < Constants.kAcceptableAngleDelta;
+    }
 
+    public void setMotor(Double num){
+        mArmPivotMotor.setVoltage(num);
+    }
 
+    public CANSparkMax getPivotMotor(){
+        return mArmPivotMotor;
+    }
+
+    public DutyCycleEncoder getEncoder(){
+        return mArmPivotEncoder;
+    }
+
+    public double calculateCustomArmFeedForwarad()
+    {
+        return 0.0; //TODO? UNIMPLEMENTED UNTIL NEEDED
+        //return TelescopingRotatingArmFeedForwards.CalculateArmFeedForward(RobotContainer.S_PROTRUDER.getExtensionDistance(), getAngle(), Constants.kPivotFeedForwardGain); //UNIMPLEMENTED
     }
 
     @Override
@@ -66,11 +83,15 @@ public class PivotArmSubsytem extends SubsystemBase{
 
         if (atPosition()){
             //true stuff here
-            mArmPivotMotor.set(0.0);
+            mArmPivotMotor.setVoltage(0.0);
         }
         else{
             //false stuff here
-            mArmPivotMotor.set(mPidController.calculate(getAngle(), mCurrentDesiredAngle));
+            mArmPivotMotor.setVoltage(mPidController.calculate(getAngle(), mCurrentDesiredAngle) * 12);
+        }
+        if(RobotState.isDisabled())
+        {
+            resetMotorEncoderToAbsoluteEncoder();
         }
 
     }
