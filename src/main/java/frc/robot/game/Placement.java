@@ -14,9 +14,9 @@ public class Placement {
     public static Placement LOW_PLACEMENT_CUBE = new Placement(0.0,0.0);
     public static Placement LOW_PLACEMENT_CONE = new Placement(0.0,0.0);
     public static Placement MED_PLACEMENT_CUBE = new Placement(0.0,0.0);
-    public static Placement MED_PLACEMENT_CONE = new Placement(0.0,0.0);
+    public static Placement MED_PLACEMENT_CONE = new Placement(0.0,280.0);
     public static Placement HIGH_PLACEMENT_CUBE = new Placement(0.0,0.0);
-    public static Placement HIGH_PLACEMENT_CONE = new Placement(0.0,0.0);
+    public static Placement HIGH_PLACEMENT_CONE = new Placement(0.0,295.0);
 
     public Double getExtendDistance(){
         return extendDistance;

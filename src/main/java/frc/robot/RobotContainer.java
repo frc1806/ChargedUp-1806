@@ -66,7 +66,7 @@ public class RobotContainer {
    * Configure the {@link SendableChooser} for our autononomous options here.
    */
   private void configureAutonomousOptions(){
-    mSendableChooser.addOption("Dead Reckoning No Obstacle", new DeadReckoningNoObstacle());
+    mSendableChooser.addOption("Dead Reckoning No Obstacle", new DeadReckoningNoObstacle(S_DRIVETRAIN));
   }
 
   public Command getAutonomousCommand() {

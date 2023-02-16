@@ -29,6 +29,8 @@ public class RobotMap {
     public static final int rightDriveEncoderB = 3;
     public static final int protrusionBeamBreak = 4;
     public static final int clawBeamBreak = 5;
+    public static final int protrusionLimitSwitchFront = 6;
+    public static final int protrusionLimitSwitchEnd = 7;
 
     //Analog
     public static final int protrusionStringPotentiometer = 4;
