@@ -39,13 +39,9 @@ public class TwoLEDSubsytem extends SubsystemBase {
     }
 
 
-    public void setConeLED(){
+    public void setLED(){
 
         mGPCANdle.setLEDs(255, 129, 3, 0, 1, 12); //Cone LED
-        
-    }
-
-    public void setCubeLED(){
 
         mGPCANdle.setLEDs(154,  3, 255, 0, 13, 12); //Cube LED
 
@@ -73,6 +69,9 @@ public class TwoLEDSubsytem extends SubsystemBase {
         }
         if (RobotContainer.E_CURRENT_GAME_PIECE_MODE == RobotContainer.GamePieceMode.ConeMode){
             setConeAnim();
+        }
+        if (RobotContainer.E_CURRENT_GAME_PIECE_MODE == RobotContainer.GamePieceMode.OffMode){
+            setLED();
         }
 
 

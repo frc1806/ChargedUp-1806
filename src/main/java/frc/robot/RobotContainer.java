@@ -25,7 +25,8 @@ public class RobotContainer {
 
   public enum GamePieceMode{
     ConeMode,
-    CubeMode
+    CubeMode,
+    OffMode
   };
 
   public static final SendableChooser<Command> mSendableChooser = new SendableChooser<>();
