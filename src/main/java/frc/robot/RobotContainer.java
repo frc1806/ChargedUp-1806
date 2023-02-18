@@ -18,9 +18,15 @@ import frc.robot.subsystems.DriverControls;
 import frc.robot.subsystems.PivotArm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Protruder;
+import frc.robot.subsystems.TwoLEDSubsytem;
 import frc.robot.subsystems.VisionSubsystem;
 
 public class RobotContainer {
+
+  public enum GamePieceMode{
+    ConeMode,
+    CubeMode
+  };
 
   public static final SendableChooser<Command> mSendableChooser = new SendableChooser<>();
   
@@ -31,6 +37,8 @@ public class RobotContainer {
   public static final Claw S_INTAKE = new Claw();
   public static final Protruder S_PROTRUDER = new Protruder();
   public static final PivotArm S_PIVOTARM = new PivotArm();
+  public static final TwoLEDSubsytem S_LED_SUBSYTEM = new TwoLEDSubsytem();
+
 
   //Compressor
   public Compressor compressor;
@@ -44,6 +52,8 @@ public class RobotContainer {
     configureBindings();
     configureAutonomousOptions();
   }
+
+  
 
   /**
    * Set default commands for the subsystems.

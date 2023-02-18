@@ -176,6 +176,12 @@ public class DriverControls extends SubsystemBase{
         return !o_highConePlacement() && !o_highCubePlacement() && !o_medConePlacement() && !o_medCubePlacement() && !o_lowConePlacement() && !o_lowCubePlacement();
     }
 
+
+
+    //Operator LED Control
+
+
+
     //Debug Controls
 
     public double d_pivotArmManual(){
