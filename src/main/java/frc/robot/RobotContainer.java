@@ -39,6 +39,7 @@ public class RobotContainer {
   public static final PivotArm S_PIVOTARM = new PivotArm();
   public static final TwoLEDSubsytem S_LED_SUBSYTEM = new TwoLEDSubsytem();
 
+  public static GamePieceMode E_CURRENT_GAME_PIECE_MODE = GamePieceMode.CubeMode;
 
   //Compressor
   public Compressor compressor;

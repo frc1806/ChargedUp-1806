@@ -7,6 +7,9 @@ import com.ctre.phoenix.led.CANdleFaults;
 import com.ctre.phoenix.led.StrobeAnimation;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
+import frc.robot.RobotContainer.GamePieceMode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
@@ -58,6 +61,21 @@ public class TwoLEDSubsytem extends SubsystemBase {
     public void setCubeAnim(){
 
         mStrobeAnimation = new StrobeAnimation(255, 129, 3, 0, 1, 12, 13);
+
+    
+
+    }
+
+    @Override
+    public void periodic(){
+        if(RobotContainer.E_CURRENT_GAME_PIECE_MODE == RobotContainer.GamePieceMode.CubeMode){
+            setCubeAnim();
+        }
+        if (RobotContainer.E_CURRENT_GAME_PIECE_MODE == RobotContainer.GamePieceMode.ConeMode){
+            setConeAnim();
+        }
+
+
 
     }
 
