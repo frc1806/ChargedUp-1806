@@ -22,10 +22,8 @@ public class ManualRotate extends CommandBase{
 
     @Override
     public void execute() {
-        if (mControls.d_pivotArmManual() > 0){
+        if (mControls.d_pivotArmManual() != 0){
             mArm.setMotor(mControls.d_pivotArmManual() *12);
-        } else {
-            mArm.setMotor(mControls.d_pivotArmManual() * -12);
         }
     }
 

@@ -1,10 +1,12 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -26,11 +28,14 @@ public class Protruder extends SubsystemBase{
     private ProtruderStates mProtruderStates;
     private AnalogPotentiometer mPotentiometer;
     private Double encoderSnapshot;
+    private DigitalInput mFrontLimitSwitch, mEndLimitSwitch;
     
     public Protruder(){
         mProtrusionMotorA = new TalonSRX(RobotMap.protrusionMotor);
         mProtrusionMotorB = new TalonSRX(RobotMap.protrusionMotorB);
         mPotentiometer = new AnalogPotentiometer(RobotMap.protrusionStringPotentiometer);
+        mFrontLimitSwitch = new DigitalInput(RobotMap.protrusionLimitSwitchFront);
+        mEndLimitSwitch = new DigitalInput(RobotMap.protrusionLimitSwitchEnd);
         mProtruderStates = ProtruderStates.Idle;
         currentPlacement = new Placement(0.0,0.0);
         mPidController = new PIDController(Constants.kProtruderkP, Constants.kProtruderkI, Constants.kProtruderkD);
@@ -53,7 +58,7 @@ public class Protruder extends SubsystemBase{
     }
 
     public boolean checkIfAtPosition(Placement placement){
-        if((getDistance() - encoderSnapshot) >= placement.getExtendDistance()){
+        if((getDistance() - encoderSnapshot - placement.getExtendDistance()) < Constants.kProtruderAcceptableDistanceDelta){
             return true;
         }
         return false;
@@ -67,8 +72,8 @@ public class Protruder extends SubsystemBase{
 
     public void stop(){
         mProtruderStates = ProtruderStates.Idle;
-        mProtrusionMotorA.set(TalonSRXControlMode.Disabled, 0.0);
-        mProtrusionMotorB.set(TalonSRXControlMode.Disabled, 0.0);
+        mProtrusionMotorA.setNeutralMode(NeutralMode.Brake);
+        mProtrusionMotorB.setNeutralMode(NeutralMode.Brake);
     }
 
     private Double getDistance(){
@@ -94,8 +99,6 @@ public class Protruder extends SubsystemBase{
     private double calculateFeedForward(){
         return TelescopingRotatingArmFeedForwards.CalculateTelescopeFeedForward(RobotContainer.S_PIVOTARM.getAngle(), Constants.kProtruderFeedFowardGain);
     }
-
-
 
     @Override
     public void periodic() {
