@@ -4,6 +4,18 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.PIDConstants;
+import com.pathplanner.lib.auto.RamseteAutoBuilder;
+
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -12,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.commands.Drive;
 import frc.robot.commands.AutoModes.DeadReckoningNoObstacle;
 import frc.robot.shuffleboard.ShuffleboardManager;
@@ -61,6 +74,33 @@ public class RobotContainer {
     
     configureBindings();
     configureAutonomousOptions();
+
+    // This will load the file "FullAuto.path" and generate it with a max velocity of 4 m/s and a max acceleration of 3 m/s^2
+// for every path in the group
+List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("FullAuto", new PathConstraints(4, 3));
+
+// This is just an example event map. It would be better to have a constant, global event map
+// in your code that will be used by all path following commands.
+HashMap<String, Command> eventMap = new HashMap<>();
+//eventMap.put("marker1", new PrintCommand("Passed marker 1"));
+
+// Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.
+RamseteAutoBuilder autoBuilder = new RamseteAutoBuilder(
+    S_DRIVETRAIN::getPose, // Pose2d supplier
+    S_DRIVETRAIN::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
+    new RamseteController(),
+    S_DRIVETRAIN.mDifferentialDriveKinematics, // SwerveDriveKinematics
+    new SimpleMotorFeedforward(Constants.kDriveTrainKs, Constants.kDriveTrainKv, Constants.kDriveTrainKa),
+    S_DRIVETRAIN::getWheelSpeeds,
+    new PIDConstants(5.0, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
+    S_DRIVETRAIN::outputVolts,
+    eventMap,
+    true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+    S_DRIVETRAIN // The drive subsystem. Used to properly set the requirements of path following commands
+);
+
+Command fullAuto = autoBuilder.fullAuto(pathGroup);
+
 
     
   }
