@@ -3,6 +3,7 @@ package frc.robot.shuffleboard;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.RobotContainer;
 import frc.robot.shuffleboard.tabs.DrivetrainTab;
 import frc.robot.shuffleboard.tabs.ArmTab;
@@ -13,13 +14,15 @@ import frc.robot.util.SWATXboxController;
 
 public class ShuffleboardManager {
     private List<ShuffleboardTabBase> mShuffleboardTabs;
+    private MainCompetitionTab mMainCompetitionTab;
     private List<ShuffleboardTabBase> mDebugTabs;
     private boolean testAdded;
     private static SWATXboxController mController;
     private static SWATXboxController mDebugController;
 
     public ShuffleboardManager(){
-        mShuffleboardTabs = Arrays.asList(new MainCompetitionTab(), new OperatorTab());
+        mMainCompetitionTab = new MainCompetitionTab();
+        mShuffleboardTabs = Arrays.asList(mMainCompetitionTab, new OperatorTab());
         mDebugTabs = Arrays.asList(new DrivetrainTab(), new ArmTab(), new VisionTab());
         testAdded = false;
         mController = RobotContainer.S_DRIVECONTROLS.getDriverController();
@@ -55,5 +58,9 @@ public class ShuffleboardManager {
                 dTab.update();
             }
         }
+    }
+
+    public void addAutoChooser(SendableChooser chooser){
+        mMainCompetitionTab.addAutoChooser(chooser);
     }
 }

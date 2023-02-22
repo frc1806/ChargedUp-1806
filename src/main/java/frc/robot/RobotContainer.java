@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.Drive;
 import frc.robot.commands.AutoModes.DeadReckoningNoObstacle;
+import frc.robot.shuffleboard.ShuffleboardManager;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.DriverControls;
 import frc.robot.subsystems.PivotArm;
@@ -38,24 +40,30 @@ public class RobotContainer {
   public static final Claw S_INTAKE = new Claw();
   public static final Protruder S_PROTRUDER = new Protruder();
   public static final PivotArm S_PIVOTARM = new PivotArm();
-  public static final TwoLEDSubsytem S_LED_SUBSYTEM = new TwoLEDSubsytem();
+  public static final TwoLEDSubsytem S_TWO_LED_SUBSYTEM = new TwoLEDSubsytem();
 
   public static GamePieceMode E_CURRENT_GAME_PIECE_MODE = GamePieceMode.CubeMode;
 
+  //Shuffleboard Manager
+  public ShuffleboardManager mShuffleboardManager;
   //Compressor
   public Compressor compressor;
 
   public RobotContainer() {
+    mShuffleboardManager = new ShuffleboardManager();
+    mShuffleboardManager.registerTabs();
+
     DriverStation.silenceJoystickConnectionWarning(true);
     compressor = new Compressor(PneumaticsModuleType.CTREPCM);
+    S_REAR_VISION_SUBSYSTEM.updateLimelightPose(Units.inchesToMeters(2), Units.inchesToMeters(2), Units.inchesToMeters(9), 180, 30, 0); //TODO: Update limelight pose to reflect actual robot
     //SET DEFAULT COMMANDS
     setDefaultCommands();
     
     configureBindings();
     configureAutonomousOptions();
-  }
 
-  
+    
+  }
 
   /**
    * Set default commands for the subsystems.
@@ -79,6 +87,8 @@ public class RobotContainer {
    */
   private void configureAutonomousOptions(){
     mSendableChooser.addOption("Dead Reckoning No Obstacle", new DeadReckoningNoObstacle(S_DRIVETRAIN));
+    mShuffleboardManager.addAutoChooser(mSendableChooser);
+    
   }
 
   public Command getAutonomousCommand() {
@@ -87,5 +97,9 @@ public class RobotContainer {
       return Commands.print("No autonomous command selected");
     }
     return (Command) mSendableChooser.getSelected();
+  }
+
+  public ShuffleboardManager getShuffleboardManager(){
+    return mShuffleboardManager;
   }
 }

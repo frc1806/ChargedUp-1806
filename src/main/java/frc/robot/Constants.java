@@ -3,6 +3,9 @@ package frc.robot;
 import edu.wpi.first.math.util.Units;
 
 public class Constants {
+    //GAME
+    public static final double kFieldLength = 16.54175;
+    public static final double kFieldWidth = 8.0137;
     //Controller Ports
     public static final int kDriverPort = 0;
     public static final int kOperatorPort = 1;

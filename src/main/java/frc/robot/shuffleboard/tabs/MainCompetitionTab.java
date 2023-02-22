@@ -3,6 +3,7 @@ package frc.robot.shuffleboard.tabs;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.RobotContainer;
 import frc.robot.shuffleboard.ShuffleboardTabBase;
 import frc.robot.subsystems.DriverControls;
@@ -19,9 +20,7 @@ public class MainCompetitionTab extends ShuffleboardTabBase{
             .withPosition(0, 0)
             .withSize(2,1);
         
-        mTab.add("Auto Chooser", RobotContainer.mSendableChooser)
-            .withPosition(8,0)
-            .withSize(2,1);
+
         
         leftDrivePower = mTab.add("Left Drive Power", RobotContainer.S_DRIVETRAIN.getLeftDrivePower())
             .withPosition(0, 1)
@@ -36,6 +35,12 @@ public class MainCompetitionTab extends ShuffleboardTabBase{
             .getEntry();
 
         
+    }
+
+    public void addAutoChooser(SendableChooser autoChooser){
+        mTab.add("Auto Chooser", autoChooser)
+            .withPosition(8,0)
+            .withSize(2,1);
     }
 
     @Override

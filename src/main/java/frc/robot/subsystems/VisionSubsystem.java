@@ -42,6 +42,10 @@ public class VisionSubsystem extends SubsystemBase{
         return getValidTargetUpdateTimestamp()/ 1000000 > currentTimestamp - 1.0;
     }
 
+    public Alliance getCurrentAlliance(){
+        return currentAlliance;
+    }
+
     /**
      * Update the limelight pose relative to the center of the drive base on the floor.
      * @param metersForwardOfCenter meters forward or backward of the centerline (where the cross member bar is). Forward is positive.
@@ -64,6 +68,10 @@ public class VisionSubsystem extends SubsystemBase{
         return LimelightHelpers.getTX(limelightHostname);
     }
 
+    /**
+     * Get robot pose based on apriltags
+     * @return
+     */
     public Pose2d getBotPose(){
         switch(currentAlliance){
             case Blue:
@@ -84,7 +92,8 @@ public class VisionSubsystem extends SubsystemBase{
     public void periodic() {
         outputToSmartDashboard();
         currentTimestamp = Timer.getFPGATimestamp();
-        if(lastAllianceUpdate + 5.0 < currentTimestamp){
+        //Check alliance every 5 seconds, hopesfully this will update in disabled. If not it's on the dashboard so we can thumbs-down.
+        if(lastAllianceUpdate + 2.5 < currentTimestamp){
             currentAlliance = DriverStation.getAlliance();
             lastAllianceUpdate = currentTimestamp;
         }
@@ -149,7 +158,7 @@ public class VisionSubsystem extends SubsystemBase{
     public void outputToSmartDashboard() {
 
         SmartDashboard.putBoolean("Limelight Connection", hasLimelightUpdatedRecently());
-        SmartDashboard.putString("Vision Subsystem current Alliance", currentAlliance.toString());
+        SmartDashboard.putString("Vision Subsystem current Alliance", currentAlliance.name());
     }
 
 

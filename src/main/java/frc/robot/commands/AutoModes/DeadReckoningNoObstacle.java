@@ -12,7 +12,6 @@ public class DeadReckoningNoObstacle extends CommandBase{
 
     public DeadReckoningNoObstacle(DriveTrain driveTrain){
         mDriveTrain = driveTrain;
-        addRequirements(driveTrain);
     }
 
     @Override
@@ -27,7 +26,7 @@ public class DeadReckoningNoObstacle extends CommandBase{
 
     @Override
     public void initialize() {
-        mDriveTrain.followTrajectoryCommand(PathPlanner.loadPath("NoObstacleDeadReckoning", new PathConstraints(4.0, 3.0)), true);
+        mDriveTrain.followTrajectoryCommand(PathPlanner.loadPath("NoObstacleDeadReckoning", new PathConstraints(4.0, 3.0)), true).schedule();;
     }
 
     @Override

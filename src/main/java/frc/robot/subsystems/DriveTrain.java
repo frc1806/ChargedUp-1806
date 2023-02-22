@@ -14,6 +14,7 @@ import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
@@ -21,6 +22,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
@@ -32,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
 
 public class DriveTrain extends SubsystemBase{
@@ -93,7 +96,7 @@ public class DriveTrain extends SubsystemBase{
         mLeftEncoderSim = new EncoderSim(mLeftEncoder);
         mRightEncoderSim = new EncoderSim(mRightEncoder);
         mNavXYawSim = new SimDouble(SimDeviceDataJNI.getSimValueHandle(SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]"), "Yaw"));
-        mDifferentialDrivetrainSim = new DifferentialDrivetrainSim(DCMotor.getNEO(2), 9.9, 7.5, Units.lbsToKilograms(150.0), Units.inchesToMeters(3), Constants.kDriveTrainTrackWidthMeters, VecBuilder.fill(0.0000, 0.0000, 0.0005, 0.00, 0.00, 0.0000, 0.0000));
+        mDifferentialDrivetrainSim = new DifferentialDrivetrainSim(DCMotor.getNEO(2), 6.6, 7.5, Units.lbsToKilograms(150.0), Units.inchesToMeters(2), Constants.kDriveTrainTrackWidthMeters, VecBuilder.fill(0.0000, 0.0000, 0.0005, 0.00, 0.00, 0.0000, 0.0000));
     }
 
     /**
@@ -149,10 +152,10 @@ public class DriveTrain extends SubsystemBase{
     public synchronized void resetOdometry(Pose2d newPose){
         resetEncoders();
         mNavX.reset();
-        mNavX.setAngleAdjustment(newPose.getRotation().getDegrees());
-        mNavXYawSim.set(newPose.getRotation().getDegrees()); //SIM
+        mNavX.setAngleAdjustment(-newPose.getRotation().getDegrees());
+        mNavXYawSim.set(-newPose.getRotation().getDegrees()); //SIM
         mDifferentialDrivetrainSim.setPose(newPose);
-        mDifferentialDriveOdometry.resetPosition(new Rotation2d(Units.degreesToRadians(mNavX.getAngle())), mLeftEncoder.getDistance(), mRightEncoder.getDistance(), newPose);
+        mDifferentialDriveOdometry.resetPosition(new Rotation2d(Units.degreesToRadians(-mNavX.getAngle())), mLeftEncoder.getDistance(), mRightEncoder.getDistance(), newPose);
         
         
     }
@@ -201,7 +204,12 @@ public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFir
         new InstantCommand(() -> {
           // Reset odometry for the first path you run during auto
           if(isFirstPath){
-              this.resetOdometry(traj.getInitialPose());
+                Pose2d startPose = traj.getInitialPose();
+                if(RobotContainer.S_REAR_VISION_SUBSYSTEM.getCurrentAlliance() == Alliance.Red)
+                {
+                    startPose = new Pose2d(new Translation2d(startPose.getX(), Constants.kFieldWidth - startPose.getY()), startPose.getRotation());
+                }
+              this.resetOdometry(startPose);
           }
         }),
         new PPRamseteCommand(
@@ -211,10 +219,10 @@ public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFir
             new SimpleMotorFeedforward(Constants.kDriveTrainKs, Constants.kDriveTrainKv, Constants.kDriveTrainKa),
             this.mDifferentialDriveKinematics, // DifferentialDriveKinematics
             this::getWheelSpeeds, // DifferentialDriveWheelSpeeds supplier
-            new PIDController(0.0, 0, 0), // Left controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
-            new PIDController(0.0, 0, 0), // Right controller (usually the same values as left controller)
+            new PIDController(0.5, 0, 0), // Left controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+            new PIDController(0.5, 0, 0), // Right controller (usually the same values as left controller)
             this::outputVolts, // Voltage biconsumer
-            false, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true. Currently broken for 2023 season?
+            true, // Should the path be automatically mirrored depending on alliance color. Paths should be made for the Blue Alliance to be mirrored.
             this // Requires this drive subsystem
         )
     );
@@ -238,7 +246,13 @@ public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFir
     public void periodic() {
         outputToSmartDashboard();
         mDifferentialDriveOdometry.update(new Rotation2d(Units.degreesToRadians(-mNavX.getAngle())), mLeftEncoder.getDistance(), mRightEncoder.getDistance());
-        mField.setRobotPose(mDifferentialDriveOdometry.getPoseMeters());
+        Pose2d fieldZero = new Pose2d(new Translation2d(0, 0), new Rotation2d());
+        if(RobotContainer.S_REAR_VISION_SUBSYSTEM.getCurrentAlliance() == Alliance.Red){
+            fieldZero = new Pose2d(new Translation2d(Constants.kFieldLength, Constants.kFieldWidth), new Rotation2d(Math.PI));
+        }
+        mField.setRobotPose(mDifferentialDriveOdometry.getPoseMeters().relativeTo(fieldZero));
+
+
         super.periodic();
     }
 

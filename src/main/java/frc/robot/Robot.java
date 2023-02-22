@@ -13,18 +13,17 @@ import frc.robot.shuffleboard.ShuffleboardManager;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-  public ShuffleboardManager mShuffleboardManager;
+ 
   private RobotContainer m_robotContainer;
 
   public void allPeriodic(){
-    mShuffleboardManager.updateAllTabs();
+    m_robotContainer.getShuffleboardManager().updateAllTabs();
   }
 
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
-    mShuffleboardManager = new ShuffleboardManager();
-    mShuffleboardManager.registerTabs();
+
     PathPlannerServer.startServer(5811);
 
   }
@@ -32,7 +31,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    mShuffleboardManager.updateAllTabs();
+    m_robotContainer.getShuffleboardManager().updateAllTabs();
   }
 
   @Override
