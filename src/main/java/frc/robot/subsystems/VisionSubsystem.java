@@ -117,6 +117,10 @@ public class VisionSubsystem extends SubsystemBase{
         }
     }
 
+    public boolean hasAprilTagTarget(){
+        return LimelightHelpers.getFiducialID(limelightHostname) != -1  && LimelightHelpers.getTV(limelightHostname);
+    }
+
     /* TODO: Port to new smart dashboard tab setup
     @Override
     public void setupDriverTab() {
