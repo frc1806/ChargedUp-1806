@@ -37,7 +37,7 @@ public class Protruder extends SubsystemBase{
         mFrontLimitSwitch = new DigitalInput(RobotMap.protrusionLimitSwitchFront);
         mEndLimitSwitch = new DigitalInput(RobotMap.protrusionLimitSwitchEnd);
         mProtruderStates = ProtruderStates.Idle;
-        currentPlacement = new Placement(0.0,0.0);
+        currentPlacement = Placement.Home;
         mPidController = new PIDController(Constants.kProtruderkP, Constants.kProtruderkI, Constants.kProtruderkD);
         encoderSnapshot = 0.0;
     }

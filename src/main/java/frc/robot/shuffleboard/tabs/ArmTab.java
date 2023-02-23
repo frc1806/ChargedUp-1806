@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.RobotContainer;
 import frc.robot.drivers.BeamBreak;
+import frc.robot.game.Placement;
 import frc.robot.shuffleboard.ShuffleboardTabBase;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.PivotArm;
@@ -26,11 +27,13 @@ public class ArmTab extends ShuffleboardTabBase {
     private AnalogPotentiometer mPotentiometer;
     private BeamBreak mBeamBreak;
     private Solenoid mLeftSolenoid, mRightSolenoid;
+    private Placement currentPlacement;
 
     private GenericEntry leftSolenoidOn, rightSolenoidOn, beamTripped;
     private GenericEntry ProtruderDistance, ProtruderOutputA, ProtruderOutputB;
     private GenericEntry SpinnerOutput, SpinnerTemp;
     private GenericEntry PivotDistance, PivotOutput, PivotAmps, PivotTemp, PivotAngle;
+    private GenericEntry placement;
 
     public ArmTab(){
         mPivotArm = RobotContainer.S_PIVOTARM;
@@ -45,6 +48,7 @@ public class ArmTab extends ShuffleboardTabBase {
         mBeamBreak = mClaw.getBeamBreak();
         mLeftSolenoid = mClaw.getLeftSolenoid();
         mRightSolenoid = mClaw.getRightSolenoid();
+        currentPlacement = mProtruder.getCurrentPlacement();
     }
 
     @Override
@@ -82,6 +86,11 @@ public class ArmTab extends ShuffleboardTabBase {
             .withPosition(0,3)
             .withSize(2,1)
             .withWidget(BuiltInWidgets.kNumberBar)
+            .getEntry();
+        
+        placement = mTab.add("Current Placement", currentPlacement.getPlacementName())
+            .withPosition(0,4)
+            .withSize(2,1)
             .getEntry();
         
         SpinnerOutput = mTab.add("Spinner Output", mCymbalSpinner.getMotorOutputPercent())
@@ -143,6 +152,7 @@ public class ArmTab extends ShuffleboardTabBase {
         PivotAmps.setDouble(mPivotArmMotor.getOutputCurrent());
         PivotTemp.setDouble(mPivotArmMotor.getMotorTemperature());
         PivotDistance.setDouble(mPivotArmEncoder.getDistance());
+        placement.setString(mProtruder.getCurrentPlacement().getPlacementName());
     }
     
 }

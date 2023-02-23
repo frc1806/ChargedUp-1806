@@ -173,7 +173,11 @@ public class DriverControls extends SubsystemBase{
     }
 
     public boolean o_goHome(){
-        return !o_highConePlacement() && !o_highCubePlacement() && !o_medConePlacement() && !o_medCubePlacement() && !o_lowConePlacement() && !o_lowCubePlacement();
+        if(o_lowConePlacement() == false && o_lowCubePlacement() == false && o_medConePlacement() == false && o_medCubePlacement() == false && o_highConePlacement() == false && o_highCubePlacement()){
+            RobotContainer.S_PROTRUDER.setCurrentPlacement(Placement.Home);
+            return true;
+        }
+        return false;
     }
 
 
