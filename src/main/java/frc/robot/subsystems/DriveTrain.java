@@ -41,7 +41,7 @@ public class DriveTrain extends SubsystemBase{
 
     private DifferentialDrive mDifferentialDrive;
     private DifferentialDriveOdometry mDifferentialDriveOdometry;
-    private DifferentialDriveKinematics mDifferentialDriveKinematics;
+    public DifferentialDriveKinematics mDifferentialDriveKinematics;
     private MotorControllerGroup mLeftMotorGroup, mRightMotorGroup;
 
     private CANSparkMax mLeftLeader, mRightLeader, mLeftFollower, mRightFollower;
@@ -49,6 +49,7 @@ public class DriveTrain extends SubsystemBase{
     private AHRS mNavX;
 
     private Field2d mField;
+
 
     //Simulation
     private EncoderSim mLeftEncoderSim, mRightEncoderSim;
