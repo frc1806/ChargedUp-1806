@@ -41,7 +41,7 @@ public class DriveTrain extends SubsystemBase{
 
     private DifferentialDrive mDifferentialDrive;
     private DifferentialDriveOdometry mDifferentialDriveOdometry;
-    private DifferentialDriveKinematics mDifferentialDriveKinematics;
+    public DifferentialDriveKinematics mDifferentialDriveKinematics;
     private MotorControllerGroup mLeftMotorGroup, mRightMotorGroup;
 
     private CANSparkMax mLeftLeader, mRightLeader, mLeftFollower, mRightFollower;
@@ -50,10 +50,13 @@ public class DriveTrain extends SubsystemBase{
 
     private Field2d mField;
 
+
     //Simulation
     private EncoderSim mLeftEncoderSim, mRightEncoderSim;
     DifferentialDrivetrainSim mDifferentialDrivetrainSim;
     SimDouble mNavXYawSim;
+
+    Pose2d mLastVisionUpdate = null;
 
     public DriveTrain(){
 
@@ -252,6 +255,11 @@ public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFir
         }
         mField.setRobotPose(mDifferentialDriveOdometry.getPoseMeters().relativeTo(fieldZero));
 
+        Pose2d visionUpdate = RobotContainer.S_REAR_VISION_SUBSYSTEM.getBotPose();
+        if(RobotContainer.S_REAR_VISION_SUBSYSTEM.hasAprilTagTarget() && visionUpdate != mLastVisionUpdate){
+            mLastVisionUpdate = visionUpdate;
+            mDifferentialDriveOdometry.resetPosition(new Rotation2d(Units.degreesToRadians(-mNavX.getAngle())), mLeftEncoder.getDistance(), mRightEncoder.getDistance(), RobotContainer.S_REAR_VISION_SUBSYSTEM.getBotPose());
+        }
 
         super.periodic();
     }
