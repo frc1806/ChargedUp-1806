@@ -23,6 +23,11 @@ public class Constants {
     public static final double kDriveTrainKv = 1.1603;
     public static final double kDriveTrainKa = 0.40226;
 
+    //Powered Brake
+    public static final double kDriveTrainMinimumMovingSpeed = .3048;
+    public static final double kDriveTrainNormalPowerBrakePower = .015;
+    public static final double kDriveTrainRampPowerBrakePower = 0.5;
+
     // Protruder
     public static final double kProtruderkP = 1/6;
     public static final double kProtruderkI = 0;

@@ -65,9 +65,6 @@ public class DriveTrain extends SubsystemBase{
         mRightLeader = new CANSparkMax(RobotMap.rightLeader, MotorType.kBrushless);
         mRightFollower = new CANSparkMax(RobotMap.rightFollower, MotorType.kBrushless);
 
-        mLeftFollower.follow(mLeftLeader);
-        mRightFollower.follow(mRightFollower);
-
         mLeftMotorGroup = new MotorControllerGroup(mLeftLeader, mLeftFollower);
         mRightMotorGroup = new MotorControllerGroup(mRightLeader, mRightFollower);
 
@@ -102,6 +99,19 @@ public class DriveTrain extends SubsystemBase{
         mDifferentialDrivetrainSim = new DifferentialDrivetrainSim(DCMotor.getNEO(2), 6.6, 7.5, Units.lbsToKilograms(150.0), Units.inchesToMeters(2), Constants.kDriveTrainTrackWidthMeters, VecBuilder.fill(0.0000, 0.0000, 0.0005, 0.00, 0.00, 0.0000, 0.0000));
     }
 
+    public boolean powerBrake(double power, double turn, double brakePower){
+        if(Math.abs(getWheelSpeeds().leftMetersPerSecond) < Constants.kDriveTrainMinimumMovingSpeed && Math.abs(getWheelSpeeds().rightMetersPerSecond) < Constants.kDriveTrainMinimumMovingSpeed && Math.abs(power) < .005 && Math.abs(turn) < .005){
+            mLeftLeader.set(brakePower);
+            mLeftFollower.set(-brakePower);
+            mRightLeader.set(brakePower);
+            mRightFollower.set(-brakePower);
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     /**
      * Drive in teleop as normal
      * @param throttle Desired movement forward/backward (1 is full forward, -1 is full backward, 0 is no movement)
@@ -109,7 +119,11 @@ public class DriveTrain extends SubsystemBase{
      * @param quickTurn Turn fast?
      */
     public void setDriveMode(double throttle, double steer, boolean quickTurn){
-        mDifferentialDrive.curvatureDrive(throttle, steer * Constants.kDriveTurningSensitivity, quickTurn);
+        if(!powerBrake(steer, throttle, Constants.kDriveTrainNormalPowerBrakePower))
+        {
+            mDifferentialDrive.curvatureDrive(throttle, steer * Constants.kDriveTurningSensitivity, quickTurn);
+        }
+        
     }
 
     /**
@@ -119,7 +133,10 @@ public class DriveTrain extends SubsystemBase{
      * @param quickTurn Turn fast?
      */
     public void setCreepMode(double throttle, double steer, boolean quickTurn){
-        mDifferentialDrive.curvatureDrive(throttle / 3.33 , steer * Constants.kDriveTurningSensitivity, quickTurn);
+        if(!powerBrake(steer, throttle, Constants.kDriveTrainNormalPowerBrakePower))
+        {
+            mDifferentialDrive.curvatureDrive(throttle / 3.33 , steer * Constants.kDriveTurningSensitivity, quickTurn);
+        }
     }
 
     public void setBrakeMode(){

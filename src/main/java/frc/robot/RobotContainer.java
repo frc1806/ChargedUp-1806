@@ -98,9 +98,8 @@ public class RobotContainer {
    * Configure the {@link SendableChooser} for our autononomous options here.
    */
   private void configureAutonomousOptions(){
-    
-    mSendableChooser.addOption("Dead Reckoning No Obstacle", new DeadReckoningNoObstacle(S_DRIVETRAIN));
 
+/*
 // This will load the file "FullAuto.path" and generate it with a max velocity of 4 m/s and a max acceleration of 3 m/s^2
 // for every path in the group
 List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("FullAuto", new PathConstraints(4, 3));
@@ -125,10 +124,12 @@ RamseteAutoBuilder autoBuilder = new RamseteAutoBuilder(
     S_DRIVETRAIN // The drive subsystem. Used to properly set the requirements of path following commands
 );
 
-// Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.
+    // Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.
 
-
-   mSendableChooser.addOption("Full Auto", autoBuilder.fullAuto(pathGroup));
+    /* */
+    mSendableChooser.addOption("Dead Reckoning No Obstacle", new DeadReckoningNoObstacle(S_DRIVETRAIN));
+   // mSendableChooser.addOption("Full Auto", autoBuilder.fullAuto(pathGroup));
+    
     mShuffleboardManager.addAutoChooser(mSendableChooser);
     
   }
