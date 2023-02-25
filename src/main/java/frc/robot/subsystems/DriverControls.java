@@ -54,14 +54,6 @@ public class DriverControls extends SubsystemBase{
      * Get drivetrain throttle control value
      * @return a {@link double} between -1 and 1
      */
-    public SWATXboxController getDriverController(){
-        return driverController;
-    }
-
-    public SWATXboxController getDebugController(){
-        return debugController;
-    }
-
     public double getThrottle(){
         switch(selectedControls){
             default:
@@ -173,13 +165,12 @@ public class DriverControls extends SubsystemBase{
     }
 
     public boolean o_goHome(){
-        if(o_lowConePlacement() == false && o_lowCubePlacement() == false && o_medConePlacement() == false && o_medCubePlacement() == false && o_highConePlacement() == false && o_highCubePlacement()){
+        if(!o_lowConePlacement() && !o_lowCubePlacement() && !o_medConePlacement() && !o_medCubePlacement() && !o_medConePlacement() && !o_highConePlacement() && !o_highCubePlacement()){
             RobotContainer.S_PROTRUDER.setCurrentPlacement(Placement.Home);
             return true;
         }
         return false;
     }
-
 
 
     //Operator LED Control
@@ -202,6 +193,21 @@ public class DriverControls extends SubsystemBase{
 
     public boolean d_getIntakeRight(){
         return debugController.getRightTriggerDigital();
+    }
+
+
+    // Debug Tabs
+
+    public boolean debugTabs(){
+        return driverController.getStartButton() && driverController.getBackButton();
+    }
+
+    public boolean o_debugTabs(){
+        return operatorController.getStartButton() && operatorController.getBackButton();
+    }
+
+    public boolean d_debugTabs(){
+        return debugController.getStartButton() && debugController.getBackButton();
     }
 
 
