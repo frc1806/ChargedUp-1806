@@ -26,7 +26,7 @@ public class PlaceGamePiece extends CommandBase{
 
     @Override
     public void initialize() {
-        mProtruder.Extend();
+        mProtruder.Extend(mProtruder.getCurrentPlacement());
         mArm.goToPosition(mProtruder.getCurrentPlacement().getPivotAngle());
     }
 

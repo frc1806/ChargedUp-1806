@@ -80,11 +80,11 @@ public class PivotArm extends SubsystemBase{
 
         if (atPosition()){
             //true stuff here
-            mArmPivotMotor.setVoltage(0.0);
+            setMotor(0.0);
         }
         else{
             //false stuff here
-            mArmPivotMotor.setVoltage(mPidController.calculate(getAngle(), mCurrentDesiredAngle) * 12);
+            setMotor(mPidController.calculate(getAngle(), mCurrentDesiredAngle) * 12);
         }
         if(RobotState.isDisabled())
         {

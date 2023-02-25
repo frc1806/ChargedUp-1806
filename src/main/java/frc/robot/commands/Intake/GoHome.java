@@ -28,7 +28,7 @@ public class GoHome extends CommandBase {
     @Override
     public void initialize() {
         mArm.goToPosition(0);
-        mProtruder.goToExtension(Placement.Home);
+        mProtruder.Extend(Placement.Home);
     }
 
     @Override

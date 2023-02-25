@@ -41,8 +41,8 @@ public class ArmTab extends ShuffleboardTabBase {
         mProtruder = RobotContainer.S_PROTRUDER;
         mPivotArmMotor = mPivotArm.getPivotMotor();
         mPivotArmEncoder = mPivotArm.getEncoder();
-        mProtruderMotorA = mProtruder.getMotorA();
-        mProtrusionMotorB = mProtruder.getMotorB();
+        mProtruderMotorA = mProtruder.getInnerStageMotor();
+        mProtrusionMotorB = mProtruder.getOuterStageMotor();
         mCymbalSpinner = mClaw.getSpinner();
         mPotentiometer = mProtruder.getPotentiometer();
         mBeamBreak = mClaw.getBeamBreak();
@@ -70,13 +70,13 @@ public class ArmTab extends ShuffleboardTabBase {
             .withSize(1,1)
             .getEntry();
         
-        ProtruderOutputA = mTab.add("ProtruderA Output", mProtruderMotorA.getMotorOutputPercent())
+        ProtruderOutputA = mTab.add("Inner Stage Output", mProtruderMotorA.getMotorOutputPercent())
             .withPosition(0,1)
             .withSize(2,1)
             .withWidget(BuiltInWidgets.kNumberBar)
             .getEntry();
         
-        ProtruderOutputB = mTab.add("ProtruderB Output", mProtrusionMotorB.getMotorOutputPercent())
+        ProtruderOutputB = mTab.add("Outer Stage Output", mProtrusionMotorB.getMotorOutputPercent())
             .withPosition(0,2)
             .withSize(2,1)
             .withWidget(BuiltInWidgets.kNumberBar)

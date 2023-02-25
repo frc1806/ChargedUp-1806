@@ -172,6 +172,14 @@ public class DriverControls extends SubsystemBase{
         return false;
     }
 
+    public double o_spinnerThrottle(){
+        return operatorController.getRightX();
+    }
+
+    public boolean o_wantSpin(){
+        return o_spinnerThrottle() != 0;
+    }
+
 
     //Operator LED Control
 
@@ -184,7 +192,7 @@ public class DriverControls extends SubsystemBase{
     }
 
     public boolean d_wantArmManual(){
-        return d_pivotArmManual() > 0;
+        return d_pivotArmManual() != 0;
     }
 
     public boolean d_getIntakeLeft(){
@@ -229,6 +237,7 @@ public class DriverControls extends SubsystemBase{
         new Trigger(this::o_highConePlacement).onTrue(new PlaceGamePiece(protruder, arm));
         new Trigger(this::o_highCubePlacement).onTrue(new PlaceGamePiece(protruder, arm));
         new Trigger(this::o_goHome).whileTrue(new GoHome(arm, protruder));
+        new Trigger(this::o_wantSpin).whileTrue(RobotContainer.S_INTAKE.rotateClaw(o_spinnerThrottle()));
 
         //Debug
         new Trigger(this::d_getIntakeLeft).onTrue(new LeftSolenoid(intake));

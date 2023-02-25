@@ -36,6 +36,8 @@ public class Constants {
     public static final double kProtruderAcceptableDistanceDelta = 0.5;
     public static final double kProtruderDistanceAtFullRetract = 10; //TODO: Make number for actual robot and implement
     public static final double kProtruderDistanceAtFullExtend = 50; //TODO Measure
+    public static final double kProtruderInnerStageLength = 40;
+    public static final double kProtruderOuterStageLength = 50;
     
     //Arm Angle Constants
     public static final double kArmGearRatio = 333.0 + (1.0/3.0);
