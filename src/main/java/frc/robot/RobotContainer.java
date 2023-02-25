@@ -127,6 +127,7 @@ List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("FullAuto", ne
     // Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.
 
       //mSendableChooser.addOption("Full Auto", autoBuilder.fullAuto(pathGroup));
+      mSendableChooser.addOption("Dead Reckoning No Obstacle", new DeadReckoningNoObstacle(S_DRIVETRAIN));
       mShuffleboardManager.addAutoChooser(mSendableChooser);
       
     }
