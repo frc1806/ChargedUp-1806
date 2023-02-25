@@ -13,12 +13,12 @@ public class Placement {
 
     // TODO (preset placements)
     public static Placement Home = new Placement("Home", 0.0,0.0);
-    public static Placement LOW_PLACEMENT_CUBE = new Placement("Low Placement Cube", 0.0,0.0);
-    public static Placement LOW_PLACEMENT_CONE = new Placement("Low Placement Cone", 0.0,0.0);
-    public static Placement MED_PLACEMENT_CUBE = new Placement("Medium Placement Cube", 0.0,0.0);
-    public static Placement MED_PLACEMENT_CONE = new Placement("Medium Placement Cone", 0.0,280.0);
-    public static Placement HIGH_PLACEMENT_CUBE = new Placement("High Placement Cube", 0.0,0.0);
-    public static Placement HIGH_PLACEMENT_CONE = new Placement("High Placement Cone", 0.0,295.0);
+    public static Placement LOW_PLACEMENT_CUBE = new Placement("Low Placement Cube", 10.0,0.0);
+    public static Placement LOW_PLACEMENT_CONE = new Placement("Low Placement Cone", 10.0,0.0);
+    public static Placement MED_PLACEMENT_CUBE = new Placement("Medium Placement Cube", 10.0,0.0);
+    public static Placement MED_PLACEMENT_CONE = new Placement("Medium Placement Cone", 10.0,280.0);
+    public static Placement HIGH_PLACEMENT_CUBE = new Placement("High Placement Cube", 10.0,0.0);
+    public static Placement HIGH_PLACEMENT_CONE = new Placement("High Placement Cone", 10.0,295.0);
 
     public Double getExtendDistance(){
         return extendDistance;

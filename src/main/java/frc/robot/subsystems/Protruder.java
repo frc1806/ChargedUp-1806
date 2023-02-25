@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -18,25 +17,34 @@ import frc.robot.util.TelescopingRotatingArmFeedForwards;
 public class Protruder extends SubsystemBase{
 
     private TalonSRX mInnerStageMotor, mOuterStageMotor;
-    private enum ProtruderStates {
-        Idle,
-        Extending,
-        Calculating
+    private enum InnerStates {
+        HoldIn,
+        Retract,
+        HoldOut,
+        Extend,
     };
+    private enum OuterStates {
+        HoldIn,
+        Retract,
+        HoldOut,
+        Extend,
+    }
     private Placement currentPlacement;
     private PIDController mPidController;
-    private ProtruderStates mProtruderStates;
+    private InnerStates mInnerStates;
+    private OuterStates mOuterStates;
     private AnalogPotentiometer mPotentiometer;
     private Double encoderSnapshot;
-    private DigitalInput mFrontLimitSwitch, mEndLimitSwitch;
+    private DigitalInput mInnerLimitSwitch, mOuterLimitSwitch;
     
     public Protruder(){
         mInnerStageMotor = new TalonSRX(RobotMap.protruderOuterStage);
         mOuterStageMotor = new TalonSRX(RobotMap.protruderInnerStage);
         mPotentiometer = new AnalogPotentiometer(RobotMap.protrusionStringPotentiometer);
-        mFrontLimitSwitch = new DigitalInput(RobotMap.protrusionLimitSwitchFront);
-        mEndLimitSwitch = new DigitalInput(RobotMap.protrusionLimitSwitchEnd);
-        mProtruderStates = ProtruderStates.Idle;
+        mInnerLimitSwitch = new DigitalInput(RobotMap.protrusionLimitSwitchFront);
+        mOuterLimitSwitch = new DigitalInput(RobotMap.protrusionLimitSwitchEnd);
+        mInnerStates = InnerStates.Retract;
+        mOuterStates = OuterStates.Retract;
         currentPlacement = Placement.Home;
         mPidController = new PIDController(Constants.kProtruderkP, Constants.kProtruderkI, Constants.kProtruderkD);
         encoderSnapshot = 0.0;
@@ -50,30 +58,29 @@ public class Protruder extends SubsystemBase{
         currentPlacement = placement;
     }
 
-    private void goToExtension(Placement placement) {
-        mProtruderStates = ProtruderStates.Extending;
+    private void goToExtension() {
         encoderSnapshot = getDistance();
-        setMotors(placement.getExtendDistance());
-        mProtruderStates = ProtruderStates.Calculating;
+
+        if(getCurrentPlacement().getExtendDistance() < Constants.kProtruderInnerStageLength){
+            mInnerStates = InnerStates.Extend;
+        } else {
+            mInnerStates = InnerStates.Extend;
+            mOuterStates = OuterStates.Extend;
+        }
     }
 
-    private boolean checkIfAtPosition(Placement placement){
-        if((getDistance() - encoderSnapshot - placement.getExtendDistance()) < Constants.kProtruderAcceptableDistanceDelta){
+    private boolean checkIfAtPosition(){
+        if((getDistance() - encoderSnapshot - getCurrentPlacement().getExtendDistance()) < Constants.kProtruderAcceptableDistanceDelta){
+            mInnerStates = InnerStates.HoldOut;
+            mOuterStates = OuterStates.HoldOut;
             return true;
         }
         return false;
     }
 
-    private void setMotors(Double number){
-        mProtruderStates = ProtruderStates.Extending;
-        mInnerStageMotor.set(TalonSRXControlMode.PercentOutput,mPidController.calculate(number));
-        mOuterStageMotor.set(TalonSRXControlMode.PercentOutput,mPidController.calculate(number));
-    }
-
     public void stop(){
-        mProtruderStates = ProtruderStates.Idle;
-        mInnerStageMotor.setNeutralMode(NeutralMode.Brake);
-        mOuterStageMotor.setNeutralMode(NeutralMode.Brake);
+        mInnerStates = InnerStates.Retract;
+        mOuterStates = OuterStates.Retract;
     }
 
     private Double getDistance(){
@@ -93,7 +100,7 @@ public class Protruder extends SubsystemBase{
     }
 
     public CommandBase Extend(Placement placement){
-        return this.runOnce(() -> goToExtension(getCurrentPlacement()));
+        return this.runOnce(() -> goToExtension());
     }
 
     public double calculateFeedForward(){
@@ -102,11 +109,37 @@ public class Protruder extends SubsystemBase{
 
     @Override
     public void periodic() {
-        if(mProtruderStates == ProtruderStates.Calculating){
-            if (checkIfAtPosition(currentPlacement)){
-                mProtruderStates = ProtruderStates.Idle;
-                stop();
-            }
+
+        if(mInnerLimitSwitch.get()){
+            mInnerStates = InnerStates.HoldOut;
+        }
+
+        if(mOuterLimitSwitch.get()){
+            mOuterStates = OuterStates.HoldOut;
+        }
+
+        switch(mInnerStates){
+            case Retract:
+                mInnerStageMotor.set(TalonSRXControlMode.PercentOutput, -1.0);
+            case HoldIn:
+                mInnerStageMotor.set(TalonSRXControlMode.PercentOutput, 0.08);
+            case HoldOut: 
+                mInnerStageMotor.set(TalonSRXControlMode.PercentOutput, -0.08);
+            case Extend:
+                mInnerStageMotor.set(TalonSRXControlMode.PercentOutput, mPidController.calculate(getCurrentPlacement().getExtendDistance()));
+                checkIfAtPosition();
+        }
+
+        switch(mOuterStates){
+            case Retract:
+                mOuterStageMotor.set(TalonSRXControlMode.PercentOutput, -1.0);
+            case HoldIn:
+                mOuterStageMotor.set(TalonSRXControlMode.PercentOutput, 0.08);
+            case HoldOut: 
+                mOuterStageMotor.set(TalonSRXControlMode.PercentOutput, -0.08);
+            case Extend:
+                mOuterStageMotor.set(TalonSRXControlMode.PercentOutput, mPidController.calculate(getCurrentPlacement().getExtendDistance()));
+                checkIfAtPosition();
         }
     }
 }
