@@ -12,6 +12,7 @@ import frc.robot.commands.DebugCommands.LeftSolenoid;
 import frc.robot.commands.DebugCommands.ManualRotate;
 import frc.robot.commands.DebugCommands.RightSolenoid;
 import frc.robot.commands.Intake.GoHome;
+import frc.robot.commands.Intake.RotateCone;
 import frc.robot.game.Placement;
 import frc.robot.shuffleboard.tabs.tabsUtil.XboxControllerConfigValues;
 import frc.robot.util.SWATXboxController;
@@ -172,12 +173,8 @@ public class DriverControls extends SubsystemBase{
         return false;
     }
 
-    public double o_spinnerThrottle(){
-        return operatorController.getRightX();
-    }
-
     public boolean o_wantSpin(){
-        return o_spinnerThrottle() != 0;
+        return operatorController.getLeftBumper();
     }
 
 
@@ -237,7 +234,7 @@ public class DriverControls extends SubsystemBase{
         new Trigger(this::o_highConePlacement).onTrue(new PlaceGamePiece(protruder, arm));
         new Trigger(this::o_highCubePlacement).onTrue(new PlaceGamePiece(protruder, arm));
         new Trigger(this::o_goHome).whileTrue(new GoHome(arm, protruder));
-        new Trigger(this::o_wantSpin).whileTrue(RobotContainer.S_INTAKE.rotateClaw(o_spinnerThrottle()));
+        new Trigger(this::o_wantSpin).onTrue(new RotateCone());
 
         //Debug
         new Trigger(this::d_getIntakeLeft).onTrue(new LeftSolenoid(intake));
