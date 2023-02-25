@@ -11,23 +11,21 @@ import frc.robot.shuffleboard.tabs.ArmTab;
 import frc.robot.shuffleboard.tabs.MainCompetitionTab;
 import frc.robot.shuffleboard.tabs.OperatorTab;
 import frc.robot.shuffleboard.tabs.VisionTab;
-import frc.robot.util.SWATXboxController;
+import frc.robot.subsystems.DriverControls;
 
 public class ShuffleboardManager {
     private List<ShuffleboardTabBase> mShuffleboardTabs;
     private MainCompetitionTab mMainCompetitionTab;
     private List<ShuffleboardTabBase> mDebugTabs;
     private boolean testAdded;
-    private static SWATXboxController mController;
-    private static SWATXboxController mDebugController;
+    private DriverControls driverControls;
 
     public ShuffleboardManager(){
         mMainCompetitionTab = new MainCompetitionTab();
         mShuffleboardTabs = Arrays.asList(mMainCompetitionTab, new OperatorTab());
         mDebugTabs = Arrays.asList(new DrivetrainTab(), new ArmTab(), new VisionTab());
         testAdded = false;
-        mController = RobotContainer.S_DRIVECONTROLS.getDriverController();
-        mDebugController = RobotContainer.S_DRIVECONTROLS.getDebugController();
+        driverControls = RobotContainer.S_DRIVECONTROLS;
     }
 
     public void registerTabs(){
@@ -35,7 +33,7 @@ public class ShuffleboardManager {
             tab.createEntries();
         }
 
-        if (mController.getStartButton() && mController.getBackButton() || mDebugController.getStartButton() && mDebugController.getBackButton() || testAdded){
+        if (driverControls.debugTabs() || driverControls.d_debugTabs() || driverControls.o_debugTabs() || testAdded){
             testAdded=true;
             for (ShuffleboardTabBase dTab : mDebugTabs){
                 dTab.createEntries();
@@ -48,7 +46,7 @@ public class ShuffleboardManager {
             tab.update();
         }
 
-        if (mController.getStartButton() && mController.getBackButton() || mDebugController.getStartButton() && mDebugController.getBackButton() || testAdded){
+        if (driverControls.debugTabs() || driverControls.d_debugTabs() || driverControls.o_debugTabs() || testAdded){
             if(testAdded==false){
                 testAdded=true;
                 for (ShuffleboardTabBase dTab : mDebugTabs){
