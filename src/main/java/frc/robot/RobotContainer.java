@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,9 +21,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.commands.Drive;
 import frc.robot.commands.AutoModes.DeadReckoningNoObstacle;
 import frc.robot.shuffleboard.ShuffleboardManager;
@@ -44,7 +43,7 @@ public class RobotContainer {
     OffMode
   };
 
-  public static final SendableChooser<Command> mSendableChooser = new SendableChooser<>();
+  public static final SendableChooser<CommandBase> mSendableChooser = new SendableChooser<>();
   
   //DEFINE SUBSYSTEM INSTANCES
   public static final DriverControls S_DRIVECONTROLS = new DriverControls();
@@ -105,34 +104,34 @@ public class RobotContainer {
 List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("FullAuto", new PathConstraints(4, 3));
 
 
-// This is just an example event map. It would be better to have a constant, global event map
-// in your code that will be used by all path following commands.
-HashMap<String, Command> eventMap = new HashMap<>();
-//eventMap.put("marker1", new PrintCommand("Passed marker 1"));
 
-RamseteAutoBuilder autoBuilder = new RamseteAutoBuilder(
-    S_DRIVETRAIN::getPose, // Pose2d supplier
-    S_DRIVETRAIN::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
-    new RamseteController(),
-    S_DRIVETRAIN.mDifferentialDriveKinematics, // SwerveDriveKinematics
-    new SimpleMotorFeedforward(Constants.kDriveTrainKs, Constants.kDriveTrainKv, Constants.kDriveTrainKa),
-    S_DRIVETRAIN::getWheelSpeeds,
-    new PIDConstants(5.0, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
-    S_DRIVETRAIN::outputVolts,
-    eventMap,
-    true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
-    S_DRIVETRAIN // The drive subsystem. Used to properly set the requirements of path following commands
-);
+    // This is just an example event map. It would be better to have a constant, global event map
+    // in your code that will be used by all path following commands.
+    HashMap<String, Command> eventMap = new HashMap<>();
+    //eventMap.put("marker1", new PrintCommand("Passed marker 1"));
 
+    RamseteAutoBuilder autoBuilder = new RamseteAutoBuilder(
+        S_DRIVETRAIN::getPose, // Pose2d supplier
+        S_DRIVETRAIN::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
+        new RamseteController(),
+        S_DRIVETRAIN.mDifferentialDriveKinematics, // SwerveDriveKinematics
+        new SimpleMotorFeedforward(Constants.kDriveTrainKs, Constants.kDriveTrainKv, Constants.kDriveTrainKa),
+        S_DRIVETRAIN::getWheelSpeeds,
+        new PIDConstants(5.0, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
+        S_DRIVETRAIN::outputVolts,
+        eventMap,
+        true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+        S_DRIVETRAIN // The drive subsystem. Used to properly set the requirements of path following commands
+    );
+    */
     // Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.
 
-    /* */
-    mSendableChooser.addOption("Dead Reckoning No Obstacle", new DeadReckoningNoObstacle(S_DRIVETRAIN));
-   // mSendableChooser.addOption("Full Auto", autoBuilder.fullAuto(pathGroup));
-    
-    mShuffleboardManager.addAutoChooser(mSendableChooser);
-    
-  }
+-
+
+      //mSendableChooser.addOption("Full Auto", autoBuilder.fullAuto(pathGroup));
+      mShuffleboardManager.addAutoChooser(mSendableChooser);
+      
+    }
 
   public Command getAutonomousCommand() {
     if(mSendableChooser.getSelected() == null)

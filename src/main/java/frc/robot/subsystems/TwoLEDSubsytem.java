@@ -7,9 +7,7 @@ import com.ctre.phoenix.led.CANdleFaults;
 import com.ctre.phoenix.led.StrobeAnimation;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
-import frc.robot.RobotContainer.GamePieceMode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
