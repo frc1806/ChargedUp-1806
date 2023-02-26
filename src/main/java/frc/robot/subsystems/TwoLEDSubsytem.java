@@ -62,13 +62,13 @@ public class TwoLEDSubsytem extends SubsystemBase {
 
     @Override
     public void periodic(){
-        if(RobotContainer.E_CURRENT_GAME_PIECE_MODE == RobotContainer.GamePieceMode.CubeMode){
+        if(RobotContainer.GetCurrentGamePieceMode() == RobotContainer.GamePieceMode.CubeMode){
             setCubeAnim();
         }
-        if (RobotContainer.E_CURRENT_GAME_PIECE_MODE == RobotContainer.GamePieceMode.ConeMode){
+        if (RobotContainer.GetCurrentGamePieceMode() == RobotContainer.GamePieceMode.ConeMode){
             setConeAnim();
         }
-        if (RobotContainer.E_CURRENT_GAME_PIECE_MODE == RobotContainer.GamePieceMode.OffMode){
+        if (RobotContainer.GetCurrentGamePieceMode() == RobotContainer.GamePieceMode.OffMode){
             setLED();
         }
 

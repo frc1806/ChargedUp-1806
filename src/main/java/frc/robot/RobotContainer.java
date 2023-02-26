@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.Drive;
 import frc.robot.commands.AutoModes.DeadReckoningNoObstacle;
+import frc.robot.game.Placement;
 import frc.robot.shuffleboard.ShuffleboardManager;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.DriverControls;
@@ -54,7 +55,25 @@ public class RobotContainer {
   public static final PivotArm S_PIVOTARM = new PivotArm();
   public static final TwoLEDSubsytem S_TWO_LED_SUBSYTEM = new TwoLEDSubsytem();
 
-  public static GamePieceMode E_CURRENT_GAME_PIECE_MODE = GamePieceMode.CubeMode;
+  private static GamePieceMode ES_CURRENT_GAME_PIECE_MODE = GamePieceMode.CubeMode;
+  
+  public static GamePieceMode GetCurrentGamePieceMode() {
+    return ES_CURRENT_GAME_PIECE_MODE;
+  }
+
+  public static void SetCurrentGamePieceMode(GamePieceMode eS_CURRENT_GAME_PIECE_MODE) {
+    ES_CURRENT_GAME_PIECE_MODE = eS_CURRENT_GAME_PIECE_MODE;
+  }
+
+  private static Placement S_CURRENT_PLACEMENT = Placement.HOME;
+
+  public static Placement GetCurrentPlacement(){
+    return S_CURRENT_PLACEMENT;
+  }
+
+  public static void SetCurrentPlacement(Placement placement){
+    S_CURRENT_PLACEMENT = placement;
+  }
 
   //Shuffleboard Manager
   public ShuffleboardManager mShuffleboardManager;

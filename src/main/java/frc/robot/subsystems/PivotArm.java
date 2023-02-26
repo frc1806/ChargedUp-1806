@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -23,7 +24,7 @@ public class PivotArm extends SubsystemBase{
 
         mArmPivotMotor = new CANSparkMax(RobotMap.armPivotMotor, MotorType.kBrushless);
         mArmPivotMotor.getEncoder().setPositionConversionFactor((1/Constants.kArmGearRatio) * 360);
-
+        mArmPivotMotor.setIdleMode(IdleMode.kBrake);
         mArmPivotEncoder = new DutyCycleEncoder(RobotMap.armPivotEncoder);
         mArmPivotEncoder.setDutyCycleRange(1.0/1025.0,  1024.0/1025.0);
         mArmPivotEncoder.setDistancePerRotation(360);
@@ -32,7 +33,7 @@ public class PivotArm extends SubsystemBase{
     }
 
     public void resetMotorEncoderToAbsoluteEncoder(){
-        mArmPivotMotor.getEncoder().setPosition(mArmPivotEncoder.getAbsolutePosition());
+        mArmPivotMotor.getEncoder().setPosition(mArmPivotEncoder.getDistance() % 360.0);
     }
 
     /**

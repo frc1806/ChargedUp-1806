@@ -9,8 +9,10 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.drivers.BeamBreak;
+import frc.robot.drivers.StringPotentiometer;
 import frc.robot.game.Placement;
 import frc.robot.shuffleboard.ShuffleboardTabBase;
 import frc.robot.subsystems.Claw;
@@ -24,7 +26,7 @@ public class ArmTab extends ShuffleboardTabBase {
     private CANSparkMax mPivotArmMotor;
     private DutyCycleEncoder mPivotArmEncoder;
     private TalonSRX mProtruderMotorA, mProtrusionMotorB, mCymbalSpinner;
-    private AnalogPotentiometer mPotentiometer;
+    private StringPotentiometer mPotentiometer;
     private BeamBreak mBeamBreak;
     private Solenoid mLeftSolenoid, mRightSolenoid;
     private Placement currentPlacement;
@@ -48,7 +50,7 @@ public class ArmTab extends ShuffleboardTabBase {
         mBeamBreak = mClaw.getBeamBreak();
         mLeftSolenoid = mClaw.getLeftSolenoid();
         mRightSolenoid = mClaw.getRightSolenoid();
-        currentPlacement = mProtruder.getCurrentPlacement();
+        currentPlacement = RobotContainer.GetCurrentPlacement();
     }
 
     @Override
@@ -82,7 +84,7 @@ public class ArmTab extends ShuffleboardTabBase {
             .withWidget(BuiltInWidgets.kNumberBar)
             .getEntry();
         
-        ProtruderDistance = mTab.add("Protruder Distance", mPotentiometer.get())
+        ProtruderDistance = mTab.add("Protruder First Stage Distance", mPotentiometer.getExtensionInInches())
             .withPosition(0,3)
             .withSize(2,1)
             .withWidget(BuiltInWidgets.kNumberBar)
@@ -144,7 +146,7 @@ public class ArmTab extends ShuffleboardTabBase {
         rightSolenoidOn.setBoolean(mRightSolenoid.get());
         ProtruderOutputA.setDouble(mProtruderMotorA.getMotorOutputPercent());
         ProtruderOutputB.setDouble(mProtrusionMotorB.getMotorOutputPercent());
-        ProtruderDistance.setDouble(mPotentiometer.get());
+        ProtruderDistance.setDouble(mPotentiometer.getExtensionInInches());
         SpinnerOutput.setDouble(mCymbalSpinner.getMotorOutputPercent());
         SpinnerTemp.setDouble(mCymbalSpinner.getTemperature());
         PivotOutput.setDouble(mPivotArmMotor.getAppliedOutput()) ;
@@ -152,7 +154,7 @@ public class ArmTab extends ShuffleboardTabBase {
         PivotAmps.setDouble(mPivotArmMotor.getOutputCurrent());
         PivotTemp.setDouble(mPivotArmMotor.getMotorTemperature());
         PivotDistance.setDouble(mPivotArmEncoder.getDistance());
-        placement.setString(mProtruder.getCurrentPlacement().getPlacementName());
+        placement.setString(RobotContainer.GetCurrentPlacement().getPlacementName());
     }
     
 }
