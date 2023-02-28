@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.util.CircularBuffer;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
@@ -75,8 +76,8 @@ public class Claw extends SubsystemBase{
         return mBeamBreak.get(); //May have to ! this, if it's normally closed.
     }
 
-    public void rotateClaw(double power){
-        mCymbalSpinner.set(TalonSRXControlMode.PercentOutput, power);
+    public CommandBase rotateClaw(double power){
+        return this.runOnce(() -> mCymbalSpinner.set(TalonSRXControlMode.PercentOutput, power));
     }
 
     public boolean isClawSpinnerStalled(){

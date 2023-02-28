@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -23,7 +24,7 @@ public class PivotArm extends SubsystemBase{
 
         mArmPivotMotor = new CANSparkMax(RobotMap.armPivotMotor, MotorType.kBrushless);
         mArmPivotMotor.getEncoder().setPositionConversionFactor((1/Constants.kArmGearRatio) * 360);
-
+        mArmPivotMotor.setIdleMode(IdleMode.kBrake);
         mArmPivotEncoder = new DutyCycleEncoder(RobotMap.armPivotEncoder);
         mArmPivotEncoder.setDutyCycleRange(1.0/1025.0,  1024.0/1025.0);
         mArmPivotEncoder.setDistancePerRotation(360);
@@ -32,7 +33,7 @@ public class PivotArm extends SubsystemBase{
     }
 
     public void resetMotorEncoderToAbsoluteEncoder(){
-        mArmPivotMotor.getEncoder().setPosition(mArmPivotEncoder.getAbsolutePosition());
+        mArmPivotMotor.getEncoder().setPosition(mArmPivotEncoder.getDistance() % 360.0);
     }
 
     /**
@@ -80,11 +81,11 @@ public class PivotArm extends SubsystemBase{
 
         if (atPosition()){
             //true stuff here
-            mArmPivotMotor.setVoltage(0.0);
+            setMotor(0.0);
         }
         else{
             //false stuff here
-            mArmPivotMotor.setVoltage(mPidController.calculate(getAngle(), mCurrentDesiredAngle) * 12);
+            setMotor(mPidController.calculate(getAngle(), mCurrentDesiredAngle) * 12);
         }
         if(RobotState.isDisabled())
         {

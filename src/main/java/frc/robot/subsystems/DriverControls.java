@@ -5,36 +5,43 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
-import frc.robot.commands.PlaceGamePiece;
+import frc.robot.commands.GoToPlacement;
 import frc.robot.commands.RearVisionSteerAndDrive;
 import frc.robot.commands.ToggleIntake;
+import frc.robot.commands.DebugCommands.CymbalSpinManual;
 import frc.robot.commands.DebugCommands.LeftSolenoid;
 import frc.robot.commands.DebugCommands.ManualRotate;
 import frc.robot.commands.DebugCommands.RightSolenoid;
 import frc.robot.commands.Intake.GoHome;
+import frc.robot.commands.Intake.RotateCone;
 import frc.robot.game.Placement;
 import frc.robot.shuffleboard.tabs.tabsUtil.XboxControllerConfigValues;
 import frc.robot.util.SWATXboxController;
 
-public class DriverControls extends SubsystemBase{
+public class DriverControls extends SubsystemBase {
     private SWATXboxController driverController;
     private SWATXboxController operatorController;
     private SWATXboxController debugController;
     DriverControlType selectedControls;
 
     public static SendableChooser<DriverControlType> controllerConfigChooser;
+
     private enum DriverControlType {
         Classic,
         Forza,
     }
 
     /**
-     * Creates a DriverControls subsystem. The subsystem used to keep track of the driver's controls based on the status of a sendable chooser.
+     * Creates a DriverControls subsystem. The subsystem used to keep track of the
+     * driver's controls based on the status of a sendable chooser.
      */
-    public DriverControls(){
-        driverController = new SWATXboxController(Constants.kDriverPort, "Driver", XboxControllerConfigValues.kDriverControllerDefaultConfig);
-        operatorController = new SWATXboxController(Constants.kOperatorPort, "Operator", XboxControllerConfigValues.kOperatorControllerDefaultConfig);
-        debugController = new SWATXboxController(Constants.kDebugPort, "Debug", XboxControllerConfigValues.kOperatorControllerDefaultConfig);
+    public DriverControls() {
+        driverController = new SWATXboxController(Constants.kDriverPort, "Driver",
+                XboxControllerConfigValues.kDriverControllerDefaultConfig);
+        operatorController = new SWATXboxController(Constants.kOperatorPort, "Operator",
+                XboxControllerConfigValues.kOperatorControllerDefaultConfig);
+        debugController = new SWATXboxController(Constants.kDebugPort, "Debug",
+                XboxControllerConfigValues.kOperatorControllerDefaultConfig);
 
         controllerConfigChooser = new SendableChooser<DriverControlType>();
         controllerConfigChooser.addOption("Forza", DriverControlType.Forza);
@@ -46,31 +53,24 @@ public class DriverControls extends SubsystemBase{
     /**
      * Get the current selected driver controls
      */
-    public DriverControlType getCurrentDriverControls(){
+    public DriverControlType getCurrentDriverControls() {
         return selectedControls;
     }
 
     /**
      * Get drivetrain throttle control value
+     * 
      * @return a {@link double} between -1 and 1
      */
-    public SWATXboxController getDriverController(){
-        return driverController;
-    }
-
-    public SWATXboxController getDebugController(){
-        return debugController;
-    }
-
-    public double getThrottle(){
-        switch(selectedControls){
+    public double getThrottle() {
+        switch (selectedControls) {
             default:
             case Classic:
                 return driverController.getLeftY();
             case Forza:
-                if(driverController.getLeftTriggerAxis() > 0){
+                if (driverController.getLeftTriggerAxis() > 0) {
                     return driverController.getLeftTriggerAxis();
-                } else if (driverController.getRightTriggerAxis() > 0){
+                } else if (driverController.getRightTriggerAxis() > 0) {
                     return -driverController.getRightTriggerAxis();
                 } else {
                     return 0.0;
@@ -80,10 +80,11 @@ public class DriverControls extends SubsystemBase{
 
     /**
      * Get drivetrain turn control value For curvature drive, 1 is counterclockwise.
+     * 
      * @return a {@link double} between -1 and 1
      */
-    public double getTurn(){
-        switch(selectedControls){
+    public double getTurn() {
+        switch (selectedControls) {
             default:
             case Classic:
                 return -driverController.getRightX();
@@ -96,8 +97,8 @@ public class DriverControls extends SubsystemBase{
      * 
      * @return Whether or not to turn quickly and/or allow turn in place.
      */
-    public boolean getQuickTurn(){
-        switch(selectedControls){
+    public boolean getQuickTurn() {
+        switch (selectedControls) {
             default:
             case Classic:
                 return driverController.getRightTriggerDigital();
@@ -110,8 +111,8 @@ public class DriverControls extends SubsystemBase{
      * 
      * @return Whether or not to drive in creep mode
      */
-    public boolean getCreepMode(){
-        switch(selectedControls){
+    public boolean getCreepMode() {
+        switch (selectedControls) {
             default:
             case Classic:
                 return driverController.getLeftTriggerDigital();
@@ -120,8 +121,8 @@ public class DriverControls extends SubsystemBase{
         }
     }
 
-    public boolean getVisionLineup(){
-        switch(selectedControls){
+    public boolean getVisionLineup() {
+        switch (selectedControls) {
             default:
             case Classic:
                 return driverController.getAButton();
@@ -130,8 +131,8 @@ public class DriverControls extends SubsystemBase{
         }
     }
 
-    public boolean getIntakeMode(){
-        switch(selectedControls){
+    public boolean getIntakeMode() {
+        switch (selectedControls) {
             default:
             case Classic:
                 return driverController.getBButton();
@@ -140,66 +141,91 @@ public class DriverControls extends SubsystemBase{
         }
     }
 
-    //Operator Controls
+    // Operator Controls
 
-    public boolean o_lowCubePlacement(){
-        RobotContainer.S_PROTRUDER.setCurrentPlacement(Placement.LOW_PLACEMENT_CUBE);
+    public boolean o_lowCubePlacement() {
+        RobotContainer.SetCurrentPlacement(Placement.LOW_PLACEMENT_CUBE);
         return operatorController.getPOVDown();
     }
 
-    public boolean o_medCubePlacement(){
-        RobotContainer.S_PROTRUDER.setCurrentPlacement(Placement.MED_PLACEMENT_CUBE);
+    public boolean o_medCubePlacement() {
+        RobotContainer.SetCurrentPlacement(Placement.MED_PLACEMENT_CUBE);
         return operatorController.getPOVLeft();
     }
 
-    public boolean o_highCubePlacement(){
-        RobotContainer.S_PROTRUDER.setCurrentPlacement(Placement.HIGH_PLACEMENT_CUBE);
+    public boolean o_highCubePlacement() {
+        RobotContainer.SetCurrentPlacement(Placement.HIGH_PLACEMENT_CUBE);
         return operatorController.getPOVUp();
     }
 
-    public boolean o_lowConePlacement(){
-        RobotContainer.S_PROTRUDER.setCurrentPlacement(Placement.LOW_PLACEMENT_CONE);
+    public boolean o_lowConePlacement() {
+        RobotContainer.SetCurrentPlacement(Placement.LOW_PLACEMENT_CONE);
         return operatorController.getAButton();
     }
 
-    public boolean o_medConePlacement(){
-        RobotContainer.S_PROTRUDER.setCurrentPlacement(Placement.MED_PLACEMENT_CONE);
+    public boolean o_medConePlacement() {
+        RobotContainer.SetCurrentPlacement(Placement.MED_PLACEMENT_CONE);
         return operatorController.getBButton();
     }
 
-    public boolean o_highConePlacement(){
-        RobotContainer.S_PROTRUDER.setCurrentPlacement(Placement.HIGH_PLACEMENT_CONE);
+    public boolean o_highConePlacement() {
+        RobotContainer.SetCurrentPlacement(Placement.HIGH_PLACEMENT_CONE);
         return operatorController.getYButton();
     }
-
     public boolean o_goHome(){
-        return !o_highConePlacement() && !o_highCubePlacement() && !o_medConePlacement() && !o_medCubePlacement() && !o_lowConePlacement() && !o_lowCubePlacement();
+        if(!o_lowConePlacement() && !o_lowCubePlacement() && !o_medConePlacement() && !o_medCubePlacement()
+                && !o_medConePlacement() && !o_highConePlacement() && !o_highCubePlacement()){
+            RobotContainer.SetCurrentPlacement(Placement.HOME);
+            return true;
+        }
+        return false;
     }
 
+    public boolean o_wantSpin() {
+        return operatorController.getLeftBumper();
+    }
 
+    // Operator LED Control
 
-    //Operator LED Control
+    // Debug Controls
 
-
-
-    //Debug Controls
-
-    public double d_pivotArmManual(){
+    public double d_pivotArmManual() {
         return debugController.getRightY();
     }
 
-    public boolean d_wantArmManual(){
-        return d_pivotArmManual() > 0;
+    public boolean d_wantArmManual() {
+        return d_pivotArmManual() != 0;
     }
 
-    public boolean d_getIntakeLeft(){
+    public boolean d_getIntakeLeft() {
         return debugController.getLeftTriggerDigital();
     }
 
-    public boolean d_getIntakeRight(){
+    public boolean d_getIntakeRight() {
         return debugController.getRightTriggerDigital();
     }
 
+    public double d_cymbalThrottle() {
+        return debugController.getLeftY();
+    }
+
+    public boolean d_wantCymbalManual() {
+        return d_cymbalThrottle() != 0;
+    }
+
+    // Debug Tabs
+
+    public boolean debugTabs() {
+        return driverController.getStartButton() && driverController.getBackButton();
+    }
+
+    public boolean o_debugTabs() {
+        return operatorController.getStartButton() && operatorController.getBackButton();
+    }
+
+    public boolean d_debugTabs() {
+        return debugController.getStartButton() && debugController.getBackButton();
+    }
 
     /**
      * Register all the controls for the robot. Note that selected controls updates won't happen without a roborio reboot due to the way that triggers work.
@@ -212,30 +238,32 @@ public class DriverControls extends SubsystemBase{
         new Trigger(this::getIntakeMode).onTrue(new ToggleIntake(intake));
 
         //Operator
-        new Trigger(this::o_lowCubePlacement).onTrue(new PlaceGamePiece(protruder, arm));
-        new Trigger(this::o_lowConePlacement).onTrue(new PlaceGamePiece(protruder, arm));
-        new Trigger(this::o_medConePlacement).onTrue(new PlaceGamePiece(protruder, arm));
-        new Trigger(this::o_medCubePlacement).onTrue(new PlaceGamePiece(protruder, arm));
-        new Trigger(this::o_highConePlacement).onTrue(new PlaceGamePiece(protruder, arm));
-        new Trigger(this::o_highCubePlacement).onTrue(new PlaceGamePiece(protruder, arm));
+        new Trigger(this::o_lowCubePlacement).onTrue(new GoToPlacement(Placement.LOW_PLACEMENT_CUBE));
+        new Trigger(this::o_lowConePlacement).onTrue(new GoToPlacement(Placement.LOW_PLACEMENT_CONE));
+        new Trigger(this::o_medConePlacement).onTrue(new GoToPlacement(Placement.MED_PLACEMENT_CONE));
+        new Trigger(this::o_medCubePlacement).onTrue(new GoToPlacement(Placement.MED_PLACEMENT_CUBE));
+        new Trigger(this::o_highConePlacement).onTrue(new GoToPlacement(Placement.HIGH_PLACEMENT_CONE));
+        new Trigger(this::o_highCubePlacement).onTrue(new GoToPlacement(Placement.HIGH_PLACEMENT_CONE));
         new Trigger(this::o_goHome).whileTrue(new GoHome(arm, protruder));
+        new Trigger(this::o_wantSpin).onTrue(new RotateCone());
 
         //Debug
         new Trigger(this::d_getIntakeLeft).onTrue(new LeftSolenoid(intake));
         new Trigger(this::d_getIntakeRight).onTrue(new RightSolenoid(intake));
         new Trigger(this::d_wantArmManual).whileTrue(new ManualRotate(arm, this));
+        new Trigger(this::d_wantCymbalManual).whileTrue(new CymbalSpinManual(intake, this));
     }
 
     @Override
     public void periodic() {
-        if(controllerConfigChooser.getSelected() != null){
-            if(selectedControls != controllerConfigChooser.getSelected()){
+        if (controllerConfigChooser.getSelected() != null) {
+            if (selectedControls != controllerConfigChooser.getSelected()) {
                 selectedControls = controllerConfigChooser.getSelected();
-                //registerBindings(); TODO: Maybe someday we can un-declare triggers.
+                // registerBindings(); TODO: Maybe someday we can un-declare triggers.
             }
         } else {
             selectedControls = DriverControlType.Classic;
         }
     }
-    
+
 }
