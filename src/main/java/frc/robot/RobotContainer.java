@@ -30,10 +30,11 @@ import frc.robot.game.Placement;
 import frc.robot.shuffleboard.ShuffleboardManager;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.DriverControls;
+import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.PivotArm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Protruder;
-import frc.robot.subsystems.TwoLEDSubsytem;
+import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.VisionSubsystem;
 
 public class RobotContainer {
@@ -53,7 +54,7 @@ public class RobotContainer {
   public static final Claw S_INTAKE = new Claw();
   public static final Protruder S_PROTRUDER = new Protruder();
   public static final PivotArm S_PIVOTARM = new PivotArm();
-  public static final TwoLEDSubsytem S_TWO_LED_SUBSYTEM = new TwoLEDSubsytem();
+  public static final LEDs S_TWO_LED_SUBSYTEM = new LEDs();
 
   private static GamePieceMode ES_CURRENT_GAME_PIECE_MODE = GamePieceMode.CubeMode;
   

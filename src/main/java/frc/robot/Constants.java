@@ -58,4 +58,8 @@ public class Constants {
     public static final double kClawSpinnerSpeed = 0.7;
     public static final double kClawTimeFrame = 3.0;
 
+    //LEDs
+    public static final int kTotalLEDCount = 24;
+    public static final int HalfOfLEDCount = kTotalLEDCount * 5;
+
 }
