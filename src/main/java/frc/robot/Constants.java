@@ -60,6 +60,4 @@ public class Constants {
 
     //LEDs
     public static final int kTotalLEDCount = 24;
-    public static final int HalfOfLEDCount = kTotalLEDCount * 5;
-
 }

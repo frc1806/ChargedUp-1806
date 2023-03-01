@@ -31,17 +31,12 @@ public class LEDs extends SubsystemBase {
 
 
 
-          //CONE LEDS
-          for(var i = 0; i < mLEDBuffer.getLength() - Constants.kTotalLEDCount; i++) {
+          //this will set the leds to black which will also be off
+         
+          for(var i = 0; i < mLEDBuffer.getLength(); i++) {
 
             mLEDBuffer.setRGB(i, 0, 0, 0);
 
-        }
-
-        //CUBE LEDS
-        for(var i = 12; i < mLEDBuffer.getLength() - Constants.kTotalLEDCount; i++ ) {
-
-            mLEDBuffer.setRGB(i, 0,  0, 0);
         }
 
 
@@ -54,18 +49,14 @@ public class LEDs extends SubsystemBase {
 
     public void setConeLEDOn(){
 
-        //CONE LEDS
-        for(var i = 0; i < mLEDBuffer.getLength() - Constants.kTotalLEDCount; i++) {
+        //this will set the leds to an orange color
+
+        for(var i = 0; i < mLEDBuffer.getLength(); i++) {
 
             mLEDBuffer.setRGB(i, 255, 129, 3);
 
         }
 
-        //CUBE LEDS
-        for(var i = 12; i < mLEDBuffer.getLength() - Constants.kTotalLEDCount; i++ ) {
-
-            mLEDBuffer.setRGB(i, 0,  0, 0);
-        }
 
 
 
@@ -75,15 +66,9 @@ public class LEDs extends SubsystemBase {
     public void setCubeLEDOn(){
 
 
-          //CONE LEDS
-          for(var i = 0; i < mLEDBuffer.getLength() - Constants.kTotalLEDCount; i++) {
-
-            mLEDBuffer.setRGB(i, 0, 0, 0);
-
-        }
-
-        //CUBE LEDS
-        for(var i = 12; i < mLEDBuffer.getLength() - Constants.kTotalLEDCount; i++ ) {
+        //this will set the leds to a purple color
+        
+        for(var i = 0; i < mLEDBuffer.getLength(); i++ ) {
 
             mLEDBuffer.setRGB(i, 154,  3, 255);
         }
