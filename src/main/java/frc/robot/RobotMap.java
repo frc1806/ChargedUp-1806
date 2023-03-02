@@ -34,4 +34,7 @@ public class RobotMap {
     //Analog
     public static final int protrusionStringPotentiometer = 4;
 
+    //LEDs
+    public static final int LEDStrip = 9;
+
 }

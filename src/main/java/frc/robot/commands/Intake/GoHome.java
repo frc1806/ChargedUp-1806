@@ -27,8 +27,8 @@ public class GoHome extends CommandBase {
 
     @Override
     public void initialize() {
-        mArm.goToPosition(0);
-        mProtruder.Extend(Placement.Home);
+        mArm.goToPosition(Placement.HOME.getPivotAngle());
+        mProtruder.Extend(Placement.HOME.getExtendDistance());
     }
 
     @Override

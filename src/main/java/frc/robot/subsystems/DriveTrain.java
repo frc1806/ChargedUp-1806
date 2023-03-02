@@ -79,7 +79,6 @@ public class DriveTrain extends SubsystemBase{
 
         mDifferentialDrive = new DifferentialDrive(mLeftMotorGroup, mRightMotorGroup);
         mDifferentialDriveKinematics = new DifferentialDriveKinematics(Constants.kDriveTrainTrackWidthMeters);
-        
 
         mLeftLeader.setSmartCurrentLimit(Constants.kDriveTrainCurrentLimit);
         mLeftFollower.setSmartCurrentLimit(Constants.kDriveTrainCurrentLimit);

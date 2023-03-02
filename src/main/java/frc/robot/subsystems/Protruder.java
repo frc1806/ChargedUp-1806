@@ -1,105 +1,136 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.util.CircularBuffer;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
+import frc.robot.drivers.StringPotentiometer;
 import frc.robot.game.Placement;
 import frc.robot.util.TelescopingRotatingArmFeedForwards;
 
 public class Protruder extends SubsystemBase{
 
-    private TalonSRX mInnerStageMotor, mOuterStageMotor;
-    private enum InnerStates {
-        HoldIn,
-        Retract,
-        HoldOut,
-        Extend,
+    private TalonSRX mFirstStageMotor, mSecondStageMotor;
+    private enum FirstStageStates {
+        Idle,
+        GoingToPosition,
+        AtPosition
     };
-    private enum OuterStates {
+    private enum SecondStageStates {
         HoldIn,
         Retract,
         HoldOut,
         Extend,
+        Disabled
     }
-    private Placement currentPlacement;
+    private double  mTargetTotalDistance;
     private PIDController mPidController;
-    private InnerStates mInnerStates;
-    private OuterStates mOuterStates;
-    private AnalogPotentiometer mPotentiometer;
-    private Double encoderSnapshot;
-    private DigitalInput mInnerLimitSwitch, mOuterLimitSwitch;
+    private FirstStageStates mFirstStageStates;
+    private SecondStageStates mSecondStageStates;
+    private StringPotentiometer mPotentiometer;
+    private DigitalInput mSecondStageRetractLimit, mSecondStageExtendLimit;
+    private double mFirstStageTargetDistance;
+    private CircularBuffer mSecondStageAmpsCircularBuffer;
+    private double mSecondStageCurrentRunningTotal = 0.0;
+    private double mSecondStageRetractLimitSwitchActiveTime = 0.0;
+    private double mSecondStageExtendLimitSwitchActiveTime = 0.0;
+
+    private boolean mWasSecondStageRetractLimitSwitchOn = false;
+    private boolean mWasSecondStageExtendLimitSwitchOn = false;
     
     public Protruder(){
-        mInnerStageMotor = new TalonSRX(RobotMap.protruderOuterStage);
-        mOuterStageMotor = new TalonSRX(RobotMap.protruderInnerStage);
-        mPotentiometer = new AnalogPotentiometer(RobotMap.protrusionStringPotentiometer);
-        mInnerLimitSwitch = new DigitalInput(RobotMap.protrusionLimitSwitchFront);
-        mOuterLimitSwitch = new DigitalInput(RobotMap.protrusionLimitSwitchEnd);
-        mInnerStates = InnerStates.Retract;
-        mOuterStates = OuterStates.Retract;
-        currentPlacement = Placement.Home;
+        mFirstStageMotor = new TalonSRX(RobotMap.protruderOuterStage);
+        mSecondStageMotor = new TalonSRX(RobotMap.protruderInnerStage);
+        mFirstStageMotor.setNeutralMode(NeutralMode.Brake);
+        mSecondStageMotor.setNeutralMode(NeutralMode.Brake);
+        mPotentiometer = new StringPotentiometer(RobotMap.protrusionStringPotentiometer);
+        mSecondStageRetractLimit = new DigitalInput(RobotMap.protrusionLimitSwitchFront);
+        mSecondStageExtendLimit = new DigitalInput(RobotMap.protrusionLimitSwitchEnd);
+        mFirstStageStates = FirstStageStates.Idle;
+        mSecondStageStates = SecondStageStates.Retract;
+        mTargetTotalDistance = 0.0;
         mPidController = new PIDController(Constants.kProtruderkP, Constants.kProtruderkI, Constants.kProtruderkD);
-        encoderSnapshot = 0.0;
-    }
+        mSecondStageAmpsCircularBuffer = new CircularBuffer(15);
 
-    public Placement getCurrentPlacement(){
-        return currentPlacement;
-    }
-
-    public void setCurrentPlacement(Placement placement){
-        currentPlacement = placement;
     }
 
     private void goToExtension() {
-        encoderSnapshot = getDistance();
+        //Protect against someone asking for an extension of 0.
+        double projectedInnerExtensionDistance = Math.max(mTargetTotalDistance - Constants.kProtruderDistanceAtFullRetract, 0.0);
 
-        if(getCurrentPlacement().getExtendDistance() < Constants.kProtruderInnerStageLength){
-            mInnerStates = InnerStates.Extend;
+        if(projectedInnerExtensionDistance < Constants.kProtruderFirstStageExtension){
+            mFirstStageTargetDistance = projectedInnerExtensionDistance;
+            mFirstStageStates = FirstStageStates.GoingToPosition;
+
         } else {
-            mInnerStates = InnerStates.Extend;
-            mOuterStates = OuterStates.Extend;
+            //THERE IS DEAD SPOT WHERE A FEW DISTANCES WILL JUST BE THE OUTER STAGE AND NO INNER STAGE AND THE ARM WILL EXTEND ONLY TO THE OUTER PROTRUDER LENGTH INSTEAD OF THE ASKED FOR DISTANCE
+            //Sorry, I guess  ¯\_(ツ)_/¯
+            mFirstStageTargetDistance = Math.max(projectedInnerExtensionDistance - Constants.kProtruderSecondStageLength, 0.0);
+
+            mFirstStageStates = FirstStageStates.GoingToPosition;
+            mSecondStageStates = SecondStageStates.Extend;
         }
     }
 
-    private boolean checkIfAtPosition(){
-        if((getDistance() - encoderSnapshot - getCurrentPlacement().getExtendDistance()) < Constants.kProtruderAcceptableDistanceDelta){
-            mInnerStates = InnerStates.HoldOut;
-            mOuterStates = OuterStates.HoldOut;
-            return true;
-        }
-        return false;
+    public boolean checkIfAtPosition(){
+        return isFirstStatgeAtPosition() && isSecondStageAtPosition();
     }
 
     public void stop(){
-        mInnerStates = InnerStates.Retract;
-        mOuterStates = OuterStates.Retract;
+        mFirstStageStates = FirstStageStates.Idle;
+        mSecondStageStates = SecondStageStates.Disabled;
     }
 
     private Double getDistance(){
-        return mPotentiometer.get();
+        return Constants.kProtruderDistanceAtFullRetract + getFirstStageDistance() + getSecondStageDistance();
     }
 
-    public AnalogPotentiometer getPotentiometer(){
+    public Double getTargetDistance(){
+        return mTargetTotalDistance;
+    }
+
+    private Double getFirstStageDistance(){
+        return mPotentiometer.getExtensionInInches(); //TODO: May be some trig here.
+    }
+
+    private Double getSecondStageDistance(){
+        return mSecondStageExtendLimit.get()?0:Constants.kProtruderSecondStageLength;
+    }
+
+    private boolean isSecondStageAtPosition(){
+        return mSecondStageStates == SecondStageStates.HoldOut || mSecondStageStates == SecondStageStates.HoldIn;
+    }
+
+    private boolean isFirstStatgeAtPosition(){
+        return Math.abs(getFirstStageDistance() - mFirstStageTargetDistance) < Constants.kProtruderAcceptableDistanceDelta;
+    }
+
+    public StringPotentiometer getPotentiometer(){
         return mPotentiometer;
     }
 
     public TalonSRX getInnerStageMotor(){
-        return mInnerStageMotor;
+        return mFirstStageMotor;
     }
 
     public TalonSRX getOuterStageMotor(){
-        return mOuterStageMotor;
+        return mSecondStageMotor;
     }
 
-    public CommandBase Extend(Placement placement){
+    public CommandBase Extend(Double distance){
+        mTargetTotalDistance = distance;
         return this.runOnce(() -> goToExtension());
     }
 
@@ -107,39 +138,91 @@ public class Protruder extends SubsystemBase{
         return TelescopingRotatingArmFeedForwards.CalculateTelescopeFeedForward(RobotContainer.S_PIVOTARM.getAngle(), Constants.kProtruderFeedFowardGain);
     }
 
+    public boolean isSecondStageStalled(){
+       return  mSecondStageCurrentRunningTotal / mSecondStageAmpsCircularBuffer.size() > Constants.kProtruderSecondStageStallAmps;
+    }
+
+    public boolean isSecondStageRetractTimedOut(){
+        return Timer.getFPGATimestamp() > mSecondStageRetractLimitSwitchActiveTime + Constants.kProtruderSecondStageStallTimeout;
+    }
+
+    public boolean isSecondStageExtendTimedOut(){
+        return Timer.getFPGATimestamp() > mSecondStageExtendLimitSwitchActiveTime + Constants.kProtruderSecondStageStallTimeout;
+    }
+
+    public boolean isSafeToPassThroughRobot(){
+        return mSecondStageRetractLimit.get() && getFirstStageDistance() < Constants.kProtruderAcceptableFirstStageExtensionToPassThrough;
+    }
+
     @Override
     public void periodic() {
+        mSecondStageCurrentRunningTotal -= mSecondStageAmpsCircularBuffer.getFirst();
+        mSecondStageCurrentRunningTotal += mSecondStageMotor.getStatorCurrent();
+        mSecondStageAmpsCircularBuffer.addLast(mSecondStageMotor.getStatorCurrent());
 
-        if(mInnerLimitSwitch.get()){
-            mInnerStates = InnerStates.HoldOut;
+        if(!mWasSecondStageRetractLimitSwitchOn && mSecondStageRetractLimit.get()){
+            mSecondStageRetractLimitSwitchActiveTime = Timer.getFPGATimestamp();
         }
 
-        if(mOuterLimitSwitch.get()){
-            mOuterStates = OuterStates.HoldOut;
+        if(!mWasSecondStageExtendLimitSwitchOn && mSecondStageExtendLimit.get()){
+            mSecondStageExtendLimitSwitchActiveTime = Timer.getFPGATimestamp();
         }
 
-        switch(mInnerStates){
+        switch(mFirstStageStates){
+            case AtPosition:
+                mFirstStageMotor.set(ControlMode.PercentOutput, calculateFeedForward());
+                break;
+            case GoingToPosition:
+                mFirstStageMotor.set(ControlMode.PercentOutput, mPidController.calculate(getFirstStageDistance(), mFirstStageTargetDistance) + calculateFeedForward());
+                if(isFirstStatgeAtPosition()) mFirstStageStates = FirstStageStates.AtPosition;
+                break;
+            default:
+            case Idle:
+                mFirstStageMotor.set(ControlMode.PercentOutput, 0.0);
+                break;
+        }
+
+        switch(mSecondStageStates){
             case Retract:
-                mInnerStageMotor.set(TalonSRXControlMode.PercentOutput, -1.0);
+                if(mSecondStageRetractLimit.get())
+                {
+                    mSecondStageMotor.set(TalonSRXControlMode.PercentOutput, -0.25);
+                    if(isSecondStageStalled() || isSecondStageRetractTimedOut()){
+                        mSecondStageStates = SecondStageStates.HoldIn;
+                    }
+                }
+                else{
+                    mSecondStageMotor.set(TalonSRXControlMode.PercentOutput, -1.0);
+                }
+            break;
             case HoldIn:
-                mInnerStageMotor.set(TalonSRXControlMode.PercentOutput, 0.08);
+                mSecondStageMotor.set(TalonSRXControlMode.PercentOutput, -0.08);
+                if(!mSecondStageRetractLimit.get()){
+                    mSecondStageStates= SecondStageStates.Retract;
+                }
+            break;
             case HoldOut: 
-                mInnerStageMotor.set(TalonSRXControlMode.PercentOutput, -0.08);
+                mSecondStageMotor.set(TalonSRXControlMode.PercentOutput, 0.08);
+                if(!mSecondStageExtendLimit.get()){
+                    mSecondStageStates= SecondStageStates.Extend;
+                }
+            break;
             case Extend:
-                mInnerStageMotor.set(TalonSRXControlMode.PercentOutput, mPidController.calculate(getCurrentPlacement().getExtendDistance()));
-                checkIfAtPosition();
-        }
-
-        switch(mOuterStates){
-            case Retract:
-                mOuterStageMotor.set(TalonSRXControlMode.PercentOutput, -1.0);
-            case HoldIn:
-                mOuterStageMotor.set(TalonSRXControlMode.PercentOutput, 0.08);
-            case HoldOut: 
-                mOuterStageMotor.set(TalonSRXControlMode.PercentOutput, -0.08);
-            case Extend:
-                mOuterStageMotor.set(TalonSRXControlMode.PercentOutput, mPidController.calculate(getCurrentPlacement().getExtendDistance()));
-                checkIfAtPosition();
+                if(mSecondStageExtendLimit.get())
+                {
+                    mSecondStageMotor.set(TalonSRXControlMode.PercentOutput, 0.25);
+                    if(isSecondStageStalled() || isSecondStageExtendTimedOut()){
+                        mSecondStageStates = SecondStageStates.HoldOut;
+                    }
+                }
+                else{
+                    mSecondStageMotor.set(TalonSRXControlMode.PercentOutput, 1.0);
+                }
+            break;
+            default:
+            case Disabled:
+                mSecondStageMotor.set(ControlMode.PercentOutput, 0);
+                break;
         }
     }
 }
