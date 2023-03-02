@@ -68,8 +68,14 @@ public class DriveTrain extends SubsystemBase{
         mLeftMotorGroup = new MotorControllerGroup(mLeftLeader, mLeftFollower);
         mRightMotorGroup = new MotorControllerGroup(mRightLeader, mRightFollower);
 
-        mLeftMotorGroup.setInverted(true);
-        mRightMotorGroup.setInverted(false);
+        if(Constants.isCompBot == false){
+            mLeftMotorGroup.setInverted(true);
+            mRightMotorGroup.setInverted(false);
+        } else {
+            mLeftMotorGroup.setInverted(false);
+            mRightMotorGroup.setInverted(true);
+        }
+        
 
         mDifferentialDrive = new DifferentialDrive(mLeftMotorGroup, mRightMotorGroup);
         mDifferentialDriveKinematics = new DifferentialDriveKinematics(Constants.kDriveTrainTrackWidthMeters);
