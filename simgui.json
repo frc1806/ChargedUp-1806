@@ -1,10 +1,23 @@
 {
   "HALProvider": {
-    "Other Devices": {
-      "SPARK MAX [1]": {
-        "header": {
-          "open": true
-        }
+    "Analog Inputs": {
+      "window": {
+        "visible": true
+      }
+    },
+    "DIO": {
+      "window": {
+        "visible": true
+      }
+    },
+    "Encoders": {
+      "window": {
+        "visible": true
+      }
+    },
+    "RoboRIO": {
+      "RoboRIO Input": {
+        "open": true
       }
     },
     "Solenoids": {

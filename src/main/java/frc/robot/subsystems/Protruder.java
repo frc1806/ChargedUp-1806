@@ -163,10 +163,11 @@ public class Protruder extends SubsystemBase{
         if(!mWasSecondStageRetractLimitSwitchOn && mSecondStageRetractLimit.get()){
             mSecondStageRetractLimitSwitchActiveTime = Timer.getFPGATimestamp();
         }
-
+        mWasSecondStageRetractLimitSwitchOn = mSecondStageRetractLimit.get();
         if(!mWasSecondStageExtendLimitSwitchOn && mSecondStageExtendLimit.get()){
             mSecondStageExtendLimitSwitchActiveTime = Timer.getFPGATimestamp();
         }
+        mWasSecondStageExtendLimitSwitchOn = mSecondStageExtendLimit.get();
 
         switch(mFirstStageStates){
             case AtPosition:
