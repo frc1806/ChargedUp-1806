@@ -151,79 +151,81 @@ public class Protruder extends SubsystemBase{
     }
 
     public boolean isSafeToPassThroughRobot(){
-        return mSecondStageRetractLimit.get() && getFirstStageDistance() < Constants.kProtruderAcceptableFirstStageExtensionToPassThrough;
+        return !Constants.isArmWiringPresent || (mSecondStageRetractLimit.get() && getFirstStageDistance() < Constants.kProtruderAcceptableFirstStageExtensionToPassThrough);
     }
 
     @Override
     public void periodic() {
-        mSecondStageCurrentRunningTotal -= mSecondStageAmpsCircularBuffer.getFirst();
-        mSecondStageCurrentRunningTotal += mSecondStageMotor.getStatorCurrent();
-        mSecondStageAmpsCircularBuffer.addLast(mSecondStageMotor.getStatorCurrent());
+        if(Constants.isArmWiringPresent){
+            mSecondStageCurrentRunningTotal -= mSecondStageAmpsCircularBuffer.getFirst();
+            mSecondStageCurrentRunningTotal += mSecondStageMotor.getStatorCurrent();
+            mSecondStageAmpsCircularBuffer.addLast(mSecondStageMotor.getStatorCurrent());
 
-        if(!mWasSecondStageRetractLimitSwitchOn && mSecondStageRetractLimit.get()){
-            mSecondStageRetractLimitSwitchActiveTime = Timer.getFPGATimestamp();
-        }
-        mWasSecondStageRetractLimitSwitchOn = mSecondStageRetractLimit.get();
-        if(!mWasSecondStageExtendLimitSwitchOn && mSecondStageExtendLimit.get()){
-            mSecondStageExtendLimitSwitchActiveTime = Timer.getFPGATimestamp();
-        }
-        mWasSecondStageExtendLimitSwitchOn = mSecondStageExtendLimit.get();
+            if(!mWasSecondStageRetractLimitSwitchOn && mSecondStageRetractLimit.get()){
+                mSecondStageRetractLimitSwitchActiveTime = Timer.getFPGATimestamp();
+            }
+            mWasSecondStageRetractLimitSwitchOn = mSecondStageRetractLimit.get();
+            if(!mWasSecondStageExtendLimitSwitchOn && mSecondStageExtendLimit.get()){
+                mSecondStageExtendLimitSwitchActiveTime = Timer.getFPGATimestamp();
+            }
+            mWasSecondStageExtendLimitSwitchOn = mSecondStageExtendLimit.get();
 
-        switch(mFirstStageStates){
-            case AtPosition:
-                mFirstStageMotor.set(ControlMode.PercentOutput, calculateFeedForward());
-                break;
-            case GoingToPosition:
-                mFirstStageMotor.set(ControlMode.PercentOutput, mPidController.calculate(getFirstStageDistance(), mFirstStageTargetDistance) + calculateFeedForward());
-                if(isFirstStatgeAtPosition()) mFirstStageStates = FirstStageStates.AtPosition;
-                break;
-            default:
-            case Idle:
-                mFirstStageMotor.set(ControlMode.PercentOutput, 0.0);
-                break;
-        }
+            switch(mFirstStageStates){
+                case AtPosition:
+                    mFirstStageMotor.set(ControlMode.PercentOutput, calculateFeedForward());
+                    break;
+                case GoingToPosition:
+                    mFirstStageMotor.set(ControlMode.PercentOutput, mPidController.calculate(getFirstStageDistance(), mFirstStageTargetDistance) + calculateFeedForward());
+                    if(isFirstStatgeAtPosition()) mFirstStageStates = FirstStageStates.AtPosition;
+                    break;
+                default:
+                case Idle:
+                    mFirstStageMotor.set(ControlMode.PercentOutput, 0.0);
+                    break;
+            }
 
-        switch(mSecondStageStates){
-            case Retract:
-                if(mSecondStageRetractLimit.get())
-                {
-                    mSecondStageMotor.set(TalonSRXControlMode.PercentOutput, -0.25);
-                    if(isSecondStageStalled() || isSecondStageRetractTimedOut()){
-                        mSecondStageStates = SecondStageStates.HoldIn;
+            switch(mSecondStageStates){
+                case Retract:
+                    if(mSecondStageRetractLimit.get())
+                    {
+                        mSecondStageMotor.set(TalonSRXControlMode.PercentOutput, -0.25);
+                        if(isSecondStageStalled() || isSecondStageRetractTimedOut()){
+                            mSecondStageStates = SecondStageStates.HoldIn;
+                        }
                     }
-                }
-                else{
-                    mSecondStageMotor.set(TalonSRXControlMode.PercentOutput, -1.0);
-                }
-            break;
-            case HoldIn:
-                mSecondStageMotor.set(TalonSRXControlMode.PercentOutput, -0.08);
-                if(!mSecondStageRetractLimit.get()){
-                    mSecondStageStates= SecondStageStates.Retract;
-                }
-            break;
-            case HoldOut: 
-                mSecondStageMotor.set(TalonSRXControlMode.PercentOutput, 0.08);
-                if(!mSecondStageExtendLimit.get()){
-                    mSecondStageStates= SecondStageStates.Extend;
-                }
-            break;
-            case Extend:
-                if(mSecondStageExtendLimit.get())
-                {
-                    mSecondStageMotor.set(TalonSRXControlMode.PercentOutput, 0.25);
-                    if(isSecondStageStalled() || isSecondStageExtendTimedOut()){
-                        mSecondStageStates = SecondStageStates.HoldOut;
+                    else{
+                        mSecondStageMotor.set(TalonSRXControlMode.PercentOutput, -1.0);
                     }
-                }
-                else{
-                    mSecondStageMotor.set(TalonSRXControlMode.PercentOutput, 1.0);
-                }
-            break;
-            default:
-            case Disabled:
-                mSecondStageMotor.set(ControlMode.PercentOutput, 0);
                 break;
+                case HoldIn:
+                    mSecondStageMotor.set(TalonSRXControlMode.PercentOutput, -0.08);
+                    if(!mSecondStageRetractLimit.get()){
+                        mSecondStageStates= SecondStageStates.Retract;
+                    }
+                break;
+                case HoldOut: 
+                    mSecondStageMotor.set(TalonSRXControlMode.PercentOutput, 0.08);
+                    if(!mSecondStageExtendLimit.get()){
+                        mSecondStageStates= SecondStageStates.Extend;
+                    }
+                break;
+                case Extend:
+                    if(mSecondStageExtendLimit.get())
+                    {
+                        mSecondStageMotor.set(TalonSRXControlMode.PercentOutput, 0.25);
+                        if(isSecondStageStalled() || isSecondStageExtendTimedOut()){
+                            mSecondStageStates = SecondStageStates.HoldOut;
+                        }
+                    }
+                    else{
+                        mSecondStageMotor.set(TalonSRXControlMode.PercentOutput, 1.0);
+                    }
+                break;
+                default:
+                case Disabled:
+                    mSecondStageMotor.set(ControlMode.PercentOutput, 0);
+                    break;
+            }
         }
     }
 }
