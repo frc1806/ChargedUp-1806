@@ -61,6 +61,8 @@ public class GoToPlacement extends CommandBase{
     
 
     private boolean checkIfNeedRetractionFirst(){
+        if(!Constants.isArmWiringPresent) return false;
+        
         double currentAngle = RobotContainer.S_PIVOTARM.getAngle();
         if(desiredPlacement.getPivotAngle() > 230.0 && currentAngle > 230.0){
             return false;
