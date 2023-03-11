@@ -109,7 +109,7 @@ public class RobotContainer {
    * Set button bindings for the driver in {@link DriverControls}, but set operator bindings here.
    */
   private void configureBindings() {
-    S_DRIVECONTROLS.registerTriggers(S_DRIVETRAIN, S_REAR_VISION_SUBSYSTEM, S_INTAKE, S_PROTRUDER, S_PIVOTARM);
+    S_DRIVECONTROLS.registerTriggers(S_DRIVETRAIN, S_REAR_VISION_SUBSYSTEM, S_INTAKE, S_PROTRUDER, S_PIVOTARM, S_TWO_LED_SUBSYTEM);
   }
 
   /**
