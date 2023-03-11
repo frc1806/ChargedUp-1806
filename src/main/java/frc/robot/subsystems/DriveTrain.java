@@ -101,7 +101,7 @@ public class DriveTrain extends SubsystemBase{
         mLeftEncoderSim = new EncoderSim(mLeftEncoder);
         mRightEncoderSim = new EncoderSim(mRightEncoder);
         mNavXYawSim = new SimDouble(SimDeviceDataJNI.getSimValueHandle(SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]"), "Yaw"));
-        mDifferentialDrivetrainSim = new DifferentialDrivetrainSim(DCMotor.getNEO(2), 6.6, 7.5, Units.lbsToKilograms(150.0), Units.inchesToMeters(2), Constants.kDriveTrainTrackWidthMeters, VecBuilder.fill(0.0000, 0.0000, 0.0005, 0.00, 0.00, 0.0000, 0.0000));
+        mDifferentialDrivetrainSim = new DifferentialDrivetrainSim(DCMotor.getNEO(2), 5.9, 7.5, Units.lbsToKilograms(118), Units.inchesToMeters(2), Constants.kDriveTrainTrackWidthMeters, VecBuilder.fill(0.0000, 0.0000, 0.0005, 0.00, 0.00, 0.0000, 0.0000));
     }
 
     public boolean powerBrake(double power, double turn, double brakePower){
