@@ -5,8 +5,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.commands.FeederStationLineupDrive;
 import frc.robot.commands.GoToPlacement;
 import frc.robot.commands.RearVisionSteerAndDrive;
+import frc.robot.commands.ScoringLineupDrive;
 import frc.robot.commands.ToggleIntake;
 import frc.robot.commands.DebugCommands.CymbalSpinManual;
 import frc.robot.commands.DebugCommands.LeftSolenoid;
@@ -131,6 +133,26 @@ public class DriverControls extends SubsystemBase {
         }
     }
 
+    public boolean getFeederLineup(){
+        switch (selectedControls) {
+            default:
+            case Classic:
+                return driverController.getYButton();
+            case Forza:
+                return driverController.getYButton();
+        }
+    }
+
+    public boolean getScoringLineup(){
+        switch (selectedControls) {
+            default:
+            case Classic:
+                return driverController.getXButton();
+            case Forza:
+                return driverController.getXButton();
+        }
+    }
+
     public boolean getIntakeMode() {
         switch (selectedControls) {
             default:
@@ -235,6 +257,8 @@ public class DriverControls extends SubsystemBase {
     public void registerTriggers(DriveTrain driveTrain, VisionSubsystem visionSubsystem, Claw intake, Protruder protruder, PivotArm arm){
         //Driver
         new Trigger(this::getVisionLineup).whileTrue(new RearVisionSteerAndDrive(driveTrain, this, visionSubsystem));
+        new Trigger(this::getFeederLineup).whileTrue(new FeederStationLineupDrive(driveTrain, this, visionSubsystem));
+        new Trigger(this::getScoringLineup).whileTrue(new ScoringLineupDrive(driveTrain, this, visionSubsystem));
         new Trigger(this::getIntakeMode).onTrue(new ToggleIntake(intake));
 
         //Operator

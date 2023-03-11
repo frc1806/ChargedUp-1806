@@ -30,7 +30,7 @@ public class VisionSubsystem extends SubsystemBase{
         limelightHostname = hostname;
         limelightTable = NetworkTableInstance.getDefault().getTable(limelightHostname);
         currentTimestamp = 0.0;
-        lastAllianceUpdate = 0.0;
+        lastAllianceUpdate = Double.NEGATIVE_INFINITY;
         currentAlliance = Alliance.Invalid;
     }
 
