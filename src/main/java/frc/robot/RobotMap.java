@@ -9,7 +9,6 @@ public class RobotMap {
 
     //ArmPivot
     public static final int armPivotMotor = 11;
-    public static final int armPivotEncoder = 10;
 
     // Protruder
     public static final int protruderInnerStage = 20;
@@ -30,6 +29,7 @@ public class RobotMap {
     public static final int clawBeamBreak = 5;
     public static final int protrusionLimitSwitchFront = 6;
     public static final int protrusionLimitSwitchEnd = 7;
+    public static final int armPivotEncoder = 9;
 
     //Analog
     public static final int protrusionStringPotentiometer = 4;

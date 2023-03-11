@@ -105,6 +105,7 @@ public class DriveTrain extends SubsystemBase{
     }
 
     public boolean powerBrake(double power, double turn, double brakePower){
+        /*
         if(Math.abs(getWheelSpeeds().leftMetersPerSecond) < Constants.kDriveTrainMinimumMovingSpeed && Math.abs(getWheelSpeeds().rightMetersPerSecond) < Constants.kDriveTrainMinimumMovingSpeed && Math.abs(power) < .005 && Math.abs(turn) < .005){
             mLeftLeader.set(brakePower);
             mLeftFollower.set(-brakePower);
@@ -115,6 +116,8 @@ public class DriveTrain extends SubsystemBase{
         else{
             return false;
         }
+        */
+        return false;
     }
 
     /**
