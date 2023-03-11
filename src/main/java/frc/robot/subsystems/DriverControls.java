@@ -9,6 +9,7 @@ import frc.robot.commands.FeederStationLineupDrive;
 import frc.robot.commands.GoToPlacement;
 import frc.robot.commands.RearVisionSteerAndDrive;
 import frc.robot.commands.ScoringLineupDrive;
+import frc.robot.commands.ToggleGamePieceMode;
 import frc.robot.commands.ToggleIntake;
 import frc.robot.commands.DebugCommands.CymbalSpinManual;
 import frc.robot.commands.DebugCommands.LeftSolenoid;
@@ -33,6 +34,8 @@ public class DriverControls extends SubsystemBase {
         Forza,
     }
 
+    public boolean isConeMode;
+
     /**
      * Creates a DriverControls subsystem. The subsystem used to keep track of the
      * driver's controls based on the status of a sendable chooser.
@@ -49,6 +52,7 @@ public class DriverControls extends SubsystemBase {
         controllerConfigChooser.addOption("Forza", DriverControlType.Forza);
         controllerConfigChooser.addOption("Classic", DriverControlType.Classic);
         selectedControls = DriverControlType.Classic;
+        isConeMode = true;
 
     }
 
@@ -165,38 +169,36 @@ public class DriverControls extends SubsystemBase {
 
     // Operator Controls
 
-    public boolean o_lowCubePlacement() {
-        RobotContainer.SetCurrentPlacement(Placement.LOW_PLACEMENT_CUBE);
+    public boolean o_lowPlacement() {
+        if(isConeMode == true){
+            RobotContainer.SetCurrentPlacement(Placement.LOW_PLACEMENT_CONE);
+        } else {
+            RobotContainer.SetCurrentPlacement(Placement.LOW_PLACEMENT_CUBE);
+        }
         return operatorController.getPOVDown();
     }
 
-    public boolean o_medCubePlacement() {
-        RobotContainer.SetCurrentPlacement(Placement.MED_PLACEMENT_CUBE);
+    public boolean o_medPlacement(){
+        if(isConeMode == true){
+            RobotContainer.SetCurrentPlacement(Placement.MED_PLACEMENT_CONE);
+        } else {
+            RobotContainer.SetCurrentPlacement(Placement.MED_PLACEMENT_CUBE);
+        }
         return operatorController.getPOVLeft();
     }
 
-    public boolean o_highCubePlacement() {
-        RobotContainer.SetCurrentPlacement(Placement.HIGH_PLACEMENT_CUBE);
+    public boolean o_highPlacement() {
+        if(isConeMode == true){
+            RobotContainer.SetCurrentPlacement(Placement.HIGH_PLACEMENT_CONE);
+        } else {
+            RobotContainer.SetCurrentPlacement(Placement.HIGH_PLACEMENT_CUBE);
+        }
         return operatorController.getPOVUp();
     }
 
-    public boolean o_lowConePlacement() {
-        RobotContainer.SetCurrentPlacement(Placement.LOW_PLACEMENT_CONE);
-        return operatorController.getAButton();
-    }
 
-    public boolean o_medConePlacement() {
-        RobotContainer.SetCurrentPlacement(Placement.MED_PLACEMENT_CONE);
-        return operatorController.getBButton();
-    }
-
-    public boolean o_highConePlacement() {
-        RobotContainer.SetCurrentPlacement(Placement.HIGH_PLACEMENT_CONE);
-        return operatorController.getYButton();
-    }
     public boolean o_goHome(){
-        if(!o_lowConePlacement() && !o_lowCubePlacement() && !o_medConePlacement() && !o_medCubePlacement()
-                && !o_medConePlacement() && !o_highConePlacement() && !o_highCubePlacement()){
+        if(!o_lowPlacement() && !o_medPlacement() && !o_highPlacement()){
             RobotContainer.SetCurrentPlacement(Placement.HOME);
             return true;
         }
@@ -205,6 +207,10 @@ public class DriverControls extends SubsystemBase {
 
     public boolean o_wantSpin() {
         return operatorController.getLeftBumper();
+    }
+
+    public boolean o_switchModes(){
+        return operatorController.getRightBumper();
     }
 
     // Operator LED Control
@@ -249,12 +255,14 @@ public class DriverControls extends SubsystemBase {
         return debugController.getStartButton() && debugController.getBackButton();
     }
 
+
+
     /**
      * Register all the controls for the robot. Note that selected controls updates won't happen without a roborio reboot due to the way that triggers work.
      * @param driveTrain Our one and only drivetrain
      * @param visionSubsystem our (currently) one and only vision subsystem representing the limelight
      */
-    public void registerTriggers(DriveTrain driveTrain, VisionSubsystem visionSubsystem, Claw intake, Protruder protruder, PivotArm arm){
+    public void registerTriggers(DriveTrain driveTrain, VisionSubsystem visionSubsystem, Claw intake, Protruder protruder, PivotArm arm, TwoLEDSubsytem led){
         //Driver
         new Trigger(this::getVisionLineup).whileTrue(new RearVisionSteerAndDrive(driveTrain, this, visionSubsystem));
         new Trigger(this::getFeederLineup).whileTrue(new FeederStationLineupDrive(driveTrain, this, visionSubsystem));
@@ -262,14 +270,12 @@ public class DriverControls extends SubsystemBase {
         new Trigger(this::getIntakeMode).onTrue(new ToggleIntake(intake));
 
         //Operator
-        new Trigger(this::o_lowCubePlacement).onTrue(new GoToPlacement(Placement.LOW_PLACEMENT_CUBE));
-        new Trigger(this::o_lowConePlacement).onTrue(new GoToPlacement(Placement.LOW_PLACEMENT_CONE));
-        new Trigger(this::o_medConePlacement).onTrue(new GoToPlacement(Placement.MED_PLACEMENT_CONE));
-        new Trigger(this::o_medCubePlacement).onTrue(new GoToPlacement(Placement.MED_PLACEMENT_CUBE));
-        new Trigger(this::o_highConePlacement).onTrue(new GoToPlacement(Placement.HIGH_PLACEMENT_CONE));
-        new Trigger(this::o_highCubePlacement).onTrue(new GoToPlacement(Placement.HIGH_PLACEMENT_CONE));
+        new Trigger(this::o_lowPlacement).onTrue(new GoToPlacement(RobotContainer.GetCurrentPlacement()));
+        new Trigger(this::o_medPlacement).onTrue(new GoToPlacement(RobotContainer.GetCurrentPlacement()));
+        new Trigger(this::o_highPlacement).onTrue(new GoToPlacement(RobotContainer.GetCurrentPlacement()));
         new Trigger(this::o_goHome).whileTrue(new GoHome(arm, protruder));
         new Trigger(this::o_wantSpin).onTrue(new RotateCone());
+        new Trigger(this::o_switchModes).onTrue(new ToggleGamePieceMode(led, this));
 
         //Debug
         new Trigger(this::d_getIntakeLeft).onTrue(new LeftSolenoid(intake));
