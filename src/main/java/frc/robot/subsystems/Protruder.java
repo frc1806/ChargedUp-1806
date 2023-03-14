@@ -85,7 +85,7 @@ public class Protruder extends SubsystemBase{
     }
 
     public boolean checkIfAtPosition(){
-        return isFirstStatgeAtPosition() && isSecondStageAtPosition();
+        return (isFirstStatgeAtPosition() && isSecondStageAtPosition()) || ! Constants.isArmWiringPresent;
     }
 
     public void stop(){
@@ -93,7 +93,7 @@ public class Protruder extends SubsystemBase{
         mSecondStageStates = SecondStageStates.Disabled;
     }
 
-    private Double getDistance(){
+    public Double getDistance(){
         return Constants.kProtruderDistanceAtFullRetract + getFirstStageDistance() + getSecondStageDistance();
     }
 

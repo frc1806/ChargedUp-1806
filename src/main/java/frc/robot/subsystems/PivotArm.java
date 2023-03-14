@@ -19,21 +19,29 @@ public class PivotArm extends SubsystemBase{
     private DutyCycleEncoder mArmPivotEncoder;
     private PIDController mPidController;
     private double mCurrentDesiredAngle; //the angle the rest of the robot wants this at.
+    private double mCurrentAngle;
     
     public PivotArm() {
 
         mArmPivotMotor = new CANSparkMax(RobotMap.armPivotMotor, MotorType.kBrushless);
         mArmPivotMotor.getEncoder().setPositionConversionFactor((1/Constants.kArmGearRatio) * 360);
         mArmPivotMotor.setIdleMode(IdleMode.kBrake);
+        mArmPivotMotor.setInverted(true);
         mArmPivotEncoder = new DutyCycleEncoder(RobotMap.armPivotEncoder);
         mArmPivotEncoder.setDutyCycleRange(1.0/1025.0,  1024.0/1025.0);
-        mArmPivotEncoder.setDistancePerRotation(360);
-        mCurrentDesiredAngle =0.0;
+        mArmPivotEncoder.setDistancePerRotation(360.0);
+        mCurrentDesiredAngle =180.0;
         mPidController = new PIDController(Constants.kPivotArmAngleKp, Constants.kPivotArmAngleKi, Constants.kPivotArmAngleKd);
+        mCurrentAngle = mArmPivotMotor.getEncoder().getPosition();
     }
 
     public void resetMotorEncoderToAbsoluteEncoder(){
-        mArmPivotMotor.getEncoder().setPosition(mArmPivotEncoder.getDistance() % 360.0);
+        double proposedNewPos = mArmPivotEncoder.getDistance();
+        if(proposedNewPos < 0)
+        {
+            proposedNewPos +=360;
+        }
+        mArmPivotMotor.getEncoder().setPosition(proposedNewPos);
     }
 
     /**
@@ -42,7 +50,7 @@ public class PivotArm extends SubsystemBase{
      */
     public double getAngle(){
 
-        return mArmPivotMotor.getEncoder().getPosition();
+        return mCurrentAngle;
     }
 
     /**
@@ -50,8 +58,9 @@ public class PivotArm extends SubsystemBase{
      * @param angle desired angle to go to, 0 degrees is straight up, 180 is straight down.
      * This arrangement allows us to use cosine for feedforwards.
      */
-    public CommandBase goToPosition(double angle){
-        return runOnce(() -> mCurrentDesiredAngle = angle);
+    public void goToPosition(double angle){
+        
+        mCurrentDesiredAngle = angle;
     }
 
     public boolean atPosition(){
@@ -78,7 +87,7 @@ public class PivotArm extends SubsystemBase{
 
     @Override
     public void periodic(){
-
+        mCurrentAngle = mArmPivotMotor.getEncoder().getPosition();
         if (atPosition()){
             //true stuff here
             setMotor(0.0);

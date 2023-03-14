@@ -1,10 +1,12 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.RobotContainer.GamePieceMode;
 import frc.robot.commands.FeederStationLineupDrive;
 import frc.robot.commands.GoToPlacement;
 import frc.robot.commands.RearVisionSteerAndDrive;
@@ -34,8 +36,6 @@ public class DriverControls extends SubsystemBase {
         Forza,
     }
 
-    public boolean isConeMode;
-
     /**
      * Creates a DriverControls subsystem. The subsystem used to keep track of the
      * driver's controls based on the status of a sendable chooser.
@@ -52,7 +52,6 @@ public class DriverControls extends SubsystemBase {
         controllerConfigChooser.addOption("Forza", DriverControlType.Forza);
         controllerConfigChooser.addOption("Classic", DriverControlType.Classic);
         selectedControls = DriverControlType.Classic;
-        isConeMode = true;
 
     }
 
@@ -169,40 +168,36 @@ public class DriverControls extends SubsystemBase {
 
     // Operator Controls
 
-    public boolean o_lowPlacement() {
-        if(isConeMode == true){
-            RobotContainer.SetCurrentPlacement(Placement.LOW_PLACEMENT_CONE);
-        } else {
-            RobotContainer.SetCurrentPlacement(Placement.LOW_PLACEMENT_CUBE);
-        }
-        return operatorController.getPOVDown();
+    public boolean o_lowConePlacement() {
+        return operatorController.getPOVDown() && RobotContainer.GetCurrentGamePieceMode() == GamePieceMode.ConeMode;
     }
 
-    public boolean o_medPlacement(){
-        if(isConeMode == true){
-            RobotContainer.SetCurrentPlacement(Placement.MED_PLACEMENT_CONE);
-        } else {
-            RobotContainer.SetCurrentPlacement(Placement.MED_PLACEMENT_CUBE);
-        }
-        return operatorController.getPOVLeft();
+    public boolean o_lowCubePlacement() {
+        return operatorController.getPOVDown() && RobotContainer.GetCurrentGamePieceMode() == GamePieceMode.CubeMode;
     }
 
-    public boolean o_highPlacement() {
-        if(isConeMode == true){
-            RobotContainer.SetCurrentPlacement(Placement.HIGH_PLACEMENT_CONE);
-        } else {
-            RobotContainer.SetCurrentPlacement(Placement.HIGH_PLACEMENT_CUBE);
-        }
-        return operatorController.getPOVUp();
+    public boolean o_medConePlacement(){
+        return operatorController.getPOVLeft() && RobotContainer.GetCurrentGamePieceMode() == GamePieceMode.ConeMode;
     }
 
+    public boolean o_medCubePlacement(){
+        return operatorController.getPOVLeft() && RobotContainer.GetCurrentGamePieceMode() == GamePieceMode.CubeMode;
+    }
+
+    public boolean o_highConePlacement() {
+        return operatorController.getPOVUp() && RobotContainer.GetCurrentGamePieceMode() == GamePieceMode.ConeMode;
+    }
+
+    public boolean o_highCubePlacement() {
+        return operatorController.getPOVUp() && RobotContainer.GetCurrentGamePieceMode() == GamePieceMode.CubeMode;
+    }
+
+    public boolean o_feederStation(){
+        return operatorController.getAButton();
+    }
 
     public boolean o_goHome(){
-        if(!o_lowPlacement() && !o_medPlacement() && !o_highPlacement()){
-            RobotContainer.SetCurrentPlacement(Placement.HOME);
-            return true;
-        }
-        return false;
+        return operatorController.getStartButton();
     }
 
     public boolean o_wantSpin() {
@@ -240,7 +235,6 @@ public class DriverControls extends SubsystemBase {
     public boolean d_wantCymbalManual() {
         return d_cymbalThrottle() != 0;
     }
-
     // Debug Tabs
 
     public boolean debugTabs() {
@@ -270,13 +264,16 @@ public class DriverControls extends SubsystemBase {
         new Trigger(this::getIntakeMode).onTrue(new ToggleIntake(intake));
 
         //Operator
-        new Trigger(this::o_lowPlacement).onTrue(new GoToPlacement(RobotContainer.GetCurrentPlacement()));
-        new Trigger(this::o_medPlacement).onTrue(new GoToPlacement(RobotContainer.GetCurrentPlacement()));
-        new Trigger(this::o_highPlacement).onTrue(new GoToPlacement(RobotContainer.GetCurrentPlacement()));
-        new Trigger(this::o_goHome).whileTrue(new GoHome(arm, protruder));
+        new Trigger(this::o_lowConePlacement).onTrue(new GoToPlacement(Placement.LOW_PLACEMENT_CONE));
+        new Trigger(this::o_medConePlacement).onTrue(new GoToPlacement(Placement.MED_PLACEMENT_CONE));
+        new Trigger(this::o_highConePlacement).onTrue(new GoToPlacement(Placement.HIGH_PLACEMENT_CONE));
+        new Trigger(this::o_lowCubePlacement).onTrue(new GoToPlacement(Placement.LOW_PLACEMENT_CUBE));
+        new Trigger(this::o_medCubePlacement).onTrue(new GoToPlacement(Placement.MED_PLACEMENT_CUBE));
+        new Trigger(this::o_highCubePlacement).onTrue(new GoToPlacement(Placement.HIGH_PLACEMENT_CUBE));
+        new Trigger(this::o_goHome).onTrue(new GoToPlacement(Placement.HOME));
+        new Trigger(this::o_feederStation).onTrue(new GoToPlacement(Placement.FEEDER_STATION));
         new Trigger(this::o_wantSpin).onTrue(new RotateCone());
-        new Trigger(this::o_switchModes).onTrue(new ToggleGamePieceMode(led, this));
-
+        new Trigger(this::o_switchModes).onTrue(new ToggleGamePieceMode());
         //Debug
         new Trigger(this::d_getIntakeLeft).onTrue(new LeftSolenoid(intake));
         new Trigger(this::d_getIntakeRight).onTrue(new RightSolenoid(intake));

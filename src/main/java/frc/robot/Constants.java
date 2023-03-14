@@ -47,8 +47,8 @@ public class Constants {
 
     
     //Arm Angle Constants
-    public static final double kArmGearRatio = 333.0 + (1.0/3.0);
-    public static final double kPivotArmAngleKp = 1.0/20.0;
+    public static final double kArmGearRatio = 272.222222222222;
+    public static final double kPivotArmAngleKp = 1.0/12.0;
     public static final double  kPivotArmAngleKi = 0.0;
     public static final double  kPivotArmAngleKd = 0.0;
     public static final double kAcceptableAngleDelta = 1.0;

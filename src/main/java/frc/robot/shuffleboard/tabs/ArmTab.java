@@ -34,7 +34,7 @@ public class ArmTab extends ShuffleboardTabBase {
     private GenericEntry leftSolenoidOn, rightSolenoidOn, beamTripped;
     private GenericEntry ProtruderDistance, ProtruderOutputA, ProtruderOutputB;
     private GenericEntry SpinnerOutput, SpinnerTemp;
-    private GenericEntry PivotDistance, PivotOutput, PivotAmps, PivotTemp, PivotAngle;
+    private GenericEntry PivotDistance, PivotOutput, PivotAmps, PivotTemp, PivotAngle, PivotAngleRelative;
     private GenericEntry placement;
 
     public ArmTab(){
@@ -125,14 +125,22 @@ public class ArmTab extends ShuffleboardTabBase {
             .withWidget(BuiltInWidgets.kNumberBar)
             .getEntry();
 
-        PivotAngle = mTab.add("Pivot Angle", mPivotArm.getAngle())
+        PivotAngle = mTab.add("Pivot Angle Absolute", mPivotArmEncoder.getDistance())
             .withPosition(9,2)
             .withSize(1,1)
             .withWidget(BuiltInWidgets.kDial)
             .getEntry();
+
+        PivotAngleRelative = mTab.add("Pivot Angle Relative", mPivotArm.getAngle())
+        .withPosition(8,3)
+        .withSize(1,1)
+        .withWidget(BuiltInWidgets.kDial)
+        .getEntry();
+
         
-        PivotDistance = mTab.add("Pivot Distance", mPivotArmEncoder.getDistance())
-            .withPosition(8,3)
+        
+        PivotDistance = mTab.add("Protruder Distance", mProtruder.getDistance())
+            .withPosition(9,4)
             .withSize(2,1)
             .withWidget(BuiltInWidgets.kNumberBar)
             .getEntry();
@@ -150,10 +158,11 @@ public class ArmTab extends ShuffleboardTabBase {
         SpinnerOutput.setDouble(mCymbalSpinner.getMotorOutputPercent());
         SpinnerTemp.setDouble(mCymbalSpinner.getTemperature());
         PivotOutput.setDouble(mPivotArmMotor.getAppliedOutput()) ;
-        PivotAngle.setDouble(mPivotArm.getAngle());
+        PivotAngle.setDouble(mPivotArmEncoder.getDistance());
+        PivotAngleRelative.setDouble(mPivotArmEncoder.getDistance());
         PivotAmps.setDouble(mPivotArmMotor.getOutputCurrent());
         PivotTemp.setDouble(mPivotArmMotor.getMotorTemperature());
-        PivotDistance.setDouble(mPivotArmEncoder.getDistance());
+        PivotDistance.setDouble(mProtruder.getDistance());
         placement.setString(RobotContainer.GetCurrentPlacement().getPlacementName());
     }
     

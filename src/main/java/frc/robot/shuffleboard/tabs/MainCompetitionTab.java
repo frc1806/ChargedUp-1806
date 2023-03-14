@@ -1,6 +1,7 @@
 package frc.robot.shuffleboard.tabs;
 
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.StringEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -12,6 +13,7 @@ import frc.robot.subsystems.DriverControls;
 public class MainCompetitionTab extends ShuffleboardTabBase{
     private GenericEntry leftDrivePower;
     private GenericEntry rightDrivePower;
+    private GenericEntry currentMode;
 
     @Override
     public void createEntries() {
@@ -35,6 +37,11 @@ public class MainCompetitionTab extends ShuffleboardTabBase{
             .withWidget(BuiltInWidgets.kNumberBar)
             .getEntry();
 
+        currentMode = mTab.add("Game Piece Mode", RobotContainer.GetCurrentGamePieceMode().name())
+            .withPosition(8, 2)
+            .withSize(2,1)
+            .withWidget(BuiltInWidgets.kTextView)
+            .getEntry();
         
     }
 
@@ -48,6 +55,7 @@ public class MainCompetitionTab extends ShuffleboardTabBase{
     public void update() {
         leftDrivePower.setDouble(RobotContainer.S_DRIVETRAIN.getLeftDrivePower());
         rightDrivePower.setDouble(RobotContainer.S_DRIVETRAIN.getRightDrivePower());
+        currentMode.setString(RobotContainer.GetCurrentGamePieceMode().name());
     }
     
 }

@@ -120,6 +120,11 @@ public class DriveTrain extends SubsystemBase{
         return false;
     }
 
+    public void setDrivePower(Double drivePower){
+        mLeftMotorGroup.set(drivePower);
+        mRightMotorGroup.set(drivePower);
+    }
+
     /**
      * Drive in teleop as normal
      * @param throttle Desired movement forward/backward (1 is full forward, -1 is full backward, 0 is no movement)

@@ -2,6 +2,7 @@ package frc.robot.commands.protruder;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 public class ProtruderGoToExtension extends CommandBase{
@@ -29,7 +30,7 @@ public class ProtruderGoToExtension extends CommandBase{
     @Override
     public boolean isFinished() {
         // TODO Auto-generated method stub
-        return RobotContainer.S_PROTRUDER.checkIfAtPosition();
+        return RobotContainer.S_PROTRUDER.checkIfAtPosition() || !Constants.isArmWiringPresent;
         }
     
 }

@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.Drive;
+import frc.robot.commands.GoToPlacement;
+import frc.robot.commands.ToggleIntake;
 import frc.robot.commands.AutoModes.DeadReckoningNoObstacle;
 import frc.robot.game.Placement;
 import frc.robot.shuffleboard.ShuffleboardManager;
@@ -117,10 +119,9 @@ public class RobotContainer {
    */
   private void configureAutonomousOptions(){
 
-/*
 // This will load the file "FullAuto.path" and generate it with a max velocity of 4 m/s and a max acceleration of 3 m/s^2
 // for every path in the group
-List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("FullAuto", new PathConstraints(4, 3));
+//List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("FullAuto", new PathConstraints(4, 3));
 
 
 
@@ -128,6 +129,13 @@ List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("FullAuto", ne
     // in your code that will be used by all path following commands.
     HashMap<String, Command> eventMap = new HashMap<>();
     //eventMap.put("marker1", new PrintCommand("Passed marker 1"));
+    eventMap.put("lowCube", new GoToPlacement(Placement.LOW_PLACEMENT_CUBE));
+    eventMap.put("lowCone", new GoToPlacement(Placement.LOW_PLACEMENT_CONE));
+    eventMap.put("medCube", new GoToPlacement(Placement.MED_PLACEMENT_CUBE));
+    eventMap.put("medCone", new GoToPlacement(Placement.MED_PLACEMENT_CONE));
+    eventMap.put("highCube", new GoToPlacement(Placement.HIGH_PLACEMENT_CUBE));
+    eventMap.put("highCone", new GoToPlacement(Placement.HIGH_PLACEMENT_CONE));
+
 
     RamseteAutoBuilder autoBuilder = new RamseteAutoBuilder(
         S_DRIVETRAIN::getPose, // Pose2d supplier
@@ -142,11 +150,18 @@ List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("FullAuto", ne
         true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
         S_DRIVETRAIN // The drive subsystem. Used to properly set the requirements of path following commands
     );
-    */
+
     // Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.
 
       //mSendableChooser.addOption("Full Auto", autoBuilder.fullAuto(pathGroup));
       mSendableChooser.addOption("Dead Reckoning No Obstacle", new DeadReckoningNoObstacle(S_DRIVETRAIN));
+      mSendableChooser.addOption("PlaceCubeHigh", new GoToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new ToggleIntake(S_INTAKE)));
+      mSendableChooser.addOption("DoNothing", new CommandBase() {
+        @Override
+        public void initialize() {
+          System.out.println("Nothing Auto. Fortnite Gaming.");
+        }
+      });
       mShuffleboardManager.addAutoChooser(mSendableChooser);
       
     }

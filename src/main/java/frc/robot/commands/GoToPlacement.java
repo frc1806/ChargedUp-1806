@@ -15,6 +15,7 @@ import frc.robot.game.Placement;
 public class GoToPlacement extends CommandBase{
 
     Placement desiredPlacement;
+    Command m_command;
 
     public GoToPlacement(Placement placement){
         desiredPlacement = placement;
@@ -36,27 +37,31 @@ public class GoToPlacement extends CommandBase{
         RobotContainer.SetCurrentPlacement(desiredPlacement);
         if(checkIfNeedRetractionFirst())
         {
-            CommandScheduler.getInstance().schedule(new ProtruderGoToExtension(Constants.kProtruderDistanceAtFullRetract)
-                .andThen(new ArmGoToAngle(desiredPlacement.getPivotAngle())
-                .andThen(new ProtruderGoToExtension(desiredPlacement.getExtendDistance()))));
+            m_command = new ProtruderGoToExtension(Constants.kProtruderDistanceAtFullRetract)
+            .andThen(new ArmGoToAngle(desiredPlacement.getPivotAngle())
+            .andThen(new ProtruderGoToExtension(desiredPlacement.getExtendDistance())));
         }
         else
         {
-            CommandScheduler.getInstance().schedule(new ParallelCommandGroup(
+            m_command = new ParallelCommandGroup(
                 new ArmGoToAngle(desiredPlacement.getPivotAngle()), 
-                new ProtruderGoToExtension(desiredPlacement.getExtendDistance())));
+                new ProtruderGoToExtension(desiredPlacement.getExtendDistance()));
+            
         }
-        
-        RobotContainer.S_PIVOTARM.goToPosition(RobotContainer.GetCurrentPlacement().getPivotAngle());
         // TODO Auto-generated method stub
 
-        
+        CommandScheduler.getInstance().schedule(m_command);
     }
 
     @Override
     public boolean isFinished() {
         return Math.abs(desiredPlacement.getPivotAngle() - RobotContainer.S_PIVOTARM.getAngle()) < Constants.kAcceptableAngleDelta
-            && RobotContainer.S_PROTRUDER.checkIfAtPosition() && RobotContainer.S_PROTRUDER.getTargetDistance() == desiredPlacement.getExtendDistance();
+            && ((RobotContainer.S_PROTRUDER.checkIfAtPosition() && RobotContainer.S_PROTRUDER.getTargetDistance() == desiredPlacement.getExtendDistance()) || !Constants.isArmWiringPresent);
+    }
+
+    @Override
+    public void end(boolean wasInterrupted){
+        m_command.end(wasInterrupted);
     }
     
 
