@@ -12,6 +12,6 @@ public class StringPotentiometer {
     }
 
     public double getExtensionInInches(){
-        return 6.606 * mAnalogInput.getVoltage();
+        return 34 - 6.606 * mAnalogInput.getVoltage();
     }
 }

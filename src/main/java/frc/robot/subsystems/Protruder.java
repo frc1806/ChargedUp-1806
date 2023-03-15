@@ -106,7 +106,7 @@ public class Protruder extends SubsystemBase{
     }
 
     private Double getSecondStageDistance(){
-        return mSecondStageExtendLimit.get()?0:Constants.kProtruderSecondStageLength;
+        return mSecondStageStates == SecondStageStates.HoldIn?0:Constants.kProtruderSecondStageLength;
     }
 
     private boolean isSecondStageAtPosition(){
@@ -199,15 +199,9 @@ public class Protruder extends SubsystemBase{
                 break;
                 case HoldIn:
                     mSecondStageMotor.set(TalonSRXControlMode.PercentOutput, -0.08);
-                    if(!mSecondStageRetractLimit.get()){
-                        mSecondStageStates= SecondStageStates.Retract;
-                    }
                 break;
                 case HoldOut: 
                     mSecondStageMotor.set(TalonSRXControlMode.PercentOutput, 0.08);
-                    if(!mSecondStageExtendLimit.get()){
-                        mSecondStageStates= SecondStageStates.Extend;
-                    }
                 break;
                 case Extend:
                     if(mSecondStageExtendLimit.get())
