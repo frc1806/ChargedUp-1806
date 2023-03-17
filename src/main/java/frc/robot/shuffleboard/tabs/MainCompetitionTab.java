@@ -1,7 +1,6 @@
 package frc.robot.shuffleboard.tabs;
 
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.StringEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;

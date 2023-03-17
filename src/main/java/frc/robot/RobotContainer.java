@@ -87,7 +87,7 @@ public class RobotContainer {
     mShuffleboardManager.registerTabs();
 
     DriverStation.silenceJoystickConnectionWarning(true);
-    compressor = new Compressor(PneumaticsModuleType.CTREPCM);
+    compressor = new Compressor(PneumaticsModuleType.REVPH);
     S_REAR_VISION_SUBSYSTEM.updateLimelightPose(Units.inchesToMeters(2), Units.inchesToMeters(2), Units.inchesToMeters(9), 180, 30, 0); //TODO: Update limelight pose to reflect actual robot
     //SET DEFAULT COMMANDS
     setDefaultCommands();
@@ -95,6 +95,7 @@ public class RobotContainer {
     configureBindings();
     configureAutonomousOptions();
     
+    compressor.enableAnalog(90.0,120.0);
   }
 
   /**
@@ -129,12 +130,12 @@ public class RobotContainer {
     // in your code that will be used by all path following commands.
     HashMap<String, Command> eventMap = new HashMap<>();
     //eventMap.put("marker1", new PrintCommand("Passed marker 1"));
-    eventMap.put("lowCube", new GoToPlacement(Placement.LOW_PLACEMENT_CUBE));
-    eventMap.put("lowCone", new GoToPlacement(Placement.LOW_PLACEMENT_CONE));
-    eventMap.put("medCube", new GoToPlacement(Placement.MED_PLACEMENT_CUBE));
-    eventMap.put("medCone", new GoToPlacement(Placement.MED_PLACEMENT_CONE));
-    eventMap.put("highCube", new GoToPlacement(Placement.HIGH_PLACEMENT_CUBE));
-    eventMap.put("highCone", new GoToPlacement(Placement.HIGH_PLACEMENT_CONE));
+    eventMap.put("lowCube", new GoToPlacement(Placement.LOW_PLACEMENT_CUBE, S_INTAKE));
+    eventMap.put("lowCone", new GoToPlacement(Placement.LOW_PLACEMENT_CONE, S_INTAKE));
+    eventMap.put("medCube", new GoToPlacement(Placement.MED_PLACEMENT_CUBE, S_INTAKE));
+    eventMap.put("medCone", new GoToPlacement(Placement.MED_PLACEMENT_CONE, S_INTAKE));
+    eventMap.put("highCube", new GoToPlacement(Placement.HIGH_PLACEMENT_CUBE, S_INTAKE));
+    eventMap.put("highCone", new GoToPlacement(Placement.HIGH_PLACEMENT_CONE, S_INTAKE));
 
 
     RamseteAutoBuilder autoBuilder = new RamseteAutoBuilder(
@@ -155,7 +156,7 @@ public class RobotContainer {
 
       //mSendableChooser.addOption("Full Auto", autoBuilder.fullAuto(pathGroup));
       mSendableChooser.addOption("Dead Reckoning No Obstacle", new DeadReckoningNoObstacle(S_DRIVETRAIN));
-      mSendableChooser.addOption("PlaceCubeHigh", new GoToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new ToggleIntake(S_INTAKE)));
+      mSendableChooser.addOption("PlaceCubeHigh", new GoToPlacement(Placement.HIGH_PLACEMENT_CUBE, S_INTAKE).andThen(new ToggleIntake(S_INTAKE)));
       mSendableChooser.addOption("DoNothing", new CommandBase() {
         @Override
         public void initialize() {

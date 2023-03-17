@@ -3,8 +3,6 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.GamePieceMode;
-import frc.robot.subsystems.DriverControls;
-import frc.robot.subsystems.TwoLEDSubsytem;
 
 public class ToggleGamePieceMode extends CommandBase{
 

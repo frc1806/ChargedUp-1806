@@ -11,8 +11,8 @@ public class RobotMap {
     public static final int armPivotMotor = 11;
 
     // Protruder
-    public static final int protruderInnerStage = 20;
-    public static final int protruderOuterStage = 21;
+    public static final int protruderFirstStage = 20;
+    public static final int protruderSecondStage = 21;
 
     //Claw Spinner
     public static final int clawSpinMotor = 30;

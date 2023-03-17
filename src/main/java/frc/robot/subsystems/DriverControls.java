@@ -1,14 +1,13 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.GamePieceMode;
 import frc.robot.commands.FeederStationLineupDrive;
-import frc.robot.commands.GoToPlacement;
+import frc.robot.commands.MoveArmToPlacement;
 import frc.robot.commands.RearVisionSteerAndDrive;
 import frc.robot.commands.ScoringLineupDrive;
 import frc.robot.commands.ToggleGamePieceMode;
@@ -17,7 +16,6 @@ import frc.robot.commands.DebugCommands.CymbalSpinManual;
 import frc.robot.commands.DebugCommands.LeftSolenoid;
 import frc.robot.commands.DebugCommands.ManualRotate;
 import frc.robot.commands.DebugCommands.RightSolenoid;
-import frc.robot.commands.Intake.GoHome;
 import frc.robot.commands.Intake.RotateCone;
 import frc.robot.game.Placement;
 import frc.robot.shuffleboard.tabs.tabsUtil.XboxControllerConfigValues;
@@ -208,6 +206,14 @@ public class DriverControls extends SubsystemBase {
         return operatorController.getRightBumper();
     }
 
+    public double o_spinnerThrottle(){
+        return operatorController.getRightY();
+    }
+
+    public boolean o_wantSpinThrottle(){
+        return o_spinnerThrottle() != 0.0;
+    }
+
     // Operator LED Control
 
     // Debug Controls
@@ -264,16 +270,17 @@ public class DriverControls extends SubsystemBase {
         new Trigger(this::getIntakeMode).onTrue(new ToggleIntake(intake));
 
         //Operator
-        new Trigger(this::o_lowConePlacement).onTrue(new GoToPlacement(Placement.LOW_PLACEMENT_CONE));
-        new Trigger(this::o_medConePlacement).onTrue(new GoToPlacement(Placement.MED_PLACEMENT_CONE));
-        new Trigger(this::o_highConePlacement).onTrue(new GoToPlacement(Placement.HIGH_PLACEMENT_CONE));
-        new Trigger(this::o_lowCubePlacement).onTrue(new GoToPlacement(Placement.LOW_PLACEMENT_CUBE));
-        new Trigger(this::o_medCubePlacement).onTrue(new GoToPlacement(Placement.MED_PLACEMENT_CUBE));
-        new Trigger(this::o_highCubePlacement).onTrue(new GoToPlacement(Placement.HIGH_PLACEMENT_CUBE));
-        new Trigger(this::o_goHome).onTrue(new GoToPlacement(Placement.HOME));
-        new Trigger(this::o_feederStation).onTrue(new GoToPlacement(Placement.FEEDER_STATION));
+        new Trigger(this::o_lowConePlacement).onTrue(new MoveArmToPlacement(Placement.LOW_PLACEMENT_CONE));
+        new Trigger(this::o_medConePlacement).onTrue(new MoveArmToPlacement(Placement.MED_PLACEMENT_CONE));
+        new Trigger(this::o_highConePlacement).onTrue(new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CONE));
+        new Trigger(this::o_lowCubePlacement).onTrue(new MoveArmToPlacement(Placement.LOW_PLACEMENT_CUBE));
+        new Trigger(this::o_medCubePlacement).onTrue(new MoveArmToPlacement(Placement.MED_PLACEMENT_CUBE));
+        new Trigger(this::o_highCubePlacement).onTrue(new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE));
+        new Trigger(this::o_goHome).onTrue(new MoveArmToPlacement(Placement.HOME));
+        new Trigger(this::o_feederStation).onTrue(new MoveArmToPlacement(Placement.FEEDER_STATION));
         new Trigger(this::o_wantSpin).onTrue(new RotateCone());
         new Trigger(this::o_switchModes).onTrue(new ToggleGamePieceMode());
+        new Trigger(this::o_wantSpinThrottle).whileTrue(new CymbalSpinManual(intake, this));
         //Debug
         new Trigger(this::d_getIntakeLeft).onTrue(new LeftSolenoid(intake));
         new Trigger(this::d_getIntakeRight).onTrue(new RightSolenoid(intake));

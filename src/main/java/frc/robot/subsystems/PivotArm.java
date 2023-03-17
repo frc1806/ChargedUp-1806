@@ -7,7 +7,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotState;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
@@ -88,6 +87,7 @@ public class PivotArm extends SubsystemBase{
     @Override
     public void periodic(){
         mCurrentAngle = mArmPivotMotor.getEncoder().getPosition();
+        
         if (atPosition()){
             //true stuff here
             setMotor(0.0);
@@ -100,9 +100,11 @@ public class PivotArm extends SubsystemBase{
         {
             resetMotorEncoderToAbsoluteEncoder();
         }
+        
 
     }
 
+    
 
 
 }

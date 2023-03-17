@@ -11,14 +11,20 @@ import frc.robot.RobotContainer;
 import frc.robot.commands.arm.ArmGoToAngle;
 import frc.robot.commands.protruder.ProtruderGoToExtension;
 import frc.robot.game.Placement;
+import frc.robot.subsystems.Claw;
 
 public class GoToPlacement extends CommandBase{
 
     Placement desiredPlacement;
     Command m_command;
+    Boolean mWasInterupted;
+    private Claw mClaw;
 
-    public GoToPlacement(Placement placement){
+    public GoToPlacement(Placement placement, Claw claw){
         desiredPlacement = placement;
+        mWasInterupted = false;
+        mClaw = claw;
+        addRequirements(claw);
     }
     @Override
     public void cancel() {
@@ -34,6 +40,8 @@ public class GoToPlacement extends CommandBase{
 
     @Override
     public void initialize() {
+        System.out.println("Init Running for GoToPlacement");
+        mClaw.closeBoth();
         RobotContainer.SetCurrentPlacement(desiredPlacement);
         if(checkIfNeedRetractionFirst())
         {
@@ -55,12 +63,21 @@ public class GoToPlacement extends CommandBase{
 
     @Override
     public boolean isFinished() {
+        if(RobotContainer.GetCurrentPlacement() != desiredPlacement){
+            return true; //SOME OTHER COMMAND HAS RUN
+        }
+
+        if(mWasInterupted){
+            return true;
+        }
         return Math.abs(desiredPlacement.getPivotAngle() - RobotContainer.S_PIVOTARM.getAngle()) < Constants.kAcceptableAngleDelta
             && ((RobotContainer.S_PROTRUDER.checkIfAtPosition() && RobotContainer.S_PROTRUDER.getTargetDistance() == desiredPlacement.getExtendDistance()) || !Constants.isArmWiringPresent);
     }
 
     @Override
     public void end(boolean wasInterrupted){
+        System.out.println("Go to placement ended. " + (wasInterrupted?"Interrupted":"Not Interrupted"));
+        mWasInterupted = wasInterrupted;
         m_command.end(wasInterrupted);
     }
     

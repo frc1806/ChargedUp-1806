@@ -4,12 +4,10 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.drivers.BeamBreak;
 import frc.robot.drivers.StringPotentiometer;
@@ -32,7 +30,7 @@ public class ArmTab extends ShuffleboardTabBase {
     private Placement currentPlacement;
 
     private GenericEntry leftSolenoidOn, rightSolenoidOn, beamTripped;
-    private GenericEntry ProtruderDistance, ProtruderOutputA, ProtruderOutputB;
+    private GenericEntry ProtruderDistance, PotentiometerRawVoltage, ProtruderOutputA, ProtruderOutputB, ProtruderFirstAmps, ProtruderSecondAmps;
     private GenericEntry SpinnerOutput, SpinnerTemp;
     private GenericEntry PivotDistance, PivotOutput, PivotAmps, PivotTemp, PivotAngle, PivotAngleRelative;
     private GenericEntry placement;
@@ -51,6 +49,7 @@ public class ArmTab extends ShuffleboardTabBase {
         mLeftSolenoid = mClaw.getLeftSolenoid();
         mRightSolenoid = mClaw.getRightSolenoid();
         currentPlacement = RobotContainer.GetCurrentPlacement();
+
     }
 
     @Override
@@ -86,6 +85,24 @@ public class ArmTab extends ShuffleboardTabBase {
         
         ProtruderDistance = mTab.add("Protruder First Stage Distance", mPotentiometer.getExtensionInInches())
             .withPosition(0,3)
+            .withSize(2,1)
+            .withWidget(BuiltInWidgets.kNumberBar)
+            .getEntry();
+
+        ProtruderFirstAmps = mTab.add("First Stage Amps", mProtruderMotorA.getStatorCurrent())
+            .withPosition(3,2)
+            .withSize(1,1)
+            .withWidget(BuiltInWidgets.kNumberBar)
+            .getEntry();
+
+        ProtruderSecondAmps = mTab.add("Second Stage Amps", mProtrusionMotorB.getStatorCurrent())
+            .withPosition(4,2)
+            .withSize(1,1)
+            .withWidget(BuiltInWidgets.kNumberBar)
+            .getEntry();
+
+        PotentiometerRawVoltage = mTab.add("String Potentiometer Raw Voltage", mPotentiometer.getRawVoltage())
+            .withPosition(3, 1)
             .withSize(2,1)
             .withWidget(BuiltInWidgets.kNumberBar)
             .getEntry();
@@ -164,6 +181,9 @@ public class ArmTab extends ShuffleboardTabBase {
         PivotTemp.setDouble(mPivotArmMotor.getMotorTemperature());
         PivotDistance.setDouble(mProtruder.getDistance());
         placement.setString(RobotContainer.GetCurrentPlacement().getPlacementName());
+        PotentiometerRawVoltage.setDouble(mPotentiometer.getRawVoltage());
+        ProtruderFirstAmps.setDouble(mProtruderMotorA.getStatorCurrent());
+        ProtruderSecondAmps.setDouble(mProtrusionMotorB.getStatorCurrent());
     }
     
 }

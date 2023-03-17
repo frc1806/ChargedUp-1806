@@ -68,7 +68,7 @@ public class DriveTrain extends SubsystemBase{
         mLeftMotorGroup = new MotorControllerGroup(mLeftLeader, mLeftFollower);
         mRightMotorGroup = new MotorControllerGroup(mRightLeader, mRightFollower);
 
-        if(Constants.isCompBot == false){
+        if(!Constants.isCompBot){
             mLeftMotorGroup.setInverted(true);
             mRightMotorGroup.setInverted(false);
         } else {

@@ -29,8 +29,8 @@ public class Claw extends SubsystemBase{
     private IntakeStates mIntakeStates;
 
     public Claw(){
-        mLeftSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, RobotMap.leftSolenoid);
-        mRightSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, RobotMap.rightSolenoid);
+        mLeftSolenoid = new Solenoid(PneumaticsModuleType.REVPH, RobotMap.leftSolenoid);
+        mRightSolenoid = new Solenoid(PneumaticsModuleType.REVPH, RobotMap.rightSolenoid);
         mIntakeStates = IntakeStates.Closed;
         mCymbalSpinner = new TalonSRX(RobotMap.clawSpinMotor);
         mBeamBreak = new BeamBreak(RobotMap.clawBeamBreak);
@@ -38,11 +38,12 @@ public class Claw extends SubsystemBase{
         mRunningTotal = 0.0;
     }
 
-    public void openBoth(){
-        System.out.println("Opened");
-        mIntakeStates = IntakeStates.Opened;
-        mLeftSolenoid.set(true);
-        mRightSolenoid.set(true);
+    public CommandBase openBoth(){
+        return this.runOnce(() -> {
+            mIntakeStates = IntakeStates.Opened;
+            mLeftSolenoid.set(true);
+            mRightSolenoid.set(true);
+        });
     }
 
     public void openLeft(){
@@ -55,11 +56,12 @@ public class Claw extends SubsystemBase{
         mRightSolenoid.set(true);
     }
 
-    public void closeBoth(){
-        mIntakeStates = IntakeStates.Closed;
-        System.out.println("closed");
-        mLeftSolenoid.set(false);
-        mRightSolenoid.set(false);
+    public CommandBase closeBoth(){
+        return this.runOnce(() -> {
+            mIntakeStates = IntakeStates.Closed;
+            mLeftSolenoid.set(false);
+            mRightSolenoid.set(false);
+        });
     }
 
     public void closeLeft(){
