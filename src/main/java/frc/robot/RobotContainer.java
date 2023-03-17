@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.Drive;
 import frc.robot.commands.GoToPlacement;
+import frc.robot.commands.MoveArmToPlacement;
 import frc.robot.commands.ToggleIntake;
 import frc.robot.commands.AutoModes.DeadReckoningNoObstacle;
 import frc.robot.game.Placement;
@@ -156,7 +157,7 @@ public class RobotContainer {
 
       //mSendableChooser.addOption("Full Auto", autoBuilder.fullAuto(pathGroup));
       mSendableChooser.addOption("Dead Reckoning No Obstacle", new DeadReckoningNoObstacle(S_DRIVETRAIN));
-      mSendableChooser.addOption("PlaceCubeHigh", new GoToPlacement(Placement.HIGH_PLACEMENT_CUBE, S_INTAKE).andThen(new ToggleIntake(S_INTAKE)));
+      mSendableChooser.addOption("PlaceCubeHigh", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new ToggleIntake(S_INTAKE)));
       mSendableChooser.addOption("DoNothing", new CommandBase() {
         @Override
         public void initialize() {

@@ -4,7 +4,7 @@ import edu.wpi.first.math.util.Units;
 
 public class Constants {
     //imortant
-    public static final boolean isCompBot = false;
+    public static final boolean isCompBot = true;
     public static final boolean isArmWiringPresent = true;
     //GAME
     public static final double kFieldLength = 16.54175;

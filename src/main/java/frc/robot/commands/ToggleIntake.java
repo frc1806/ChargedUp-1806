@@ -33,8 +33,7 @@ public class ToggleIntake extends CommandBase{
         }
 
         if(isOpen == false){
-            isOpen = true;
-            mIntake.openBoth();
+            isOpen = true;          
         } else {
             isOpen = false;
             mIntake.closeBoth();

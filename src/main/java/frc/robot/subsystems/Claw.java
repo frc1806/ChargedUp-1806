@@ -38,12 +38,10 @@ public class Claw extends SubsystemBase{
         mRunningTotal = 0.0;
     }
 
-    public CommandBase openBoth(){
-        return this.runOnce(() -> {
+    public void openBoth(){
             mIntakeStates = IntakeStates.Opened;
             mLeftSolenoid.set(true);
             mRightSolenoid.set(true);
-        });
     }
 
     public void openLeft(){
@@ -56,12 +54,10 @@ public class Claw extends SubsystemBase{
         mRightSolenoid.set(true);
     }
 
-    public CommandBase closeBoth(){
-        return this.runOnce(() -> {
+    public void closeBoth(){
             mIntakeStates = IntakeStates.Closed;
             mLeftSolenoid.set(false);
             mRightSolenoid.set(false);
-        });
     }
 
     public void closeLeft(){

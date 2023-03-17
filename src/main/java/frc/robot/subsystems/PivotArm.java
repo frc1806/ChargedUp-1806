@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
 import frc.robot.RobotMap;
+import frc.robot.game.Placement;
 
 public class PivotArm extends SubsystemBase{
 
@@ -29,7 +30,7 @@ public class PivotArm extends SubsystemBase{
         mArmPivotEncoder = new DutyCycleEncoder(RobotMap.armPivotEncoder);
         mArmPivotEncoder.setDutyCycleRange(1.0/1025.0,  1024.0/1025.0);
         mArmPivotEncoder.setDistancePerRotation(360.0);
-        mCurrentDesiredAngle =180.0;
+        mCurrentDesiredAngle =Placement.HOME.getPivotAngle();
         mPidController = new PIDController(Constants.kPivotArmAngleKp, Constants.kPivotArmAngleKi, Constants.kPivotArmAngleKd);
         mCurrentAngle = mArmPivotMotor.getEncoder().getPosition();
     }

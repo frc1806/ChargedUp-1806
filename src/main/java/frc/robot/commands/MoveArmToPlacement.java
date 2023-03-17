@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.commands.arm.ArmGoToAngle;
 import frc.robot.commands.protruder.ProtruderGoToExtension;
 import frc.robot.game.Placement;
@@ -18,8 +19,10 @@ public class MoveArmToPlacement extends SequentialCommandGroup {
   public MoveArmToPlacement(Placement placement) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new ProtruderGoToExtension(Constants.kProtruderDistanceAtFullRetract)
+    addCommands(
+      new ProtruderGoToExtension(Constants.kProtruderDistanceAtFullRetract)
       , new ArmGoToAngle(placement.getPivotAngle())
       , new ProtruderGoToExtension(placement.getExtendDistance()));
+      addRequirements(RobotContainer.S_INTAKE, RobotContainer.S_PIVOTARM, RobotContainer.S_PROTRUDER);
   }
 }

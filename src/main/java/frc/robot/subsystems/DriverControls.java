@@ -164,6 +164,10 @@ public class DriverControls extends SubsystemBase {
         }
     }
 
+    public boolean floorIntakeMode(){
+        return driverController.getRightBumper();
+    }
+
     // Operator Controls
 
     public boolean o_lowConePlacement() {
