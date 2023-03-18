@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.GamePieceMode;
 import frc.robot.commands.FeederStationLineupDrive;
@@ -217,8 +218,12 @@ public class DriverControls extends SubsystemBase {
         return operatorController.getLeftBumper();
     }
 
-    public boolean o_getGroundIntake(){
-        return operatorController.getYButton();
+    public boolean o_getGroundIntakeCube(){
+        return operatorController.getYButton() && RobotContainer.GetCurrentGamePieceMode() == GamePieceMode.CubeMode;
+    }
+
+    public boolean o_getGroundIntakeCone(){
+        return operatorController.getYButton() && RobotContainer.GetCurrentGamePieceMode() == GamePieceMode.CubeMode;
     }
 
     // Operator LED Control
@@ -284,7 +289,8 @@ public class DriverControls extends SubsystemBase {
         new Trigger(this::o_highCubePlacement).onTrue(new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE));
         new Trigger(this::o_goHome).onTrue(new MoveArmToPlacement(Placement.HOME));
         new Trigger(this::o_feederStation).onTrue(new MoveArmToPlacement(Placement.FEEDER_STATION));
-        new Trigger(this::o_getGroundIntake).onTrue(new GroundIntake());
+        new Trigger(this::o_getGroundIntakeCube).onTrue(new GroundIntake(GamePieceMode.CubeMode));
+        new Trigger(this::o_getGroundIntakeCone).onTrue(new GroundIntake(GamePieceMode.ConeMode));
         new Trigger(this::o_wantSpin).onTrue(new RotateCone());
         new Trigger(this::o_switchModes).onTrue(new ToggleGamePieceMode());
         new Trigger(this::o_wantSpinThrottle).whileTrue(new CymbalSpinManual(intake, this));

@@ -160,7 +160,8 @@ public class RobotContainer {
       //mSendableChooser.addOption("Full Auto", autoBuilder.fullAuto(pathGroup));
       mSendableChooser.addOption("Dead Reckoning No Obstacle", new DeadReckoningNoObstacle(S_DRIVETRAIN));
       mSendableChooser.addOption("PlaceCubeHigh", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new ToggleIntake(S_INTAKE)).andThen(new WaitCommand(2.0)).andThen(new MoveArmToPlacement(Placement.HOME)));
-      mSendableChooser.addOption("PlaceCubeHighLongMobility", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new ToggleIntake(S_INTAKE)).andThen(new WaitCommand(2.0)).andThen(new MoveArmToPlacement(Placement.HOME)).andThen(new TimedDriveCommand(S_DRIVETRAIN, 2.5, 0.25)));
+      mSendableChooser.addOption("PlaceCubeHighLongMobility", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new ToggleIntake(S_INTAKE)).andThen(new WaitCommand(2.0)).andThen(new MoveArmToPlacement(Placement.HOME)).andThen(new TimedDriveCommand(S_DRIVETRAIN, 0.5, 0.25)));
+      mSendableChooser.addOption("PlaceCubeHighShortMobility", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new ToggleIntake(S_INTAKE)).andThen(new WaitCommand(2.0)).andThen(new MoveArmToPlacement(Placement.HOME)).andThen(new TimedDriveCommand(S_DRIVETRAIN, 2.5, 0.25)));
       mSendableChooser.addOption("DoNothing", new CommandBase() {
         @Override
         public void initialize() {

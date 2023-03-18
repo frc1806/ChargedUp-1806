@@ -7,6 +7,7 @@ package frc.robot.commands.Intake;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.RobotContainer.GamePieceMode;
 import frc.robot.commands.Intake.CloseClaw;
 import frc.robot.commands.arm.ArmGoToAngle;
 import frc.robot.commands.protruder.ProtruderGoToExtension;
@@ -17,15 +18,26 @@ import frc.robot.game.Placement;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class GroundIntake extends SequentialCommandGroup {
   /** Creates a new MoveArmToPlacement. */
-  public GroundIntake() {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
+  public GroundIntake(GamePieceMode gamePieceMode) {
+
+
     addCommands(
       new ProtruderGoToExtension(Constants.kProtruderDistanceAtFullRetract)
       , new CloseClaw(RobotContainer.S_INTAKE)
-      , new ArmGoToAngle(Placement.GROUND_INTAKE.getPivotAngle())
+      , new ArmGoToAngle(getWantedIntakePlacement(gamePieceMode).getPivotAngle())
       , new OpenClaw(RobotContainer.S_INTAKE)
-      , new ProtruderGoToExtension(Placement.GROUND_INTAKE.getExtendDistance()));
+      , new ProtruderGoToExtension(getWantedIntakePlacement(gamePieceMode).getExtendDistance()));
       //addRequirements(RobotContainer.S_INTAKE, RobotContainer.S_PIVOTARM, RobotContainer.S_PROTRUDER);
+  }
+
+  private Placement getWantedIntakePlacement(GamePieceMode mode){
+    switch(mode){
+      case ConeMode:
+        return Placement.GROUND_INTAKE_CONE;
+      case OffMode:
+      default:
+      case CubeMode:
+        return Placement.GROUND_INTAKE_CUBE;
+    }
   }
 }
