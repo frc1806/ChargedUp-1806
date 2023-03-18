@@ -28,7 +28,7 @@ public class Constants {
 
     //Powered Brake
     public static final double kDriveTrainMinimumMovingSpeed = .3048;
-    public static final double kDriveTrainNormalPowerBrakePower = .015;
+    public static final double kDriveTrainNormalPowerBrakePower = .025;
     public static final double kDriveTrainRampPowerBrakePower = 0.5;
 
     // Protruder
@@ -36,7 +36,7 @@ public class Constants {
     public static final double kProtruderkI = 0;
     public static final double kProtruderkD = 0;
     public static final double kProtruderFeedFowardGain = 0.1;
-    public static final double kProtruderAcceptableDistanceDelta = 0.5;
+    public static final double kProtruderAcceptableDistanceDelta = 1.0;
     public static final double kProtruderDistanceAtFullRetract = 25; //TODO: Make number for actual robot and implement
     public static final double kProtruderDistanceAtFullExtend = 50; //TODO Measure
     public static final double kProtruderFirstStageExtension = 17;
@@ -51,7 +51,7 @@ public class Constants {
     public static final double kPivotArmAngleKp = 1.0/15.0;
     public static final double  kPivotArmAngleKi = 0.0;
     public static final double  kPivotArmAngleKd = 0.0;
-    public static final double kAcceptableAngleDelta = 1.0;
+    public static final double kAcceptableAngleDelta = 2.0;
 
     public static final double kPivotFeedForwardGain = 0.006;
 

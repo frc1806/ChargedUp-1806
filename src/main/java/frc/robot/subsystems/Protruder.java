@@ -165,6 +165,10 @@ public class Protruder extends SubsystemBase{
                         mFirstStageMotor.set(ControlMode.PercentOutput, calculateFeedForward());
                         if(!isFirstStatgeAtPosition()) mFirstStageStates = FirstStageStates.GoingToPosition;  
                     }
+                    if(!isFirstStatgeAtPosition())
+                    {
+                        mFirstStageStates = FirstStageStates.GoingToPosition;
+                    }
                    
                     break;
                 case GoingToPosition:

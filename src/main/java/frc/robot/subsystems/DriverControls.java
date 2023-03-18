@@ -1,3 +1,4 @@
+
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -16,6 +17,7 @@ import frc.robot.commands.DebugCommands.CymbalSpinManual;
 import frc.robot.commands.DebugCommands.LeftSolenoid;
 import frc.robot.commands.DebugCommands.ManualRotate;
 import frc.robot.commands.DebugCommands.RightSolenoid;
+import frc.robot.commands.Intake.GroundIntake;
 import frc.robot.commands.Intake.RotateCone;
 import frc.robot.game.Placement;
 import frc.robot.shuffleboard.tabs.tabsUtil.XboxControllerConfigValues;
@@ -90,9 +92,9 @@ public class DriverControls extends SubsystemBase {
         switch (selectedControls) {
             default:
             case Classic:
-                return -driverController.getRightX();
+                return driverController.getRightX();
             case Forza:
-                return -driverController.getLeftX();
+                return driverController.getLeftX();
         }
     }
 
@@ -154,16 +156,6 @@ public class DriverControls extends SubsystemBase {
         }
     }
 
-    public boolean getIntakeMode() {
-        switch (selectedControls) {
-            default:
-            case Classic:
-                return driverController.getBButton();
-            case Forza:
-                return driverController.getLeftBumper();
-        }
-    }
-
     public boolean floorIntakeMode(){
         return driverController.getRightBumper();
     }
@@ -202,9 +194,12 @@ public class DriverControls extends SubsystemBase {
         return operatorController.getStartButton();
     }
 
+    
     public boolean o_wantSpin() {
-        return operatorController.getLeftBumper();
+        return operatorController.getBButton();
     }
+
+    
 
     public boolean o_switchModes(){
         return operatorController.getRightBumper();
@@ -216,6 +211,14 @@ public class DriverControls extends SubsystemBase {
 
     public boolean o_wantSpinThrottle(){
         return o_spinnerThrottle() != 0.0;
+    }
+
+    public boolean o_getIntakeMode() {
+        return operatorController.getLeftBumper();
+    }
+
+    public boolean o_getGroundIntake(){
+        return operatorController.getYButton();
     }
 
     // Operator LED Control
@@ -271,7 +274,6 @@ public class DriverControls extends SubsystemBase {
         new Trigger(this::getVisionLineup).whileTrue(new RearVisionSteerAndDrive(driveTrain, this, visionSubsystem));
         new Trigger(this::getFeederLineup).whileTrue(new FeederStationLineupDrive(driveTrain, this, visionSubsystem));
         new Trigger(this::getScoringLineup).whileTrue(new ScoringLineupDrive(driveTrain, this, visionSubsystem));
-        new Trigger(this::getIntakeMode).onTrue(new ToggleIntake(intake));
 
         //Operator
         new Trigger(this::o_lowConePlacement).onTrue(new MoveArmToPlacement(Placement.LOW_PLACEMENT_CONE));
@@ -282,9 +284,11 @@ public class DriverControls extends SubsystemBase {
         new Trigger(this::o_highCubePlacement).onTrue(new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE));
         new Trigger(this::o_goHome).onTrue(new MoveArmToPlacement(Placement.HOME));
         new Trigger(this::o_feederStation).onTrue(new MoveArmToPlacement(Placement.FEEDER_STATION));
+        new Trigger(this::o_getGroundIntake).onTrue(new GroundIntake());
         new Trigger(this::o_wantSpin).onTrue(new RotateCone());
         new Trigger(this::o_switchModes).onTrue(new ToggleGamePieceMode());
         new Trigger(this::o_wantSpinThrottle).whileTrue(new CymbalSpinManual(intake, this));
+        new Trigger(this::o_getIntakeMode).onTrue(new ToggleIntake(intake));
         //Debug
         new Trigger(this::d_getIntakeLeft).onTrue(new LeftSolenoid(intake));
         new Trigger(this::d_getIntakeRight).onTrue(new RightSolenoid(intake));
