@@ -15,7 +15,7 @@ public class Constants {
     public static final int kDebugPort = 2;
 
     //Drive Train Constants
-    public static final int kDriveTrainCurrentLimit = 80;
+    public static final int kDriveTrainCurrentLimit = 85;
     public static final double kDriveTrainTrackWidthMeters = Units.inchesToMeters(25.5); //~ 27"
     public final static double kDriveCountsPerMeter = 6628.32202312992;
     public final static double kDriveMetersPerCount = 1/kDriveCountsPerMeter;
@@ -36,7 +36,7 @@ public class Constants {
     public static final double kProtruderkI = 0;
     public static final double kProtruderkD = 0;
     public static final double kProtruderFeedFowardGain = 0.1;
-    public static final double kProtruderAcceptableDistanceDelta = 1.0;
+    public static final double kProtruderAcceptableDistanceDelta = 1.5;
     public static final double kProtruderDistanceAtFullRetract = 25; //TODO: Make number for actual robot and implement
     public static final double kProtruderDistanceAtFullExtend = 50; //TODO Measure
     public static final double kProtruderFirstStageExtension = 17;
@@ -63,4 +63,8 @@ public class Constants {
 
     //LEDs
     public static final int kTotalLEDCount = 24;
+
+    //SlowAutoBalance
+    public static final double kSlowBalanceTippedDegrees = 10.0;
+    public static final double kSlowBalanceLevelDegrees = 3.5;
 }

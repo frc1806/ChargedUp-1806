@@ -6,15 +6,15 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.game.PosesOfInterest;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.DriverControls;
-import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.Vision;
 
 public class FeederStationLineupDrive extends CommandBase{
     private DriveTrain mDriveTrain;
     private DriverControls mDriveControls;
-    private VisionSubsystem mVisionSubsystem;
+    private Vision mVisionSubsystem;
     private Translation2d mNearestFeederStation;
 
-    public FeederStationLineupDrive(DriveTrain drivetrain, DriverControls driveControls, VisionSubsystem visionSubsystem) {
+    public FeederStationLineupDrive(DriveTrain drivetrain, DriverControls driveControls, Vision visionSubsystem) {
         // Use addRequirements() here to declare subsystem dependencies.
         mDriveTrain = drivetrain;
         mDriveControls = driveControls;

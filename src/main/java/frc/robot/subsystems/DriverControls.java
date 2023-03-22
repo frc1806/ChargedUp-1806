@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.GamePieceMode;
 import frc.robot.commands.FeederStationLineupDrive;
@@ -16,8 +15,10 @@ import frc.robot.commands.ToggleGamePieceMode;
 import frc.robot.commands.ToggleIntake;
 import frc.robot.commands.DebugCommands.CymbalSpinManual;
 import frc.robot.commands.DebugCommands.LeftSolenoid;
+import frc.robot.commands.DebugCommands.ManualExtend;
 import frc.robot.commands.DebugCommands.ManualRotate;
 import frc.robot.commands.DebugCommands.RightSolenoid;
+import frc.robot.commands.DebugCommands.ToggleProtruderBrake;
 import frc.robot.commands.Intake.GroundIntake;
 import frc.robot.commands.Intake.RotateCone;
 import frc.robot.game.Placement;
@@ -127,6 +128,16 @@ public class DriverControls extends SubsystemBase {
         }
     }
 
+    public boolean getSuperPowerBrake(){
+        switch (selectedControls) {
+            default:
+            case Classic:
+                return driverController.getStartButton();
+            case Forza:
+                return driverController.getStartButton();
+        }
+    }
+
     public boolean getVisionLineup() {
         switch (selectedControls) {
             default:
@@ -223,7 +234,7 @@ public class DriverControls extends SubsystemBase {
     }
 
     public boolean o_getGroundIntakeCone(){
-        return operatorController.getYButton() && RobotContainer.GetCurrentGamePieceMode() == GamePieceMode.CubeMode;
+        return operatorController.getYButton() && RobotContainer.GetCurrentGamePieceMode() == GamePieceMode.ConeMode;
     }
 
     // Operator LED Control
@@ -246,12 +257,27 @@ public class DriverControls extends SubsystemBase {
         return debugController.getRightTriggerDigital();
     }
 
+    /*
     public double d_cymbalThrottle() {
         return debugController.getLeftY();
     }
+    
 
     public boolean d_wantCymbalManual() {
         return d_cymbalThrottle() != 0;
+    }
+    */
+
+    public double d_extendThrottle(){
+        return debugController.getLeftY();
+    }
+
+    public boolean d_wantManualExtend(){
+        return d_extendThrottle() != 0;
+    }
+
+    public boolean d_toggleProtruderBrakeMode(){
+        return debugController.getXButton();
     }
     // Debug Tabs
 
@@ -274,7 +300,7 @@ public class DriverControls extends SubsystemBase {
      * @param driveTrain Our one and only drivetrain
      * @param visionSubsystem our (currently) one and only vision subsystem representing the limelight
      */
-    public void registerTriggers(DriveTrain driveTrain, VisionSubsystem visionSubsystem, Claw intake, Protruder protruder, PivotArm arm, TwoLEDSubsytem led){
+    public void registerTriggers(DriveTrain driveTrain, Vision visionSubsystem, Claw intake, Protruder protruder, PivotArm arm, LED led){
         //Driver
         new Trigger(this::getVisionLineup).whileTrue(new RearVisionSteerAndDrive(driveTrain, this, visionSubsystem));
         new Trigger(this::getFeederLineup).whileTrue(new FeederStationLineupDrive(driveTrain, this, visionSubsystem));
@@ -299,7 +325,9 @@ public class DriverControls extends SubsystemBase {
         new Trigger(this::d_getIntakeLeft).onTrue(new LeftSolenoid(intake));
         new Trigger(this::d_getIntakeRight).onTrue(new RightSolenoid(intake));
         new Trigger(this::d_wantArmManual).whileTrue(new ManualRotate(arm, this));
-        new Trigger(this::d_wantCymbalManual).whileTrue(new CymbalSpinManual(intake, this));
+        //new Trigger(this::d_wantCymbalManual).whileTrue(new CymbalSpinManual(intake, this));
+        new Trigger(this::d_wantManualExtend).whileTrue(new ManualExtend(protruder, this));
+        new Trigger(this::d_toggleProtruderBrakeMode).onTrue(new ToggleProtruderBrake(protruder));
     }
 
     @Override

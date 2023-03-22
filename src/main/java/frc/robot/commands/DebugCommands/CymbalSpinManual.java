@@ -1,7 +1,5 @@
 package frc.robot.commands.DebugCommands;
 
-import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriverControls;
@@ -24,9 +22,9 @@ public class CymbalSpinManual extends CommandBase{
 
     @Override
     public void execute() {
-        if (mControls.d_cymbalThrottle() != 0){
-            mClaw.getSpinner().set(TalonSRXControlMode.PercentOutput, mControls.d_pivotArmManual());
-        }
+        //if (mControls.d_cymbalThrottle() != 0){
+            //mClaw.getSpinner().set(TalonSRXControlMode.PercentOutput, mControls.d_pivotArmManual());
+        //}
     }
 
     @Override

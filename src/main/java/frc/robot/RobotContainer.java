@@ -38,8 +38,8 @@ import frc.robot.subsystems.DriverControls;
 import frc.robot.subsystems.PivotArm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Protruder;
-import frc.robot.subsystems.TwoLEDSubsytem;
-import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.LED;
+import frc.robot.subsystems.Vision;
 
 public class RobotContainer {
 
@@ -54,11 +54,11 @@ public class RobotContainer {
   //DEFINE SUBSYSTEM INSTANCES
   public static final DriverControls S_DRIVECONTROLS = new DriverControls();
   public static final DriveTrain S_DRIVETRAIN = new DriveTrain();
-  public static final VisionSubsystem S_REAR_VISION_SUBSYSTEM = new VisionSubsystem("limelight");
+  public static final Vision S_REAR_VISION_SUBSYSTEM = new Vision("limelight");
   public static final Claw S_INTAKE = new Claw();
   public static final Protruder S_PROTRUDER = new Protruder();
   public static final PivotArm S_PIVOTARM = new PivotArm();
-  public static final TwoLEDSubsytem S_TWO_LED_SUBSYTEM = new TwoLEDSubsytem();
+  public static final LED S_TWO_LED_SUBSYTEM = new LED();
 
   private static GamePieceMode ES_CURRENT_GAME_PIECE_MODE = GamePieceMode.CubeMode;
   
@@ -160,8 +160,14 @@ public class RobotContainer {
       //mSendableChooser.addOption("Full Auto", autoBuilder.fullAuto(pathGroup));
       mSendableChooser.addOption("Dead Reckoning No Obstacle", new DeadReckoningNoObstacle(S_DRIVETRAIN));
       mSendableChooser.addOption("PlaceCubeHigh", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new ToggleIntake(S_INTAKE)).andThen(new WaitCommand(2.0)).andThen(new MoveArmToPlacement(Placement.HOME)));
-      mSendableChooser.addOption("PlaceCubeHighLongMobility", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new ToggleIntake(S_INTAKE)).andThen(new WaitCommand(2.0)).andThen(new MoveArmToPlacement(Placement.HOME)).andThen(new TimedDriveCommand(S_DRIVETRAIN, 0.5, 0.25)));
       mSendableChooser.addOption("PlaceCubeHighShortMobility", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new ToggleIntake(S_INTAKE)).andThen(new WaitCommand(2.0)).andThen(new MoveArmToPlacement(Placement.HOME)).andThen(new TimedDriveCommand(S_DRIVETRAIN, 2.5, 0.25)));
+      mSendableChooser.addOption("PlaceCubeHighLongMobility", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new ToggleIntake(S_INTAKE)).andThen(new WaitCommand(2.0)).andThen(new MoveArmToPlacement(Placement.HOME)).andThen(new TimedDriveCommand(S_DRIVETRAIN, 3.5, 0.25)));
+      mSendableChooser.addOption("PlaceCubeHighChargeStationMobility", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new ToggleIntake(S_INTAKE)).andThen(new WaitCommand(2.0)).andThen(new MoveArmToPlacement(Placement.HOME)).andThen(new TimedDriveCommand(S_DRIVETRAIN, 2.5, 0.4).andThen(new TimedDriveCommand(S_DRIVETRAIN, 0.1, -.2))));
+      mSendableChooser.addOption("ShortSideMobilityOnly", new TimedDriveCommand(S_DRIVETRAIN, 2.5, 0.25));
+      mSendableChooser.addOption("LongSideMobilityOnly", new TimedDriveCommand(S_DRIVETRAIN, 3.5, 0.25));
+      mSendableChooser.addOption("Desperation Mode",   new TimedDriveCommand(S_DRIVETRAIN, 1.0, -0.4).andThen(new TimedDriveCommand(S_DRIVETRAIN, 3.5, 0.25)));
+
+    
       mSendableChooser.addOption("DoNothing", new CommandBase() {
         @Override
         public void initialize() {

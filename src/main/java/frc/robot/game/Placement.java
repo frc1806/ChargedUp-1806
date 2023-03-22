@@ -1,8 +1,6 @@
 package frc.robot.game;
 
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
-import frc.robot.RobotContainer.GamePieceMode;
 
 public class Placement {
 
@@ -25,7 +23,7 @@ public class Placement {
     public static Placement HIGH_PLACEMENT_CONE = new Placement("High Placement Cone", Constants.kProtruderDistanceAtFullRetract + 32.0,275.0);
     public static Placement FEEDER_STATION = new Placement("Feeder Station",  Constants.kProtruderDistanceAtFullRetract + 17.0,65.0);
     //public static Placement GROUND_INTAKE = new Placement("Ground Intake", Constants.kProtruderDistanceAtFullRetract + 14.0 ,122.0); Pre cymbal move
-    public static Placement GROUND_INTAKE_CUBE = new Placement("Ground Intake Cube", Constants.kProtruderDistanceAtFullRetract + 16.0 ,122.0);
+    public static Placement GROUND_INTAKE_CUBE = new Placement("Ground Intake Cube", Constants.kProtruderDistanceAtFullRetract + 15.5 ,122.0);
     public static Placement GROUND_INTAKE_CONE = new Placement("Ground Intake Cone", Constants.kProtruderDistanceAtFullRetract + 14.5 ,127.0); 
     public static Placement FRONT_GROUND_INTAKE = new Placement("FrontGroundIntake", Constants.kProtruderDistanceAtFullRetract + 14.5, 220.0);
 

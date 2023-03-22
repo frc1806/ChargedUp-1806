@@ -105,7 +105,7 @@ public class DriveTrain extends SubsystemBase{
     }
 
     public boolean powerBrake(double power, double turn, double brakePower){
-        
+        /*
         if(Math.abs(getWheelSpeeds().leftMetersPerSecond) < Constants.kDriveTrainMinimumMovingSpeed && Math.abs(getWheelSpeeds().rightMetersPerSecond) < Constants.kDriveTrainMinimumMovingSpeed && Math.abs(power) < .005 && Math.abs(turn) < .005){
             mLeftLeader.set(brakePower);
             mLeftFollower.set(-brakePower);
@@ -116,8 +116,8 @@ public class DriveTrain extends SubsystemBase{
         else{
             return false;
         }
-        
-        //return false;
+        */
+        return false;
     }
 
     public void setDrivePower(Double drivePower){
@@ -132,7 +132,21 @@ public class DriveTrain extends SubsystemBase{
      * @param quickTurn Turn fast?
      */
     public void setDriveMode(double throttle, double steer, boolean quickTurn){
-        if(!powerBrake(steer, throttle, Constants.kDriveTrainNormalPowerBrakePower))
+        if(!powerBrake(steer, throttle, Constants.kDriveTrainRampPowerBrakePower))
+        {
+            mDifferentialDrive.curvatureDrive(throttle, steer * Constants.kDriveTurningSensitivity, quickTurn);
+        }
+        
+    }
+
+        /**
+     * Drive in teleop as normal
+     * @param throttle Desired movement forward/backward (1 is full forward, -1 is full backward, 0 is no movement)
+     * @param steer Desired turning (-1 is full right, 1 is full left, 0 is no turning )
+     * @param quickTurn Turn fast?
+     */
+    public void setSuperBrakeMode(double throttle, double steer, boolean quickTurn){
+        if(!powerBrake(steer, throttle, Constants.kDriveTrainRampPowerBrakePower))
         {
             mDifferentialDrive.curvatureDrive(throttle, steer * Constants.kDriveTurningSensitivity, quickTurn);
         }
@@ -146,7 +160,7 @@ public class DriveTrain extends SubsystemBase{
      * @param quickTurn Turn fast?
      */
     public void setCreepMode(double throttle, double steer, boolean quickTurn){
-        if(!powerBrake(steer, throttle, Constants.kDriveTrainNormalPowerBrakePower))
+        if(!powerBrake(steer, throttle, Constants.kDriveTrainRampPowerBrakePower))
         {
             mDifferentialDrive.curvatureDrive(throttle / 3.33 , steer * Constants.kDriveTurningSensitivity, quickTurn);
         }
@@ -226,6 +240,10 @@ public class DriveTrain extends SubsystemBase{
         return mRightFollower;
     }
 
+    public float getRobotPitch(){
+        return mNavX.getRoll();
+    }
+
     /**
      * Follow a PathPlanner Trajectory
      * @param traj the trajectory to follow
@@ -273,6 +291,7 @@ public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFir
         SmartDashboard.putData("Field", mField);
         SmartDashboard.putNumber("Left Applied Output %", mLeftMotorGroup.get());
         SmartDashboard.putNumber("Right Applied Output %", mRightMotorGroup.get());
+        SmartDashboard.putNumber("Robot Pitch", getRobotPitch());
     }
 
     @Override

@@ -15,7 +15,7 @@ import frc.robot.RobotContainer;
 import frc.robot.util.LimelightHelpers;
 
 
-public class VisionSubsystem extends SubsystemBase{
+public class Vision extends SubsystemBase{
 
     private NetworkTable limelightTable;
     private double currentTimestamp;
@@ -26,7 +26,7 @@ public class VisionSubsystem extends SubsystemBase{
     //SIMULATION
     private final Translation2d testNodePose = new Translation2d(15.77, 4.98);
 
-    public VisionSubsystem(String hostname) { 
+    public Vision(String hostname) { 
         limelightHostname = hostname;
         limelightTable = NetworkTableInstance.getDefault().getTable(limelightHostname);
         currentTimestamp = 0.0;

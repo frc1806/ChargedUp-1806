@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.GamePieceMode;
-import frc.robot.commands.Intake.CloseClaw;
 import frc.robot.commands.arm.ArmGoToAngle;
 import frc.robot.commands.protruder.ProtruderGoToExtension;
 import frc.robot.game.Placement;
@@ -25,8 +24,9 @@ public class GroundIntake extends SequentialCommandGroup {
       new ProtruderGoToExtension(Constants.kProtruderDistanceAtFullRetract)
       , new CloseClaw(RobotContainer.S_INTAKE)
       , new ArmGoToAngle(getWantedIntakePlacement(gamePieceMode).getPivotAngle())
-      , new OpenClaw(RobotContainer.S_INTAKE)
-      , new ProtruderGoToExtension(getWantedIntakePlacement(gamePieceMode).getExtendDistance()));
+      , new ProtruderGoToExtension(getWantedIntakePlacement(gamePieceMode).getExtendDistance())
+      , new OpenClaw(RobotContainer.S_INTAKE));
+      
       //addRequirements(RobotContainer.S_INTAKE, RobotContainer.S_PIVOTARM, RobotContainer.S_PROTRUDER);
   }
 

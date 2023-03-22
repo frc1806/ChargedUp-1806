@@ -3,14 +3,14 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.DriverControls;
-import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.Vision;
 
 public class RearVisionSteerAndDrive extends CommandBase{
     private DriveTrain mDriveTrain;
     private DriverControls mDriveControls;
-    private VisionSubsystem mVisionSubsystem;
+    private Vision mVisionSubsystem;
 
-    public RearVisionSteerAndDrive(DriveTrain drivetrain, DriverControls driveControls, VisionSubsystem visionSubsystem) {
+    public RearVisionSteerAndDrive(DriveTrain drivetrain, DriverControls driveControls, Vision visionSubsystem) {
         // Use addRequirements() here to declare subsystem dependencies.
         mDriveTrain = drivetrain;
         mDriveControls = driveControls;
