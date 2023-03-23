@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.util.CircularBuffer;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -18,6 +19,10 @@ public class Claw extends SubsystemBase{
     private BeamBreak mBeamBreak;
     private CircularBuffer mCircularBuffer;
     private Double mRunningTotal;
+    private DigitalInput mGPSensor0;
+    private DigitalInput mGPSensor1;
+    private DigitalInput mClosedLimit1;
+    private DigitalInput mClosedLimit2;
     public enum IntakeStates {
         Opened,
         Closed,
@@ -33,9 +38,12 @@ public class Claw extends SubsystemBase{
         mRightSolenoid = new Solenoid(PneumaticsModuleType.REVPH, RobotMap.rightSolenoid);
         mIntakeStates = IntakeStates.Closed;
         mCymbalSpinner = new TalonSRX(RobotMap.clawSpinMotor);
-        mBeamBreak = new BeamBreak(RobotMap.clawBeamBreak);
         mCircularBuffer = new CircularBuffer(Constants.kClawSpinnerBufferSize);
         mRunningTotal = 0.0;
+        mGPSensor0 = new DigitalInput(RobotMap.gPSensor0);
+        mGPSensor1 = new DigitalInput(RobotMap.gPSensor1);
+        mClosedLimit1 = new DigitalInput(RobotMap.clawCloseLimitLeft);
+        mClosedLimit2 = new DigitalInput(RobotMap.clawCloseLimitRight);
     }
 
     public void openBoth(){
@@ -103,6 +111,14 @@ public class Claw extends SubsystemBase{
     public Solenoid getRightSolenoid(){
         return mRightSolenoid;
     }
+
+    public boolean getGPSense(){
+        return mGPSensor0.get() || mGPSensor1.get();
+    }
+
+    public boolean isClawClosed(){
+        return mClosedLimit1.get() && mClosedLimit2.get();
+        }
     
     private void updateClawRotationCurrentBuffer(){
         if(mCircularBuffer.size() == Constants.kClawSpinnerBufferSize)

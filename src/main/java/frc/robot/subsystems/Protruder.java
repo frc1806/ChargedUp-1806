@@ -38,7 +38,6 @@ public class Protruder extends SubsystemBase{
     private FirstStageStates mFirstStageStates;
     private SecondStageStates mSecondStageStates;
     private StringPotentiometer mPotentiometer;
-    private DigitalInput mSecondStageRetractLimit, mSecondStageExtendLimit;
     private double mFirstStageTargetDistance;
     private CircularBuffer mSecondStageAmpsCircularBuffer;
     private double mSecondStageCurrentRunningTotal = 0.0;
@@ -51,8 +50,6 @@ public class Protruder extends SubsystemBase{
         mFirstStageMotor.setNeutralMode(NeutralMode.Brake);
         mSecondStageMotor.setNeutralMode(NeutralMode.Brake);
         mPotentiometer = new StringPotentiometer(RobotMap.protrusionStringPotentiometer);
-        mSecondStageRetractLimit = new DigitalInput(RobotMap.protrusionLimitSwitchFront);
-        mSecondStageExtendLimit = new DigitalInput(RobotMap.protrusionLimitSwitchEnd);
         mFirstStageStates = FirstStageStates.GoingToPosition;
         mSecondStageStates = SecondStageStates.RampToRetractStop;
         mTargetTotalDistance = Constants.kProtruderDistanceAtFullRetract;
@@ -138,12 +135,10 @@ public class Protruder extends SubsystemBase{
     }
 
     public boolean isSafeToPassThroughRobot(){
-        return !Constants.isArmWiringPresent || (mSecondStageRetractLimit.get() && getFirstStageDistance() < Constants.kProtruderAcceptableFirstStageExtensionToPassThrough);
+        return !Constants.isArmWiringPresent || (getFirstStageDistance() < Constants.kProtruderAcceptableFirstStageExtensionToPassThrough);
     }
 
     public void outputToSmartDashboard(){
-        SmartDashboard.putBoolean("Limit Extend Tripped", mSecondStageExtendLimit.get());
-        SmartDashboard.putBoolean("Limit Retract Tripped", mSecondStageRetractLimit.get());
         SmartDashboard.putString("First Stage States", mFirstStageStates.name());
         SmartDashboard.putString("Second Stage States", mSecondStageStates.name());
         SmartDashboard.putNumber("First Stage Target Distance", mFirstStageTargetDistance);

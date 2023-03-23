@@ -2,6 +2,7 @@ package frc.robot.commands.Intake;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.Claw;
 
 public class CloseClaw extends CommandBase{
@@ -32,7 +33,14 @@ public class CloseClaw extends CommandBase{
 
     @Override
     public boolean isFinished() {
-        return Timer.getFPGATimestamp() > mStartTime + 0.75;
+        if(Constants.areLimitSwitchesOnClaw)
+        {
+            return mClaw.isClawClosed();
+        }
+        else{
+            return Timer.getFPGATimestamp() > mStartTime + 0.75;
+        }
+        
     }
     
 }

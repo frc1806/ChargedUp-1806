@@ -26,10 +26,12 @@ public class RobotMap {
     public static final int leftDriveEncoderB = 1;
     public static final int rightDriveEncoderA = 2;
     public static final int rightDriveEncoderB = 3;
-    public static final int clawBeamBreak = 5;
-    public static final int protrusionLimitSwitchFront = 6;
-    public static final int protrusionLimitSwitchEnd = 7;
+    public static final int clawCloseLimitLeft = 4;
+    public static final int clawCloseLimitRight = 5;
+    public static final int gPSensor0 = 6;
+    public static final int gPSensor1 = 7;
     public static final int armPivotEncoder = 9;
+    
 
     //Analog
     public static final int protrusionStringPotentiometer = 4;
