@@ -26,11 +26,13 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Drive;
-import frc.robot.commands.GoToPlacement;
 import frc.robot.commands.MoveArmToPlacement;
 import frc.robot.commands.TimedDriveCommand;
 import frc.robot.commands.ToggleIntake;
 import frc.robot.commands.AutoModes.DeadReckoningNoObstacle;
+import frc.robot.commands.Intake.CloseClaw;
+import frc.robot.commands.Intake.GroundIntake;
+import frc.robot.commands.Intake.OpenClaw;
 import frc.robot.game.Placement;
 import frc.robot.shuffleboard.ShuffleboardManager;
 import frc.robot.subsystems.DriveTrain;
@@ -133,12 +135,18 @@ public class RobotContainer {
     // in your code that will be used by all path following commands.
     HashMap<String, Command> eventMap = new HashMap<>();
     //eventMap.put("marker1", new PrintCommand("Passed marker 1"));
-    eventMap.put("lowCube", new GoToPlacement(Placement.LOW_PLACEMENT_CUBE, S_INTAKE));
-    eventMap.put("lowCone", new GoToPlacement(Placement.LOW_PLACEMENT_CONE, S_INTAKE));
-    eventMap.put("medCube", new GoToPlacement(Placement.MED_PLACEMENT_CUBE, S_INTAKE));
-    eventMap.put("medCone", new GoToPlacement(Placement.MED_PLACEMENT_CONE, S_INTAKE));
-    eventMap.put("highCube", new GoToPlacement(Placement.HIGH_PLACEMENT_CUBE, S_INTAKE));
-    eventMap.put("highCone", new GoToPlacement(Placement.HIGH_PLACEMENT_CONE, S_INTAKE));
+    eventMap.put("lowCube", new MoveArmToPlacement(Placement.LOW_PLACEMENT_CUBE));
+    eventMap.put("lowCone", new MoveArmToPlacement(Placement.LOW_PLACEMENT_CONE));
+    eventMap.put("medCube", new MoveArmToPlacement(Placement.MED_PLACEMENT_CUBE));
+    eventMap.put("medCone", new MoveArmToPlacement(Placement.MED_PLACEMENT_CONE));
+    eventMap.put("highCube", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE));
+    eventMap.put("highCone", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CONE));
+    eventMap.put("homeArm", new  MoveArmToPlacement(Placement.HOME));
+    eventMap.put("openClaw", new OpenClaw(S_INTAKE));
+    eventMap.put("closeClaw", new CloseClaw(S_INTAKE));
+    eventMap.put("placeConeHigh", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new OpenClaw(S_INTAKE)));
+    eventMap.put("groundIntakeCone", new GroundIntake(GamePieceMode.ConeMode));
+    eventMap.put("groundIntakeCube", new GroundIntake(GamePieceMode.CubeMode));
 
 
     RamseteAutoBuilder autoBuilder = new RamseteAutoBuilder(

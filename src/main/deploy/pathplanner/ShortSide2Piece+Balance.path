@@ -17,8 +17,8 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
+        "executionBehavior": "sequential",
+        "waitBehavior": "after",
         "waitTime": 0
       }
     },
@@ -67,23 +67,23 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 2.3907127599586153,
-        "y": 3.6281087231226348
+        "x": 2.3476917079057777,
+        "y": 3.9292560874924978
       },
       "prevControl": {
-        "x": 2.3907127599586153,
-        "y": 4.072659594335297
+        "x": 2.218255557945895,
+        "y": 4.354546294503542
       },
       "nextControl": {
-        "x": 2.3907127599586153,
-        "y": 2.753347331381605
+        "x": 2.5484566174856864,
+        "y": 3.2695999560156555
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -99,16 +99,16 @@
     },
     {
       "anchorPoint": {
-        "x": 4.024444372713483,
-        "y": 2.933135897561571
+        "x": 3.9394706338607675,
+        "y": 3.4847052162798433
       },
       "prevControl": {
-        "x": 3.829415603407286,
-        "y": 2.933135897561571
+        "x": 3.8964495818079303,
+        "y": 3.4847052162798433
       },
       "nextControl": {
-        "x": 3.829415603407286,
-        "y": 2.933135897561571
+        "x": 3.8964495818079303,
+        "y": 3.4847052162798433
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -124,12 +124,12 @@
     },
     {
       "anchorPoint": {
-        "x": 3.869799534680408,
-        "y": 2.933135897561571
+        "x": 3.824747828386534,
+        "y": 3.4703648655955637
       },
       "prevControl": {
-        "x": 3.959498615567875,
-        "y": 2.933135897561571
+        "x": 3.89644958180793,
+        "y": 3.4703648655955637
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -150,10 +150,16 @@
   "isReversed": null,
   "markers": [
     {
-      "position": 0.36363636363636365,
+      "position": 0.045454545454545386,
       "names": [
         "event",
         "prepareIntake"
+      ]
+    },
+    {
+      "position": 1.2727272727272725,
+      "names": [
+        "event"
       ]
     }
   ]

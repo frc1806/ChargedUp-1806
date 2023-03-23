@@ -27,6 +27,9 @@ public class Placement {
     public static Placement GROUND_INTAKE_CONE = new Placement("Ground Intake Cone", Constants.kProtruderDistanceAtFullRetract + 14.5 ,127.0); 
     public static Placement FRONT_GROUND_INTAKE = new Placement("FrontGroundIntake", Constants.kProtruderDistanceAtFullRetract + 14.5, 220.0);
 
+    public static Placement LAUNCH_A_CUBE_START = new Placement("LaunchStart", Constants.kProtruderDistanceAtFullRetract, 273.0);
+    public static Placement LAUNCH_A_CUBE_END = new Placement("LaunchEnd", Constants.kProtruderDistanceAtFullRetract + 32.0, 273.0);
+
     public Double getExtendDistance(){
         return extendDistance;
     }
