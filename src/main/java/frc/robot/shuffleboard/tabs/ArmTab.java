@@ -25,7 +25,6 @@ public class ArmTab extends ShuffleboardTabBase {
     private DutyCycleEncoder mPivotArmEncoder;
     private TalonSRX mProtruderMotorA, mProtrusionMotorB, mCymbalSpinner;
     private StringPotentiometer mPotentiometer;
-    private BeamBreak mBeamBreak;
     private Solenoid mLeftSolenoid, mRightSolenoid;
     private Placement currentPlacement;
 
@@ -45,7 +44,6 @@ public class ArmTab extends ShuffleboardTabBase {
         mProtrusionMotorB = mProtruder.getOuterStageMotor();
         mCymbalSpinner = mClaw.getSpinner();
         mPotentiometer = mProtruder.getPotentiometer();
-        mBeamBreak = mClaw.getBeamBreak();
         mLeftSolenoid = mClaw.getLeftSolenoid();
         mRightSolenoid = mClaw.getRightSolenoid();
         currentPlacement = RobotContainer.GetCurrentPlacement();
@@ -58,68 +56,63 @@ public class ArmTab extends ShuffleboardTabBase {
 
         leftSolenoidOn = mTab.add("Left Solenoid", mLeftSolenoid.get())
             .withPosition(0,0)
-            .withSize(1,1)
-            .getEntry();
-        
-        beamTripped = mTab.add("Beam Tripped", mBeamBreak.get())
-            .withPosition(4,0)
-            .withSize(1,1)
+            .withSize(2,1)
             .getEntry();
         
         rightSolenoidOn = mTab.add("Right Solenoid", mRightSolenoid.get())
-            .withPosition(8,0)
-            .withSize(1,1)
+            .withPosition(9,0)
+            .withSize(2,1)
             .getEntry();
         
-        ProtruderOutputA = mTab.add("Inner Stage Output", mProtruderMotorA.getMotorOutputPercent())
+        ProtruderOutputA = mTab.add("1st Stage Output", mProtruderMotorA.getMotorOutputPercent())
             .withPosition(0,1)
-            .withSize(2,1)
+            .withSize(1,1)
             .withWidget(BuiltInWidgets.kNumberBar)
             .getEntry();
         
-        ProtruderOutputB = mTab.add("Outer Stage Output", mProtrusionMotorB.getMotorOutputPercent())
-            .withPosition(0,2)
-            .withSize(2,1)
+        ProtruderOutputB = mTab.add("2nd Stage Output", mProtrusionMotorB.getMotorOutputPercent())
+            .withPosition(1,1)
+            .withSize(1,1)
             .withWidget(BuiltInWidgets.kNumberBar)
             .getEntry();
         
-        ProtruderDistance = mTab.add("Protruder First Stage Distance", mPotentiometer.getExtensionInInches())
+        ProtruderDistance = mTab.add("1st Stage Distance", mPotentiometer.getExtensionInInches())
             .withPosition(0,3)
             .withSize(2,1)
             .withWidget(BuiltInWidgets.kNumberBar)
             .getEntry();
 
-        ProtruderFirstAmps = mTab.add("First Stage Amps", mProtruderMotorA.getStatorCurrent())
-            .withPosition(3,2)
+        ProtruderFirstAmps = mTab.add("1st Stage Amps", mProtruderMotorA.getStatorCurrent())
+            .withPosition(0,2)
             .withSize(1,1)
             .withWidget(BuiltInWidgets.kNumberBar)
             .getEntry();
 
-        ProtruderSecondAmps = mTab.add("Second Stage Amps", mProtrusionMotorB.getStatorCurrent())
-            .withPosition(4,2)
+        ProtruderSecondAmps = mTab.add("2nd Stage Amps", mProtrusionMotorB.getStatorCurrent())
+            .withPosition(1,2)
             .withSize(1,1)
             .withWidget(BuiltInWidgets.kNumberBar)
             .getEntry();
 
         PotentiometerRawVoltage = mTab.add("String Potentiometer Raw Voltage", mPotentiometer.getRawVoltage())
-            .withPosition(3, 1)
+            .withPosition(0, 4)
             .withSize(2,1)
             .withWidget(BuiltInWidgets.kNumberBar)
             .getEntry();
         
         placement = mTab.add("Current Placement", currentPlacement.getPlacementName())
-            .withPosition(0,4)
+            .withPosition(2,0)
             .withSize(2,1)
             .getEntry();
         
         SpinnerOutput = mTab.add("Spinner Output", mCymbalSpinner.getMotorOutputPercent())
-            .withPosition(4,1)
+            .withPosition(5,1)
             .withSize(2,1)
             .withWidget(BuiltInWidgets.kNumberBar)
             .getEntry();
 
         SpinnerTemp = mTab.add("Spinner Temp", mCymbalSpinner.getTemperature())
-            .withPosition(4,2)
+            .withPosition(5,2)
             .withSize(2,1)
             .withWidget(BuiltInWidgets.kNumberBar)
             .getEntry();
@@ -142,13 +135,13 @@ public class ArmTab extends ShuffleboardTabBase {
             .withWidget(BuiltInWidgets.kNumberBar)
             .getEntry();
 
-        PivotAngle = mTab.add("Pivot Angle Absolute", mPivotArmEncoder.getDistance())
+        PivotAngle = mTab.add("Angle Absolute", mPivotArmEncoder.getDistance())
             .withPosition(9,2)
             .withSize(1,1)
             .withWidget(BuiltInWidgets.kDial)
             .getEntry();
 
-        PivotAngleRelative = mTab.add("Pivot Angle Relative", mPivotArm.getAngle())
+        PivotAngleRelative = mTab.add("Angle Relative", mPivotArm.getAngle())
         .withPosition(8,3)
         .withSize(1,1)
         .withWidget(BuiltInWidgets.kDial)
@@ -167,7 +160,6 @@ public class ArmTab extends ShuffleboardTabBase {
     @Override
     public void update() {
         leftSolenoidOn.setBoolean(mLeftSolenoid.get());
-        beamTripped.setBoolean(mBeamBreak.get());
         rightSolenoidOn.setBoolean(mRightSolenoid.get());
         ProtruderOutputA.setDouble(mProtruderMotorA.getMotorOutputPercent());
         ProtruderOutputB.setDouble(mProtrusionMotorB.getMotorOutputPercent());

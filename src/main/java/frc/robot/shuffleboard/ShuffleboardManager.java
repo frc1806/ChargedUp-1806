@@ -9,7 +9,6 @@ import frc.robot.RobotContainer;
 import frc.robot.shuffleboard.tabs.DrivetrainTab;
 import frc.robot.shuffleboard.tabs.ArmTab;
 import frc.robot.shuffleboard.tabs.MainCompetitionTab;
-import frc.robot.shuffleboard.tabs.OperatorTab;
 import frc.robot.shuffleboard.tabs.VisionTab;
 import frc.robot.subsystems.DriverControls;
 
@@ -22,7 +21,7 @@ public class ShuffleboardManager {
 
     public ShuffleboardManager(){
         mMainCompetitionTab = new MainCompetitionTab();
-        mShuffleboardTabs = Arrays.asList(mMainCompetitionTab, new OperatorTab());
+        mShuffleboardTabs = Arrays.asList(mMainCompetitionTab);
         mDebugTabs = Arrays.asList(new DrivetrainTab(), new ArmTab(), new VisionTab());
         testAdded = false;
         driverControls = RobotContainer.S_DRIVECONTROLS;

@@ -6,6 +6,8 @@ public class Constants {
     //imortant
     public static final boolean isCompBot = true;
     public static final boolean isArmWiringPresent = true;
+    public static final boolean areLimitSwitchesOnClaw = true;
+    public static final boolean clawDIOsDebug = true;
     //GAME
     public static final double kFieldLength = 16.54175;
     public static final double kFieldWidth = 8.0137;

@@ -100,8 +100,8 @@ public class PivotArm extends SubsystemBase{
         if(RobotState.isDisabled())
         {
             resetMotorEncoderToAbsoluteEncoder();
+            mCurrentDesiredAngle = mCurrentAngle;
         }
-        
 
     }
 
