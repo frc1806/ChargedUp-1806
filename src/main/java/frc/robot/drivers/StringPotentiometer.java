@@ -13,7 +13,7 @@ public class StringPotentiometer {
 
     public double getExtensionInInches(){
         //tuned for our arm with a slightly off kilter mount, if using this, retune
-        return  (-42.53 * mAnalogInput.getVoltage())+ 16.4591 +45.00;
+        return  (-42.53 * mAnalogInput.getVoltage())+ 16.4591 +46.50;
     }
 
     public double getRawVoltage(){

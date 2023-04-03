@@ -30,8 +30,10 @@ import frc.robot.commands.MoveArmToPlacement;
 import frc.robot.commands.TimedDriveCommand;
 import frc.robot.commands.ToggleIntake;
 import frc.robot.commands.AutoModes.DeadReckoningNoObstacle;
+import frc.robot.commands.DebugCommands.CymbalSpinManual;
 import frc.robot.commands.Intake.CloseClaw;
 import frc.robot.commands.Intake.GroundIntake;
+import frc.robot.commands.Intake.ManualRotateCone;
 import frc.robot.commands.Intake.OpenClaw;
 import frc.robot.game.Placement;
 import frc.robot.shuffleboard.ShuffleboardManager;
@@ -39,6 +41,7 @@ import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.DriverControls;
 import frc.robot.subsystems.PivotArm;
 import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.CymbalSpinner;
 import frc.robot.subsystems.Protruder;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Vision;
@@ -61,6 +64,7 @@ public class RobotContainer {
   public static final Protruder S_PROTRUDER = new Protruder();
   public static final PivotArm S_PIVOTARM = new PivotArm();
   public static final LED S_TWO_LED_SUBSYTEM = new LED();
+  public static final CymbalSpinner S_CYMBAL_SPEEEEEEN = new CymbalSpinner();
 
   private static GamePieceMode ES_CURRENT_GAME_PIECE_MODE = GamePieceMode.CubeMode;
   
@@ -93,7 +97,7 @@ public class RobotContainer {
 
     DriverStation.silenceJoystickConnectionWarning(true);
     compressor = new Compressor(PneumaticsModuleType.REVPH);
-    S_REAR_VISION_SUBSYSTEM.updateLimelightPose(Units.inchesToMeters(2), Units.inchesToMeters(2), Units.inchesToMeters(9), 180, 30, 0); //TODO: Update limelight pose to reflect actual robot
+    S_REAR_VISION_SUBSYSTEM.updateLimelightPose(Units.inchesToMeters(2), Units.inchesToMeters(8.75), Units.inchesToMeters(35), 180, -30, 0); //TODO: Update limelight pose to reflect actual robot
     //SET DEFAULT COMMANDS
     setDefaultCommands();
     
@@ -111,6 +115,7 @@ public class RobotContainer {
    */
   private void setDefaultCommands(){
     CommandScheduler.getInstance().setDefaultCommand(S_DRIVETRAIN, new Drive(S_DRIVETRAIN, S_DRIVECONTROLS));
+    CommandScheduler.getInstance().setDefaultCommand(S_CYMBAL_SPEEEEEEN, new ManualRotateCone());
   }
 
   /**

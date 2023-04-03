@@ -19,6 +19,6 @@ public class FalconPunch extends SequentialCommandGroup {
   public FalconPunch() {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new MoveArmToPlacement(Placement.LAUNCH_A_CUBE_START).andThen(new ParallelCommandGroup(new  ProtruderGoToExtension(Placement.LAUNCH_A_CUBE_END.getExtendDistance()), new OpenClawAtProtruderDistance(Constants.kProtruderDistanceAtFullRetract + 15.0))));
+    addCommands(new MoveArmToPlacement(Placement.LAUNCH_A_CUBE_START).andThen(new ParallelCommandGroup(new  ProtruderGoToExtension(Placement.LAUNCH_A_CUBE_END.getExtendDistance()), new OpenClawAtProtruderDistance(24.0))));
   }
 }

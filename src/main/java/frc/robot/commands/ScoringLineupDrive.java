@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 import frc.robot.game.PosesOfInterest;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.DriverControls;
@@ -28,7 +29,18 @@ public class ScoringLineupDrive extends CommandBase{
   public void initialize() {
 
     //TODO: When we add robot modes for cubes and cones, make this select  what to lineup on based on that.
-    mNearestScoringLocation = PosesOfInterest.GetClosestCubeNode(mVisionSubsystem.getCurrentAlliance(), mDriveTrain.getPose());
+    switch(RobotContainer.GetCurrentGamePieceMode()){
+      case ConeMode:
+        mNearestScoringLocation = PosesOfInterest.GetClosestConeNode(mVisionSubsystem.getCurrentAlliance(), mDriveTrain.getPose());
+        break;
+        case OffMode:
+      default:
+      case CubeMode:
+        mNearestScoringLocation = PosesOfInterest.GetClosestCubeNode(mVisionSubsystem.getCurrentAlliance(), mDriveTrain.getPose());
+        break;
+
+      
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -39,7 +51,7 @@ public class ScoringLineupDrive extends CommandBase{
     double robotToTargetAngle = robotToTarget.getDegrees();
     double driveTrainAngle = mDriveTrain.getPose().getRotation().getDegrees();
     double error = yaw.getDegrees();
-    mDriveTrain.setDriveMode(mDriveControls.getThrottle(), error * .0125, true);
+    mDriveTrain.setDriveMode(mDriveControls.getThrottle(), -error * .015, true);
     
   }
 

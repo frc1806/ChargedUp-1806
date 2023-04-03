@@ -56,7 +56,7 @@ public class Vision extends SubsystemBase{
      * @param roll limelight skew. Let's try to mount the limelight so this is always 0. In Degrees.
      */
     public void updateLimelightPose(double metersForwardOfCenter, double metersLeftOrRight, double metersUpOrDown, double yaw, double pitch, double roll){
-        LimelightHelpers.setCameraPose_RobotSpace(limelightHostname, metersForwardOfCenter, metersLeftOrRight, metersUpOrDown, yaw, pitch, roll);
+        LimelightHelpers.setCameraPose_RobotSpace(limelightHostname, metersForwardOfCenter, metersLeftOrRight, metersUpOrDown, roll, pitch, yaw);
     }
 
 
@@ -163,6 +163,11 @@ public class Vision extends SubsystemBase{
 
         SmartDashboard.putBoolean("Limelight Connection", hasLimelightUpdatedRecently());
         SmartDashboard.putString("Vision Subsystem current Alliance", currentAlliance.name());
+        if(getBotPose() != null){
+            SmartDashboard.putNumber("Limelight X:", getBotPose().getX());
+            SmartDashboard.putNumber("Limelight Y:", getBotPose().getY());
+            SmartDashboard.putNumber("Limelight Rotation: ", getBotPose().getRotation().getDegrees());   
+        }
     }
 
 

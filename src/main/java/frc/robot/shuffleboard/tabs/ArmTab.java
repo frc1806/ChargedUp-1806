@@ -14,6 +14,7 @@ import frc.robot.drivers.StringPotentiometer;
 import frc.robot.game.Placement;
 import frc.robot.shuffleboard.ShuffleboardTabBase;
 import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.CymbalSpinner;
 import frc.robot.subsystems.PivotArm;
 import frc.robot.subsystems.Protruder;
 
@@ -21,6 +22,7 @@ public class ArmTab extends ShuffleboardTabBase {
     private PivotArm mPivotArm;
     private Claw mClaw;
     private Protruder mProtruder;
+    private CymbalSpinner mCymbalSpeenSubsystem;
     private CANSparkMax mPivotArmMotor;
     private DutyCycleEncoder mPivotArmEncoder;
     private TalonSRX mProtruderMotorA, mProtrusionMotorB, mCymbalSpinner;
@@ -38,11 +40,12 @@ public class ArmTab extends ShuffleboardTabBase {
         mPivotArm = RobotContainer.S_PIVOTARM;
         mClaw = RobotContainer.S_INTAKE;
         mProtruder = RobotContainer.S_PROTRUDER;
+        mCymbalSpeenSubsystem = RobotContainer.S_CYMBAL_SPEEEEEEN;
         mPivotArmMotor = mPivotArm.getPivotMotor();
         mPivotArmEncoder = mPivotArm.getEncoder();
         mProtruderMotorA = mProtruder.getInnerStageMotor();
         mProtrusionMotorB = mProtruder.getOuterStageMotor();
-        mCymbalSpinner = mClaw.getSpinner();
+        mCymbalSpinner = mCymbalSpeenSubsystem.getSpinner();
         mPotentiometer = mProtruder.getPotentiometer();
         mLeftSolenoid = mClaw.getLeftSolenoid();
         mRightSolenoid = mClaw.getRightSolenoid();

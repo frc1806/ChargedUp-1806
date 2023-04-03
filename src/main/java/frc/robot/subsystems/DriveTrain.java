@@ -49,7 +49,7 @@ public class DriveTrain extends SubsystemBase{
     private AHRS mNavX;
 
     private Field2d mField;
-
+    public Boolean isBrake;
 
     //Simulation
     private EncoderSim mLeftEncoderSim, mRightEncoderSim;
@@ -86,10 +86,11 @@ public class DriveTrain extends SubsystemBase{
         mRightFollower.setSmartCurrentLimit(Constants.kDriveTrainCurrentLimit);
 
         mLeftEncoder = new Encoder(RobotMap.leftDriveEncoderA, RobotMap.leftDriveEncoderB);
-        mLeftEncoder.setReverseDirection(true);
+        mLeftEncoder.setReverseDirection(false);
         mLeftEncoder.setDistancePerPulse(Constants.kDriveMetersPerCount);
         mRightEncoder = new Encoder(RobotMap.rightDriveEncoderA, RobotMap.rightDriveEncoderB);
         mRightEncoder.setDistancePerPulse(Constants.kDriveMetersPerCount);
+        mRightEncoder.setReverseDirection(true);
 
         mNavX = new AHRS();
 
@@ -102,6 +103,7 @@ public class DriveTrain extends SubsystemBase{
         mRightEncoderSim = new EncoderSim(mRightEncoder);
         mNavXYawSim = new SimDouble(SimDeviceDataJNI.getSimValueHandle(SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]"), "Yaw"));
         mDifferentialDrivetrainSim = new DifferentialDrivetrainSim(DCMotor.getNEO(2), 5.9, 7.5, Units.lbsToKilograms(118), Units.inchesToMeters(2), Constants.kDriveTrainTrackWidthMeters, VecBuilder.fill(0.0000, 0.0000, 0.0005, 0.00, 0.00, 0.0000, 0.0000));
+        isBrake = false;
     }
 
     public boolean powerBrake(double power, double turn, double brakePower){
@@ -167,6 +169,7 @@ public class DriveTrain extends SubsystemBase{
     }
 
     public void setBrakeMode(){
+        isBrake = true;
         mLeftLeader.setIdleMode(CANSparkMax.IdleMode.kBrake);
         mLeftFollower.setIdleMode(CANSparkMax.IdleMode.kBrake);
         mRightLeader.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -174,6 +177,7 @@ public class DriveTrain extends SubsystemBase{
     }
 
     public void setCoastMode(){
+        isBrake = false;
         mLeftLeader.setIdleMode(CANSparkMax.IdleMode.kCoast);
         mLeftFollower.setIdleMode(CANSparkMax.IdleMode.kCoast);
         mRightLeader.setIdleMode(CANSparkMax.IdleMode.kCoast);

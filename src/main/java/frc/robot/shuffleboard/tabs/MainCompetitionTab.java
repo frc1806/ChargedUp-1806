@@ -2,6 +2,7 @@ package frc.robot.shuffleboard.tabs;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -13,6 +14,7 @@ public class MainCompetitionTab extends ShuffleboardTabBase{
     private GenericEntry leftDrivePower;
     private GenericEntry rightDrivePower;
     private GenericEntry currentMode;
+    private ComplexWidget limelightCam;
 
     @Override
     public void createEntries() {
@@ -41,6 +43,10 @@ public class MainCompetitionTab extends ShuffleboardTabBase{
             .withSize(2,1)
             .withWidget(BuiltInWidgets.kTextView)
             .getEntry();
+        
+        mTab.addCamera("Limelight Stream", "limelight-stream", "http://limelight.local:5800/")
+            .withPosition(2,0)
+            .withSize(4,4);
         
     }
 

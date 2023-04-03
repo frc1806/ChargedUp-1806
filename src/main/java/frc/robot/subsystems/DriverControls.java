@@ -7,10 +7,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.GamePieceMode;
+import frc.robot.commands.FalconPunch;
 import frc.robot.commands.FeederStationLineupDrive;
 import frc.robot.commands.MoveArmToPlacement;
-import frc.robot.commands.RearVisionSteerAndDrive;
 import frc.robot.commands.ScoringLineupDrive;
+import frc.robot.commands.SetDriveBrake;
 import frc.robot.commands.ToggleGamePieceMode;
 import frc.robot.commands.ToggleIntake;
 import frc.robot.commands.DebugCommands.CymbalSpinManual;
@@ -19,6 +20,7 @@ import frc.robot.commands.DebugCommands.ManualExtend;
 import frc.robot.commands.DebugCommands.ManualRotate;
 import frc.robot.commands.DebugCommands.RightSolenoid;
 import frc.robot.commands.DebugCommands.ToggleProtruderBrake;
+import frc.robot.commands.Intake.FeederStation;
 import frc.robot.commands.Intake.GroundIntake;
 import frc.robot.commands.Intake.RotateCone;
 import frc.robot.game.Placement;
@@ -138,16 +140,6 @@ public class DriverControls extends SubsystemBase {
         }
     }
 
-    public boolean getVisionLineup() {
-        switch (selectedControls) {
-            default:
-            case Classic:
-                return driverController.getAButton();
-            case Forza:
-                return driverController.getAButton();
-        }
-    }
-
     public boolean getFeederLineup(){
         switch (selectedControls) {
             default:
@@ -206,6 +198,10 @@ public class DriverControls extends SubsystemBase {
         return operatorController.getStartButton();
     }
 
+    public double o_getManualRotateCone(){
+        return operatorController.getLeftY();
+    }
+
     
     public boolean o_wantSpin() {
         return operatorController.getBButton();
@@ -235,6 +231,10 @@ public class DriverControls extends SubsystemBase {
 
     public boolean o_getGroundIntakeCone(){
         return operatorController.getYButton() && RobotContainer.GetCurrentGamePieceMode() == GamePieceMode.ConeMode;
+    }
+
+    public boolean o_throwGamePiece(){
+        return operatorController.getXButton();
     }
 
     // Operator LED Control
@@ -302,9 +302,9 @@ public class DriverControls extends SubsystemBase {
      */
     public void registerTriggers(DriveTrain driveTrain, Vision visionSubsystem, Claw intake, Protruder protruder, PivotArm arm, LED led){
         //Driver
-        new Trigger(this::getVisionLineup).whileTrue(new RearVisionSteerAndDrive(driveTrain, this, visionSubsystem));
         new Trigger(this::getFeederLineup).whileTrue(new FeederStationLineupDrive(driveTrain, this, visionSubsystem));
         new Trigger(this::getScoringLineup).whileTrue(new ScoringLineupDrive(driveTrain, this, visionSubsystem));
+        new Trigger(this::getSuperPowerBrake).onTrue(new SetDriveBrake(driveTrain));
 
         //Operator
         new Trigger(this::o_lowConePlacement).onTrue(new MoveArmToPlacement(Placement.LOW_PLACEMENT_CONE));
@@ -314,7 +314,7 @@ public class DriverControls extends SubsystemBase {
         new Trigger(this::o_medCubePlacement).onTrue(new MoveArmToPlacement(Placement.MED_PLACEMENT_CUBE));
         new Trigger(this::o_highCubePlacement).onTrue(new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE));
         new Trigger(this::o_goHome).onTrue(new MoveArmToPlacement(Placement.HOME));
-        new Trigger(this::o_feederStation).onTrue(new MoveArmToPlacement(Placement.FEEDER_STATION));
+        new Trigger(this::o_feederStation).onTrue(new FeederStation());
         new Trigger(this::o_getGroundIntakeCube).onTrue(new GroundIntake(GamePieceMode.CubeMode));
         new Trigger(this::o_getGroundIntakeCone).onTrue(new GroundIntake(GamePieceMode.ConeMode));
         new Trigger(this::o_wantSpin).onTrue(new RotateCone());

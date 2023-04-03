@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -16,13 +17,11 @@ import frc.robot.drivers.BeamBreak;
 
 public class Claw extends SubsystemBase{
     private Solenoid mLeftSolenoid, mRightSolenoid;
-    private TalonSRX mCymbalSpinner;
-    private CircularBuffer mCircularBuffer;
-    private Double mRunningTotal;
     private DigitalInput mGPSensor0;
     private DigitalInput mGPSensor1;
     private DigitalInput mClosedLimit1;
     private DigitalInput mClosedLimit2;
+
     public enum IntakeStates {
         Opened,
         Closed,
@@ -37,14 +36,13 @@ public class Claw extends SubsystemBase{
         mLeftSolenoid = new Solenoid(PneumaticsModuleType.REVPH, RobotMap.leftSolenoid);
         mRightSolenoid = new Solenoid(PneumaticsModuleType.REVPH, RobotMap.rightSolenoid);
         mIntakeStates = IntakeStates.Closed;
-        mCymbalSpinner = new TalonSRX(RobotMap.clawSpinMotor);
-        mCircularBuffer = new CircularBuffer(Constants.kClawSpinnerBufferSize);
-        mRunningTotal = 0.0;
+
         //All these read backard, they are on when you would think they're off.
         mGPSensor0 = new DigitalInput(RobotMap.gPSensor0);
         mGPSensor1 = new DigitalInput(RobotMap.gPSensor1);
         mClosedLimit1 = new DigitalInput(RobotMap.clawCloseLimitLeft);
         mClosedLimit2 = new DigitalInput(RobotMap.clawCloseLimitRight);
+    
     }
 
     public void openBoth(){
@@ -79,22 +77,10 @@ public class Claw extends SubsystemBase{
         mRightSolenoid.set(false);
     }
 
-    public CommandBase rotateClaw(double power){
-        return this.runOnce(() -> mCymbalSpinner.set(TalonSRXControlMode.PercentOutput, power));
-    }
-
-    public boolean isClawSpinnerStalled(){
-        return (mRunningTotal / mCircularBuffer.size()) > Constants.kClawSpinnerStalledCurrent;
-    }
-
 
 
     public IntakeStates getIntakeState(){
         return mIntakeStates;
-    }
-
-    public TalonSRX getSpinner(){
-        return mCymbalSpinner;
     }
 
     public Solenoid getLeftSolenoid(){
@@ -116,30 +102,16 @@ public class Claw extends SubsystemBase{
     public boolean isClawOpened(){
         return mClosedLimit1.get() && mClosedLimit2.get();
     }
-    
-    private void updateClawRotationCurrentBuffer(){
-        if(mCircularBuffer.size() == Constants.kClawSpinnerBufferSize)
-        {
-            mRunningTotal -= mCircularBuffer.getFirst();
-        }
-        double spinnerCurrent = mCymbalSpinner.getStatorCurrent();
-        mRunningTotal += spinnerCurrent;
-        mCircularBuffer.addLast(spinnerCurrent);
-    }
+
 
     @Override
     public void periodic() {
-        updateClawRotationCurrentBuffer();
+        
         if(Constants.clawDIOsDebug){
             logDIOs();
         }
 
 
-    }
-
-    public void reset(){
-        mCircularBuffer.clear();
-        mRunningTotal = 0.0;
     }
 
     public void logDIOs(){

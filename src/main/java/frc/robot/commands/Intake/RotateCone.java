@@ -1,5 +1,6 @@
 package frc.robot.commands.Intake;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -7,31 +8,35 @@ import frc.robot.RobotContainer;
 
 public class RotateCone extends CommandBase{
 
-    private static double mStartTime;
+    private double mStartTime;
 
     public RotateCone(){
-        addRequirements(RobotContainer.S_INTAKE);
+        addRequirements(RobotContainer.S_CYMBAL_SPEEEEEEN);
     }
+    @Override
     public void initialize(){
         mStartTime = Timer.getFPGATimestamp();
     }
 
-    public void end(){
-        RobotContainer.S_INTAKE.rotateClaw(0);
+    @Override
+    public void end(boolean interrupted) {
+        RobotContainer.S_CYMBAL_SPEEEEEEN.rotateClaw(0.0);
     }
 
+    @Override
     public void execute(){
-        RobotContainer.S_INTAKE.rotateClaw(Constants.kClawSpinnerSpeed);
+        RobotContainer.S_CYMBAL_SPEEEEEEN.rotateClaw(Constants.kClawSpinnerSpeed);
     }
 
+    @Override
     public boolean isFinished(){
-        return RobotContainer.S_INTAKE.isClawSpinnerStalled() ||isTimedOut();
+        return  RobotContainer.S_CYMBAL_SPEEEEEEN.isClawSpinnerStalled() ||isTimedOut();
     }
 
 
     public boolean isTimedOut(){
 
-        return RotateCone.mStartTime + Constants.kClawTimeFrame < Timer.getFPGATimestamp();
+        return mStartTime + Constants.kClawTimeFrame < Timer.getFPGATimestamp();
     }
 
 

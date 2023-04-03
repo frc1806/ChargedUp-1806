@@ -17,16 +17,16 @@ import frc.robot.game.Placement;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class GroundIntake extends SequentialCommandGroup {
+public class FeederStation extends SequentialCommandGroup {
   /** Creates a new MoveArmToPlacement. */
-  public GroundIntake(GamePieceMode gamePieceMode) {
+  public FeederStation() {
 
 
     addCommands(
       new ProtruderGoToExtension(Constants.kProtruderDistanceAtFullRetract)
       , new CloseClaw(RobotContainer.S_INTAKE)
-      , new ArmGoToAngle(getWantedIntakePlacement(gamePieceMode).getPivotAngle())
-      , new ProtruderGoToExtension(getWantedIntakePlacement(gamePieceMode).getExtendDistance())
+      , new ArmGoToAngle(Placement.FEEDER_STATION.getPivotAngle())
+      , new ProtruderGoToExtension(Placement.FEEDER_STATION.getExtendDistance())
       , new OpenClaw(RobotContainer.S_INTAKE)
       , new WaitForGPSenseThenCloseClaw()
       , new WaitAndDoNothing(.125)
@@ -35,14 +35,14 @@ public class GroundIntake extends SequentialCommandGroup {
       //addRequirements(RobotContainer.S_INTAKE, RobotContainer.S_PIVOTARM, RobotContainer.S_PROTRUDER);
   }
 
-  private Placement getWantedIntakePlacement(GamePieceMode mode){
-    switch(mode){
-      case ConeMode:
-        return Placement.GROUND_INTAKE_CONE;
-      case OffMode:
-      default:
-      case CubeMode:
-        return Placement.GROUND_INTAKE_CUBE;
-    }
-  }
+  // private Placement getWantedIntakePlacement(GamePieceMode mode){
+  //   switch(mode){
+  //     case ConeMode:
+  //       return Placement.GROUND_INTAKE_CONE;
+  //     case OffMode:
+  //     default:
+  //     case CubeMode:
+  //       return Placement.GROUND_INTAKE_CUBE;
+  //   }
+  // }
 }

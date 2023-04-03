@@ -5,33 +5,30 @@
 package frc.robot.commands.Intake;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.CymbalSpinner;
+import frc.robot.subsystems.DriverControls;
 
-public class OpenClawAtProtruderDistance extends CommandBase {
-
-  private double mDistanceToOpenAt;
-  private boolean mHasOpenedClaw;
-  /** Creates a new OpenClawAtProtruderDistance. */
-  public OpenClawAtProtruderDistance(Double distanceToOpenAt) {
-    mDistanceToOpenAt = distanceToOpenAt;
-    mHasOpenedClaw = false;
-    addRequirements(RobotContainer.S_INTAKE);
+public class ManualRotateCone extends CommandBase {
+  /** Creates a new ManualRotateCone. */
+  CymbalSpinner mClawSpin;
+  DriverControls mControls;
+  
+  public ManualRotateCone() {
+    mClawSpin = RobotContainer.S_CYMBAL_SPEEEEEEN;
+    mControls = RobotContainer.S_DRIVECONTROLS;
+    addRequirements(mClawSpin);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    mHasOpenedClaw = false;
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    if(!mHasOpenedClaw && RobotContainer.S_PROTRUDER.getDistance() > mDistanceToOpenAt){
-      RobotContainer.S_INTAKE.openBoth();
-      mHasOpenedClaw = true;
-    }
-  }
+  public void execute() {mClawSpin.rotateClaw(mControls.o_getManualRotateCone());}
 
   // Called once the command ends or is interrupted.
   @Override
@@ -40,6 +37,6 @@ public class OpenClawAtProtruderDistance extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return mHasOpenedClaw;
+    return false;
   }
 }
