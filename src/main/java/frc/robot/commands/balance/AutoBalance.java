@@ -9,6 +9,7 @@ public class AutoBalance extends CommandBase {
     private boolean mHasBeenTipped;
     private boolean mIsForward;
     private DriveTrain mDriveTrain;
+    private double power;
 
     public AutoBalance(DriveTrain driveTrain, boolean isForward){
         mHasBeenTipped = false;
@@ -31,14 +32,14 @@ public class AutoBalance extends CommandBase {
         if(isTipped()){
             mHasBeenTipped = true;
         } 
-
-        mDriveTrain.setDriveMode((mIsForward?0.3:-0.3), 0.0, false);
+        power = mHasBeenTipped?0.2:0.4;
+        mDriveTrain.setDriveMode((mIsForward?power:-power), 0.0, false);
     }
 
     @Override
     public void initialize() {
         mHasBeenTipped = false;
-        
+        mDriveTrain.setBrakeMode();
     }
 
     @Override

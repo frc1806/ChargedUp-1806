@@ -71,5 +71,5 @@ public class Constants {
 
     //SlowAutoBalance
     public static final double kSlowBalanceTippedDegrees = 10.0;
-    public static final double kSlowBalanceLevelDegrees = 3.5;
+    public static final double kSlowBalanceLevelDegrees = 7.0;
 }

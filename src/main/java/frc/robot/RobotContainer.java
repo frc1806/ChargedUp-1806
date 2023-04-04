@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Drive;
 import frc.robot.commands.MoveArmToPlacement;
+import frc.robot.commands.PlaceSequence;
 import frc.robot.commands.TimedDriveCommand;
 import frc.robot.commands.ToggleIntake;
 import frc.robot.commands.AutoModes.DeadReckoningNoObstacle;
@@ -35,6 +36,7 @@ import frc.robot.commands.Intake.CloseClaw;
 import frc.robot.commands.Intake.GroundIntake;
 import frc.robot.commands.Intake.ManualRotateCone;
 import frc.robot.commands.Intake.OpenClaw;
+import frc.robot.commands.balance.AutoBalance;
 import frc.robot.game.Placement;
 import frc.robot.shuffleboard.ShuffleboardManager;
 import frc.robot.subsystems.DriveTrain;
@@ -132,7 +134,7 @@ public class RobotContainer {
 
 // This will load the file "FullAuto.path" and generate it with a max velocity of 4 m/s and a max acceleration of 3 m/s^2
 // for every path in the group
-//List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("FullAuto", new PathConstraints(4, 3));
+List<PathPlannerTrajectory> cableProtector2PiecePaths = PathPlanner.loadPathGroup("LongSide2Piece+Balance", new PathConstraints(4, 3));
 
 
 
@@ -153,7 +155,7 @@ public class RobotContainer {
     eventMap.put("placeCubeHigh", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new OpenClaw(S_INTAKE)).andThen( new MoveArmToPlacement(Placement.HOME)));
     eventMap.put("groundIntakeCone", new GroundIntake(GamePieceMode.ConeMode));
     eventMap.put("groundIntakeCube", new GroundIntake(GamePieceMode.CubeMode));
-
+    eventMap.put("place", new PlaceSequence());
 
     RamseteAutoBuilder autoBuilder = new RamseteAutoBuilder(
         S_DRIVETRAIN::getPose, // Pose2d supplier
@@ -173,15 +175,15 @@ public class RobotContainer {
 
       //mSendableChooser.addOption("Full Auto", autoBuilder.fullAuto(pathGroup));
       mSendableChooser.addOption("Dead Reckoning No Obstacle", new DeadReckoningNoObstacle(S_DRIVETRAIN));
-      mSendableChooser.addOption("PlaceCubeHigh", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new ToggleIntake(S_INTAKE)).andThen(new WaitCommand(2.0)).andThen(new MoveArmToPlacement(Placement.HOME)));
-      mSendableChooser.addOption("PlaceCubeHighShortMobility", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new ToggleIntake(S_INTAKE)).andThen(new WaitCommand(2.0)).andThen(new MoveArmToPlacement(Placement.HOME)).andThen(new TimedDriveCommand(S_DRIVETRAIN, 2.5, 0.25)));
-      mSendableChooser.addOption("PlaceCubeHighLongMobility", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new ToggleIntake(S_INTAKE)).andThen(new WaitCommand(2.0)).andThen(new MoveArmToPlacement(Placement.HOME)).andThen(new TimedDriveCommand(S_DRIVETRAIN, 3.5, 0.25)));
-      mSendableChooser.addOption("PlaceCubeHighChargeStationMobility", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new ToggleIntake(S_INTAKE)).andThen(new WaitCommand(2.0)).andThen(new MoveArmToPlacement(Placement.HOME)).andThen(new TimedDriveCommand(S_DRIVETRAIN, 2.5, 0.4).andThen(new TimedDriveCommand(S_DRIVETRAIN, 0.1, -.2))));
+      mSendableChooser.addOption("PlaceCubeHigh", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new PlaceSequence()));
+      mSendableChooser.addOption("PlaceCubeHighShortMobility", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new PlaceSequence()).andThen(new TimedDriveCommand(S_DRIVETRAIN, 2.5, 0.25)));
+      mSendableChooser.addOption("PlaceCubeHighLongMobility", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new PlaceSequence()).andThen(new TimedDriveCommand(S_DRIVETRAIN, 3.5, 0.25)));
+      mSendableChooser.addOption("PlaceCubeHighChargeStationMobility", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new PlaceSequence()).andThen(new TimedDriveCommand(S_DRIVETRAIN, 2.5, 0.4).andThen(new TimedDriveCommand(S_DRIVETRAIN, 0.1, -.2))));
       mSendableChooser.addOption("ShortSideMobilityOnly", new TimedDriveCommand(S_DRIVETRAIN, 2.5, 0.25));
       mSendableChooser.addOption("LongSideMobilityOnly", new TimedDriveCommand(S_DRIVETRAIN, 3.5, 0.25));
-      mSendableChooser.addOption("Desperation Mode",   new TimedDriveCommand(S_DRIVETRAIN, 1.0, -0.4).andThen(new TimedDriveCommand(S_DRIVETRAIN, 3.5, 0.25)));
-
-    
+      mSendableChooser.addOption("Desperation Mode",   new TimedDriveCommand(S_DRIVETRAIN, 1.0, -0.4).andThen(new TimedDriveCommand(S_DRIVETRAIN, 2.5, 0.4).andThen(new TimedDriveCommand(S_DRIVETRAIN, 0.1, -.2))));
+      mSendableChooser.addOption("PlaceCubeHighChargeStationBalance", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new PlaceSequence()).andThen(new TimedDriveCommand(S_DRIVETRAIN, 2.5, 0.4).andThen(new TimedDriveCommand(S_DRIVETRAIN, 0.1, -.2).andThen(new AutoBalance(S_DRIVETRAIN, false)))));
+      mSendableChooser.addOption("CableProtector2Cube+Balance", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new PlaceSequence().andThen(autoBuilder.fullAuto(cableProtector2PiecePaths).andThen(new AutoBalance(S_DRIVETRAIN, true)))));
       mSendableChooser.addOption("DoNothing", new CommandBase() {
         @Override
         public void initialize() {
