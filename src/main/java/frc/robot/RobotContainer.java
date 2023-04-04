@@ -149,7 +149,8 @@ public class RobotContainer {
     eventMap.put("homeArm", new  MoveArmToPlacement(Placement.HOME));
     eventMap.put("openClaw", new OpenClaw(S_INTAKE));
     eventMap.put("closeClaw", new CloseClaw(S_INTAKE));
-    eventMap.put("placeConeHigh", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new OpenClaw(S_INTAKE)));
+    eventMap.put("placeConeHigh", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CONE).andThen(new OpenClaw(S_INTAKE)).andThen( new MoveArmToPlacement(Placement.HOME)));
+    eventMap.put("placeCubeHigh", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new OpenClaw(S_INTAKE)).andThen( new MoveArmToPlacement(Placement.HOME)));
     eventMap.put("groundIntakeCone", new GroundIntake(GamePieceMode.ConeMode));
     eventMap.put("groundIntakeCube", new GroundIntake(GamePieceMode.CubeMode));
 

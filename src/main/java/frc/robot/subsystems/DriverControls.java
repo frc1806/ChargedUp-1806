@@ -10,6 +10,7 @@ import frc.robot.RobotContainer.GamePieceMode;
 import frc.robot.commands.FalconPunch;
 import frc.robot.commands.FeederStationLineupDrive;
 import frc.robot.commands.MoveArmToPlacement;
+import frc.robot.commands.PlaceSequence;
 import frc.robot.commands.ScoringLineupDrive;
 import frc.robot.commands.SetDriveBrake;
 import frc.robot.commands.ToggleGamePieceMode;
@@ -240,9 +241,13 @@ public class DriverControls extends SubsystemBase {
         return operatorController.getRightY();
     }
 
-    public boolean o_wantManualRotate(){
+    public boolean o_wantManualArmRotate(){
         return RobotContainer.S_INTAKE.isAngleSafeForClawOpen(RobotContainer.S_PIVOTARM.mCurrentDesiredAngle) 
         && operatorController.getRightTriggerDigital();
+    }
+
+    public boolean o_wantPlaceSequence(){
+        return operatorController.getLeftTriggerDigital();
     }
 
     // Operator LED Control
@@ -329,6 +334,7 @@ public class DriverControls extends SubsystemBase {
         new Trigger(this::o_switchModes).onTrue(new ToggleGamePieceMode());
         new Trigger(this::o_wantSpinThrottle).whileTrue(new CymbalSpinManual(intake, this));
         new Trigger(this::o_getIntakeMode).onTrue(new ToggleIntake(intake));
+        new Trigger(this::o_wantPlaceSequence).onTrue(new PlaceSequence());
         //Debug
         new Trigger(this::d_getIntakeLeft).onTrue(new LeftSolenoid(intake));
         new Trigger(this::d_getIntakeRight).onTrue(new RightSolenoid(intake));

@@ -95,7 +95,7 @@ public class PivotArm extends SubsystemBase{
     public void periodic(){
         mCurrentAngle = mArmPivotMotor.getEncoder().getPosition();
         
-        if(!(RobotContainer.S_DRIVECONTROLS.d_wantArmManual() || RobotContainer.S_DRIVECONTROLS.o_wantManualRotate())){
+        if(!(RobotContainer.S_DRIVECONTROLS.d_wantArmManual() || RobotContainer.S_DRIVECONTROLS.o_wantManualArmRotate())){
             if (atPosition()){
                 //true stuff here
                 setMotor(0.0);
