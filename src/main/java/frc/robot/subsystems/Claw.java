@@ -1,19 +1,13 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.InvertType;
-import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
-import edu.wpi.first.util.CircularBuffer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
-import frc.robot.drivers.BeamBreak;
 
 public class Claw extends SubsystemBase{
     private Solenoid mLeftSolenoid, mRightSolenoid;
@@ -75,6 +69,16 @@ public class Claw extends SubsystemBase{
     public void closeRight(){
         mIntakeStates = IntakeStates.RightClosed;
         mRightSolenoid.set(false);
+    }
+
+    public boolean canClawOpen(){
+        return isAngleSafeForClawOpen(RobotContainer.S_PIVOTARM.getAngle());
+
+    }
+
+    public boolean isAngleSafeForClawOpen(double angle){
+        return !(angle >= Constants.kClawNotAcceptableMinimumDegree
+             && angle <= Constants.kClawNotAcceptableMaximumDegree);
     }
 
 

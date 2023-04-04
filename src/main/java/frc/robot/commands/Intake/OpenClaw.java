@@ -22,12 +22,14 @@ public class OpenClaw extends CommandBase{
 
     @Override
     public void initialize() {
-        mClaw.openBoth();
+        if(mClaw.canClawOpen()){
+            mClaw.openBoth();
+        }
     }
 
     @Override
     public boolean isFinished() {
-        return mClaw.isClawOpened();
+        return mClaw.isClawOpened() || !mClaw.canClawOpen();
     }
     
 }

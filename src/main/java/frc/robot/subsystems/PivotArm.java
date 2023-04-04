@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
 import frc.robot.game.Placement;
 
@@ -18,8 +19,9 @@ public class PivotArm extends SubsystemBase{
     private CANSparkMax mArmPivotMotor;
     private DutyCycleEncoder mArmPivotEncoder;
     private PIDController mPidController;
-    private double mCurrentDesiredAngle; //the angle the rest of the robot wants this at.
+    public double mCurrentDesiredAngle; //the angle the rest of the robot wants this at.
     private double mCurrentAngle;
+    private double mWantedManualPower;
     
     public PivotArm() {
 
@@ -63,6 +65,10 @@ public class PivotArm extends SubsystemBase{
         mCurrentDesiredAngle = angle;
     }
 
+    public void setWantedManualPower(double wantedPower){
+        mWantedManualPower = wantedPower;
+    }
+
     public boolean atPosition(){
         return Math.abs(getAngle()-mCurrentDesiredAngle) < Constants.kAcceptableAngleDelta;
     }
@@ -89,20 +95,24 @@ public class PivotArm extends SubsystemBase{
     public void periodic(){
         mCurrentAngle = mArmPivotMotor.getEncoder().getPosition();
         
-        if (atPosition()){
-            //true stuff here
-            setMotor(0.0);
+        if(!(RobotContainer.S_DRIVECONTROLS.d_wantArmManual() || RobotContainer.S_DRIVECONTROLS.o_wantManualRotate())){
+            if (atPosition()){
+                //true stuff here
+                setMotor(0.0);
+            }
+            else{
+                //false stuff here
+                setMotor(mPidController.calculate(getAngle(), mCurrentDesiredAngle) * 12);
+            }
+            if(RobotState.isDisabled())
+            {
+                resetMotorEncoderToAbsoluteEncoder();
+                mCurrentDesiredAngle = mCurrentAngle;
+            }
         }
         else{
-            //false stuff here
-            setMotor(mPidController.calculate(getAngle(), mCurrentDesiredAngle) * 12);
+            setMotor(mWantedManualPower * 3);
         }
-        if(RobotState.isDisabled())
-        {
-            resetMotorEncoderToAbsoluteEncoder();
-            mCurrentDesiredAngle = mCurrentAngle;
-        }
-
     }
 
     

@@ -17,7 +17,6 @@ import frc.robot.commands.ToggleIntake;
 import frc.robot.commands.DebugCommands.CymbalSpinManual;
 import frc.robot.commands.DebugCommands.LeftSolenoid;
 import frc.robot.commands.DebugCommands.ManualExtend;
-import frc.robot.commands.DebugCommands.ManualRotate;
 import frc.robot.commands.DebugCommands.RightSolenoid;
 import frc.robot.commands.DebugCommands.ToggleProtruderBrake;
 import frc.robot.commands.Intake.FeederStation;
@@ -237,6 +236,15 @@ public class DriverControls extends SubsystemBase {
         return operatorController.getXButton();
     }
 
+    public double o_rotateThrottle(){
+        return operatorController.getRightY();
+    }
+
+    public boolean o_wantManualRotate(){
+        return RobotContainer.S_INTAKE.isAngleSafeForClawOpen(RobotContainer.S_PIVOTARM.mCurrentDesiredAngle) 
+        && operatorController.getRightTriggerDigital();
+    }
+
     // Operator LED Control
 
     // Debug Controls
@@ -324,7 +332,6 @@ public class DriverControls extends SubsystemBase {
         //Debug
         new Trigger(this::d_getIntakeLeft).onTrue(new LeftSolenoid(intake));
         new Trigger(this::d_getIntakeRight).onTrue(new RightSolenoid(intake));
-        new Trigger(this::d_wantArmManual).whileTrue(new ManualRotate(arm, this));
         //new Trigger(this::d_wantCymbalManual).whileTrue(new CymbalSpinManual(intake, this));
         new Trigger(this::d_wantManualExtend).whileTrue(new ManualExtend(protruder, this));
         new Trigger(this::d_toggleProtruderBrakeMode).onTrue(new ToggleProtruderBrake(protruder));
@@ -340,6 +347,8 @@ public class DriverControls extends SubsystemBase {
         } else {
             selectedControls = DriverControlType.Classic;
         }
+
+        RobotContainer.S_PIVOTARM.setWantedManualPower(o_rotateThrottle());
     }
 
 }

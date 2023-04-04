@@ -57,6 +57,9 @@ public class Constants {
 
     public static final double kPivotFeedForwardGain = 0.006;
 
+    public static final double kClawNotAcceptableMinimumDegree = 130.0;
+    public static final double kClawNotAcceptableMaximumDegree = 200.0;
+
     //ClawSpinner
     public static final int kClawSpinnerBufferSize = 20;
     public static final double kClawSpinnerStalledCurrent = 7.0;
