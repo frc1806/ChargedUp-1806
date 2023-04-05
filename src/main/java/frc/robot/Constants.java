@@ -46,6 +46,7 @@ public class Constants {
     public static final double kProtruderSecondStageStallAmps = 5;
     public static final double kProtruderSecondStageStallTimeout = 0.2;
     public static final double kProtruderAcceptableFirstStageExtensionToPassThrough = 1.0;
+    public static final double kProtruderPushBackInches = 1.5;
 
     
     //Arm Angle Constants

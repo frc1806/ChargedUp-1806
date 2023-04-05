@@ -20,6 +20,7 @@ import frc.robot.commands.DebugCommands.ManualExtend;
 import frc.robot.commands.DebugCommands.RightSolenoid;
 import frc.robot.commands.DebugCommands.ToggleProtruderBrake;
 import frc.robot.commands.Intake.FeederStation;
+import frc.robot.commands.Intake.FeederStationCone;
 import frc.robot.commands.Intake.GroundIntake;
 import frc.robot.commands.Intake.RotateCone;
 import frc.robot.game.Placement;
@@ -190,7 +191,11 @@ public class DriverControls extends SubsystemBase {
     }
 
     public boolean o_feederStation(){
-        return operatorController.getAButton();
+        return operatorController.getAButton() && RobotContainer.GetCurrentGamePieceMode() == GamePieceMode.CubeMode;
+    }
+
+    public boolean o_feederStationCone(){
+        return operatorController.getAButton() && RobotContainer.GetCurrentGamePieceMode() == GamePieceMode.ConeMode;
     }
 
     public boolean o_goHome(){
@@ -323,6 +328,7 @@ public class DriverControls extends SubsystemBase {
         new Trigger(this::o_highCubePlacement).onTrue(new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE));
         new Trigger(this::o_goHome).onTrue(new MoveArmToPlacement(Placement.HOME));
         new Trigger(this::o_feederStation).onTrue(new FeederStation());
+        new Trigger(this::o_feederStationCone).onTrue(new FeederStationCone());
         new Trigger(this::o_getGroundIntakeCube).onTrue(new GroundIntake(GamePieceMode.CubeMode));
         new Trigger(this::o_getGroundIntakeCone).onTrue(new GroundIntake(GamePieceMode.ConeMode));
         new Trigger(this::o_wantSpin).onTrue(new RotateCone());

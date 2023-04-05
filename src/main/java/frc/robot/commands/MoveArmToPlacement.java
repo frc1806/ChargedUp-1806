@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -22,13 +21,9 @@ public class MoveArmToPlacement extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new PrintCommand("start"),
       new ProtruderGoToExtension(Constants.kProtruderDistanceAtFullRetract)
-      , new PrintCommand("Closing claw")
       , new CloseClaw(RobotContainer.S_INTAKE)
-      , new PrintCommand("Going to angle")
       , new ArmGoToAngle(placement.getPivotAngle())
-      , new PrintCommand("Going to position")
       , new ProtruderGoToExtension(placement.getExtendDistance()));
       //addRequirements(RobotContainer.S_INTAKE, RobotContainer.S_PIVOTARM, RobotContainer.S_PROTRUDER);
   }

@@ -84,7 +84,7 @@ public class Protruder extends SubsystemBase{
     }
 
     public Double getTargetDistance(){
-        return mTargetTotalDistance;
+        return mFirstStageTargetDistance;
     }
 
     private Double getFirstStageDistance(){
@@ -93,6 +93,10 @@ public class Protruder extends SubsystemBase{
 
     private Double getSecondStageDistance(){
         return mSecondStageStates == SecondStageStates.HoldIn?0:Constants.kProtruderSecondStageLength;
+    }
+
+    private double getTotalTargetDistance(){
+        return mFirstStageTargetDistance;
     }
 
 

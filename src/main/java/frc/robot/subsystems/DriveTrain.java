@@ -135,7 +135,9 @@ public class DriveTrain extends SubsystemBase{
      */
     public void setDriveMode(double throttle, double steer, boolean quickTurn){
         if(!powerBrake(steer, throttle, Constants.kDriveTrainRampPowerBrakePower))
-        {
+        {   if(quickTurn){
+            steer = steer *0.39;
+        }
             mDifferentialDrive.curvatureDrive(throttle, steer * Constants.kDriveTurningSensitivity, quickTurn);
         }
         
@@ -298,6 +300,14 @@ public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFir
         SmartDashboard.putNumber("Robot Pitch", getRobotPitch());
     }
 
+    public void forceVisionUpdate(){
+        Pose2d visionUpdate = RobotContainer.S_REAR_VISION_SUBSYSTEM.getBotPose();
+        if(RobotContainer.S_REAR_VISION_SUBSYSTEM.hasAprilTagTarget() && visionUpdate != mLastVisionUpdate){
+            mLastVisionUpdate = visionUpdate;
+            mDifferentialDriveOdometry.resetPosition(new Rotation2d(Units.degreesToRadians(-mNavX.getAngle())), mLeftEncoder.getDistance(), mRightEncoder.getDistance(), RobotContainer.S_REAR_VISION_SUBSYSTEM.getBotPose());
+        }
+    }
+
     @Override
     public void periodic() {
         outputToSmartDashboard();
@@ -310,8 +320,10 @@ public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFir
 
         Pose2d visionUpdate = RobotContainer.S_REAR_VISION_SUBSYSTEM.getBotPose();
         if(RobotContainer.S_REAR_VISION_SUBSYSTEM.hasAprilTagTarget() && visionUpdate != mLastVisionUpdate){
-            mLastVisionUpdate = visionUpdate;
-            mDifferentialDriveOdometry.resetPosition(new Rotation2d(Units.degreesToRadians(-mNavX.getAngle())), mLeftEncoder.getDistance(), mRightEncoder.getDistance(), RobotContainer.S_REAR_VISION_SUBSYSTEM.getBotPose());
+            if(visionUpdate.getTranslation().getDistance(mDifferentialDriveOdometry.getPoseMeters().getTranslation()) < 1.0){
+                mDifferentialDriveOdometry.resetPosition(new Rotation2d(Units.degreesToRadians(-mNavX.getAngle())), mLeftEncoder.getDistance(), mRightEncoder.getDistance(), RobotContainer.S_REAR_VISION_SUBSYSTEM.getBotPose());
+            } // I don't see our odometry being off an entire meter.
+           
         }
 
         super.periodic();

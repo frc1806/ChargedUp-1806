@@ -30,6 +30,7 @@ public class TimedDriveCommand extends CommandBase{
     public void initialize() {
         start = Timer.getFPGATimestamp();
         mDriveTrain.setDrivePower(mDrivePower);
+        mDriveTrain.setCoastMode();
     }
 
     @Override

@@ -6,7 +6,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants;
 import frc.robot.commands.Intake.OpenClawAtProtruderDistance;
 import frc.robot.commands.protruder.ProtruderGoToExtension;
 import frc.robot.game.Placement;
