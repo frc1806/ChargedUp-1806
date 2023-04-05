@@ -1,5 +1,6 @@
 package frc.robot.commands.balance;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveTrain;
@@ -10,12 +11,15 @@ public class AutoBalance extends CommandBase {
     private boolean mIsForward;
     private DriveTrain mDriveTrain;
     private double power;
+    private double maxPitch;
+    private PIDController mPid;
 
     public AutoBalance(DriveTrain driveTrain, boolean isForward){
         mHasBeenTipped = false;
         mIsForward = isForward;
         mDriveTrain = driveTrain;
         addRequirements(mDriveTrain);
+        mPid = new PIDController(0.0080, 0.0, 0.0023);
     }
     
     @Override
@@ -27,25 +31,29 @@ public class AutoBalance extends CommandBase {
 
     @Override
     public void execute() {
-        // TODO Auto-generated method stub
+        double absolutePitch = Math.abs(mDriveTrain.getRobotPitch());
+        if(absolutePitch > maxPitch ){
+            maxPitch = absolutePitch;
+        }
         super.execute();
         if(isTipped()){
             mHasBeenTipped = true;
         } 
-        power = mHasBeenTipped?0.2:0.4;
-        mDriveTrain.setDriveMode((mIsForward?power:-power), 0.0, false);
+        power = mHasBeenTipped?-mPid.calculate(mDriveTrain.getRobotPitch(), 0.0):(mIsForward?0.6:-0.6);
+        mDriveTrain.setDriveMode((power), 0.0, false);
     }
 
     @Override
     public void initialize() {
         mHasBeenTipped = false;
         mDriveTrain.setBrakeMode();
+        mPid.reset();
     }
 
     @Override
     public boolean isFinished() {
-        // TODO Auto-generated method stub
-        return mHasBeenTipped && isLevel();
+        return false;
+        //return mHasBeenTipped && isLevel();
     }
 
     public boolean isTipped(){
@@ -54,6 +62,10 @@ public class AutoBalance extends CommandBase {
 
     public boolean isLevel(){
         return Math.abs(mDriveTrain.getRobotPitch()) < Constants.kSlowBalanceLevelDegrees;
+    }
+
+    public boolean isLeveling(){
+        return mDriveTrain.getRobotPitch() < maxPitch - 3.0;
     }
         
 }

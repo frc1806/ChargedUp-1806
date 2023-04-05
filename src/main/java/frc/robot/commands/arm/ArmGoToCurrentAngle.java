@@ -21,4 +21,9 @@ public class ArmGoToCurrentAngle extends ArmGoToAngle {
     wantedAngle = RobotContainer.S_PIVOTARM.getAngle(); //Set wanted angle to current angle
     RobotContainer.S_PIVOTARM.goToPosition(wantedAngle);
   }
+
+  @Override
+  public boolean isFinished(){
+    return true;
+  }
 }

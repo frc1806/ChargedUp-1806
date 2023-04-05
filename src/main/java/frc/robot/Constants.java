@@ -71,6 +71,6 @@ public class Constants {
     public static final int kTotalLEDCount = 24;
 
     //SlowAutoBalance
-    public static final double kSlowBalanceTippedDegrees = 10.0;
-    public static final double kSlowBalanceLevelDegrees = 7.0;
+    public static final double kSlowBalanceTippedDegrees = 12.0;
+    public static final double kSlowBalanceLevelDegrees = 5.0;
 }

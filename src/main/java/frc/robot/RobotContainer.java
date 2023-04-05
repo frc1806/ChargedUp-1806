@@ -184,6 +184,9 @@ List<PathPlannerTrajectory> cableProtector2PiecePaths = PathPlanner.loadPathGrou
       mSendableChooser.addOption("Desperation Mode",   new TimedDriveCommand(S_DRIVETRAIN, 1.0, -0.4).andThen(new TimedDriveCommand(S_DRIVETRAIN, 2.5, 0.4).andThen(new TimedDriveCommand(S_DRIVETRAIN, 0.1, -.2))));
       mSendableChooser.addOption("PlaceCubeHighChargeStationBalance", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new PlaceSequence()).andThen(new TimedDriveCommand(S_DRIVETRAIN, 2.5, 0.4).andThen(new TimedDriveCommand(S_DRIVETRAIN, 0.1, -.2).andThen(new AutoBalance(S_DRIVETRAIN, false)))));
       mSendableChooser.addOption("CableProtector2Cube+Balance", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new PlaceSequence().andThen(autoBuilder.fullAuto(cableProtector2PiecePaths).andThen(new AutoBalance(S_DRIVETRAIN, true)))));
+      mSendableChooser.addOption("Test Auto Balance Forward", new AutoBalance(S_DRIVETRAIN, true).andThen(new TimedDriveCommand(S_DRIVETRAIN, 0.05, -0.1)));
+      mSendableChooser.addOption("Test Auto Balance Backwards", new AutoBalance(S_DRIVETRAIN, false).andThen(new TimedDriveCommand(S_DRIVETRAIN, 0.05, 0.1)));
+      mSendableChooser.addOption("CubeHighCHargeStationMobilityAndBalance", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new PlaceSequence()).andThen(new TimedDriveCommand(S_DRIVETRAIN, 2.6, 0.4).andThen(new TimedDriveCommand(S_DRIVETRAIN, 0.5, -.07).andThen(new AutoBalance(S_DRIVETRAIN, false)))));
       mSendableChooser.addOption("DoNothing", new CommandBase() {
         @Override
         public void initialize() {
