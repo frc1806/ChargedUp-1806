@@ -46,12 +46,13 @@ public class ScoringLineupDrive extends CommandBase{
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Rotation2d robotToTarget = mDriveTrain.getPose().getTranslation().minus(mNearestScoringLocation).getAngle();
+    Translation2d averagedXPointToTarget = new Translation2d( (.666* mNearestScoringLocation.getX()) + (.333*mDriveTrain.getPose().getTranslation().getX()), mNearestScoringLocation.getY() );
+    Rotation2d robotToTarget = mDriveTrain.getPose().getTranslation().minus(averagedXPointToTarget).getAngle();
     Rotation2d yaw = robotToTarget.minus(mDriveTrain.getPose().getRotation());
     double robotToTargetAngle = robotToTarget.getDegrees();
     double driveTrainAngle = mDriveTrain.getPose().getRotation().getDegrees();
     double error = yaw.getDegrees();
-    mDriveTrain.setDriveMode(mDriveControls.getThrottle(), -error * .015, true);
+    mDriveTrain.setDriveMode(mDriveControls.getThrottle(), -error * .0175, true);
     
   }
 

@@ -99,7 +99,7 @@ public class RobotContainer {
 
     DriverStation.silenceJoystickConnectionWarning(true);
     compressor = new Compressor(PneumaticsModuleType.REVPH);
-    S_REAR_VISION_SUBSYSTEM.updateLimelightPose(Units.inchesToMeters(2), Units.inchesToMeters(8.75), Units.inchesToMeters(35), 180, -30, 0); //TODO: Update limelight pose to reflect actual robot
+    S_REAR_VISION_SUBSYSTEM.updateLimelightPose(Units.inchesToMeters(2), Units.inchesToMeters(-8.75), Units.inchesToMeters(35), 180, -30, 0); //TODO: Update limelight pose to reflect actual robot
     //SET DEFAULT COMMANDS
     setDefaultCommands();
     

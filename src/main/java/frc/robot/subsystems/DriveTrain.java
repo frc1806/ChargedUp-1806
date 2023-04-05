@@ -12,6 +12,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -22,6 +23,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -40,7 +42,7 @@ import frc.robot.RobotMap;
 public class DriveTrain extends SubsystemBase{
 
     private DifferentialDrive mDifferentialDrive;
-    private DifferentialDriveOdometry mDifferentialDriveOdometry;
+    private DifferentialDrivePoseEstimator mDifferentialDrivePoseEstimator;
     public DifferentialDriveKinematics mDifferentialDriveKinematics;
     private MotorControllerGroup mLeftMotorGroup, mRightMotorGroup;
 
@@ -96,7 +98,7 @@ public class DriveTrain extends SubsystemBase{
 
         mField = new Field2d();
 
-        mDifferentialDriveOdometry = new DifferentialDriveOdometry(new Rotation2d(Units.degreesToRadians(-mNavX.getAngle())), 0, 0);
+        mDifferentialDrivePoseEstimator = new DifferentialDrivePoseEstimator(mDifferentialDriveKinematics, new Rotation2d(Units.degreesToRadians(-mNavX.getAngle())), 0, 0, new Pose2d());
 
         //SIMULATION
         mLeftEncoderSim = new EncoderSim(mLeftEncoder);
@@ -208,7 +210,7 @@ public class DriveTrain extends SubsystemBase{
         mNavX.setAngleAdjustment(-newPose.getRotation().getDegrees());
         mNavXYawSim.set(-newPose.getRotation().getDegrees()); //SIM
         mDifferentialDrivetrainSim.setPose(newPose);
-        mDifferentialDriveOdometry.resetPosition(new Rotation2d(Units.degreesToRadians(-mNavX.getAngle())), mLeftEncoder.getDistance(), mRightEncoder.getDistance(), newPose);
+        mDifferentialDrivePoseEstimator.resetPosition(new Rotation2d(Units.degreesToRadians(-mNavX.getAngle())), mLeftEncoder.getDistance(), mRightEncoder.getDistance(), newPose);
         
         
     }
@@ -219,7 +221,7 @@ public class DriveTrain extends SubsystemBase{
     }
 
     public Pose2d getPose(){
-        return mDifferentialDriveOdometry.getPoseMeters();
+        return mDifferentialDrivePoseEstimator.getEstimatedPosition();
     }
 
     public Double getLeftDrivePower(){
@@ -302,26 +304,30 @@ public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFir
 
     public void forceVisionUpdate(){
         Pose2d visionUpdate = RobotContainer.S_REAR_VISION_SUBSYSTEM.getBotPose();
-        if(RobotContainer.S_REAR_VISION_SUBSYSTEM.hasAprilTagTarget() && visionUpdate != mLastVisionUpdate){
+        if(RobotContainer.S_REAR_VISION_SUBSYSTEM.hasAprilTagTarget()){
             mLastVisionUpdate = visionUpdate;
-            mDifferentialDriveOdometry.resetPosition(new Rotation2d(Units.degreesToRadians(-mNavX.getAngle())), mLeftEncoder.getDistance(), mRightEncoder.getDistance(), RobotContainer.S_REAR_VISION_SUBSYSTEM.getBotPose());
+            mDifferentialDrivePoseEstimator.resetPosition(new Rotation2d(Units.degreesToRadians(-mNavX.getAngle())), mLeftEncoder.getDistance(), mRightEncoder.getDistance(), RobotContainer.S_REAR_VISION_SUBSYSTEM.getBotPose());
         }
     }
 
     @Override
     public void periodic() {
         outputToSmartDashboard();
-        mDifferentialDriveOdometry.update(new Rotation2d(Units.degreesToRadians(-mNavX.getAngle())), mLeftEncoder.getDistance(), mRightEncoder.getDistance());
+        mDifferentialDrivePoseEstimator.update(new Rotation2d(Units.degreesToRadians(-mNavX.getAngle())), mLeftEncoder.getDistance(), mRightEncoder.getDistance());
         Pose2d fieldZero = new Pose2d(new Translation2d(0, 0), new Rotation2d());
         if(RobotContainer.S_REAR_VISION_SUBSYSTEM.getCurrentAlliance() == Alliance.Red){
             fieldZero = new Pose2d(new Translation2d(Constants.kFieldLength, Constants.kFieldWidth), new Rotation2d(Math.PI));
         }
-        mField.setRobotPose(mDifferentialDriveOdometry.getPoseMeters().relativeTo(fieldZero));
+        mField.setRobotPose(mDifferentialDrivePoseEstimator.getEstimatedPosition().relativeTo(fieldZero));
 
         Pose2d visionUpdate = RobotContainer.S_REAR_VISION_SUBSYSTEM.getBotPose();
-        if(RobotContainer.S_REAR_VISION_SUBSYSTEM.hasAprilTagTarget() && visionUpdate != mLastVisionUpdate){
-            if(visionUpdate.getTranslation().getDistance(mDifferentialDriveOdometry.getPoseMeters().getTranslation()) < 1.0){
-                mDifferentialDriveOdometry.resetPosition(new Rotation2d(Units.degreesToRadians(-mNavX.getAngle())), mLeftEncoder.getDistance(), mRightEncoder.getDistance(), RobotContainer.S_REAR_VISION_SUBSYSTEM.getBotPose());
+        if(visionUpdate != null && mLastVisionUpdate == null){
+            forceVisionUpdate();
+        }
+        else if(RobotContainer.S_REAR_VISION_SUBSYSTEM.hasAprilTagTarget() && visionUpdate != mLastVisionUpdate){
+            if(visionUpdate.getTranslation().getDistance(mDifferentialDrivePoseEstimator.getEstimatedPosition().getTranslation()) < 3.0){
+                mDifferentialDrivePoseEstimator.addVisionMeasurement(visionUpdate, Timer.getFPGATimestamp() - 0.2);
+                mLastVisionUpdate = visionUpdate;
             } // I don't see our odometry being off an entire meter.
            
         }
