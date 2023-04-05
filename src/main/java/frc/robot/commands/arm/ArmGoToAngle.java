@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
 public class ArmGoToAngle extends CommandBase{
-    double wantedAngle;
+    protected double wantedAngle;
 
     public ArmGoToAngle(double wantedAngle){
         this.wantedAngle = wantedAngle;

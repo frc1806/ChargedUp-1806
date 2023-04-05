@@ -24,7 +24,6 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
     PathPlannerServer.startServer(5811);
-
   }
 
   @Override
@@ -47,6 +46,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    RobotContainer.S_DRIVETRAIN.setCoastMode();
   }
 
   @Override
