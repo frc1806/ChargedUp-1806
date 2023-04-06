@@ -16,6 +16,7 @@ import com.pathplanner.lib.auto.RamseteAutoBuilder;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -107,6 +108,10 @@ public class RobotContainer {
     configureAutonomousOptions();
     
     compressor.enableAnalog(90.0,120.0);
+
+    for(int port = 5800; port <= 5805; port++){
+      PortForwarder.add(port, "limelight.local", port);
+    }
   }
 
   /**
@@ -182,11 +187,10 @@ List<PathPlannerTrajectory> cableProtector2PiecePaths = PathPlanner.loadPathGrou
       mSendableChooser.addOption("ShortSideMobilityOnly", new TimedDriveCommand(S_DRIVETRAIN, 2.5, 0.25));
       mSendableChooser.addOption("LongSideMobilityOnly", new TimedDriveCommand(S_DRIVETRAIN, 3.5, 0.25));
       mSendableChooser.addOption("Desperation Mode",   new TimedDriveCommand(S_DRIVETRAIN, 1.0, -0.4).andThen(new TimedDriveCommand(S_DRIVETRAIN, 2.5, 0.4).andThen(new TimedDriveCommand(S_DRIVETRAIN, 0.1, -.2))));
-      mSendableChooser.addOption("PlaceCubeHighChargeStationBalance", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new PlaceSequence()).andThen(new TimedDriveCommand(S_DRIVETRAIN, 2.5, 0.4).andThen(new TimedDriveCommand(S_DRIVETRAIN, 0.1, -.2).andThen(new AutoBalance(S_DRIVETRAIN, false)))));
       mSendableChooser.addOption("CableProtector2Cube+Balance", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new PlaceSequence().andThen(autoBuilder.fullAuto(cableProtector2PiecePaths).andThen(new AutoBalance(S_DRIVETRAIN, true)))));
       mSendableChooser.addOption("Test Auto Balance Forward", new AutoBalance(S_DRIVETRAIN, true).andThen(new TimedDriveCommand(S_DRIVETRAIN, 0.05, -0.1)));
       mSendableChooser.addOption("Test Auto Balance Backwards", new AutoBalance(S_DRIVETRAIN, false).andThen(new TimedDriveCommand(S_DRIVETRAIN, 0.05, 0.1)));
-      mSendableChooser.addOption("CubeHighCHargeStationMobilityAndBalance", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new PlaceSequence()).andThen(new TimedDriveCommand(S_DRIVETRAIN, 2.6, 0.4).andThen(new TimedDriveCommand(S_DRIVETRAIN, 0.5, -.07).andThen(new AutoBalance(S_DRIVETRAIN, false)))));
+      mSendableChooser.addOption("CubeHighCHargeStationMobilityAndBalance", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new PlaceSequence()).andThen(new TimedDriveCommand(S_DRIVETRAIN, 2.6, 0.4).andThen(new TimedDriveCommand(S_DRIVETRAIN, 0.2, -.07).andThen(new TimedDriveCommand(S_DRIVETRAIN, 0.5, 0.0)).andThen(new AutoBalance(S_DRIVETRAIN, false)))));
       mSendableChooser.addOption("DoNothing", new CommandBase() {
         @Override
         public void initialize() {

@@ -14,6 +14,7 @@ public class MainCompetitionTab extends ShuffleboardTabBase{
     private GenericEntry leftDrivePower;
     private GenericEntry rightDrivePower;
     private GenericEntry currentMode;
+    private GenericEntry driveBrake;
     private ComplexWidget limelightCam;
 
     @Override
@@ -47,6 +48,11 @@ public class MainCompetitionTab extends ShuffleboardTabBase{
         mTab.addCamera("Limelight Stream", "limelight-stream", "http://limelight.local:5800/")
             .withPosition(2,0)
             .withSize(4,4);
+
+        driveBrake = mTab.add("Drive Train Break", RobotContainer.S_DRIVETRAIN.isBrake)
+            .withPosition(2,0)
+            .withSize(1,1)
+            .getEntry();
         
     }
 
@@ -61,6 +67,7 @@ public class MainCompetitionTab extends ShuffleboardTabBase{
         leftDrivePower.setDouble(RobotContainer.S_DRIVETRAIN.getLeftDrivePower());
         rightDrivePower.setDouble(RobotContainer.S_DRIVETRAIN.getRightDrivePower());
         currentMode.setString(RobotContainer.GetCurrentGamePieceMode().name());
+        driveBrake.setBoolean(RobotContainer.S_DRIVETRAIN.isBrake);
     }
     
 }
