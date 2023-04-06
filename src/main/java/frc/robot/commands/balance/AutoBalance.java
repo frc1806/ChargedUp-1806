@@ -1,6 +1,7 @@
 package frc.robot.commands.balance;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveTrain;
@@ -13,6 +14,7 @@ public class AutoBalance extends CommandBase {
     private double power;
     private double maxPitch;
     private PIDController mPid;
+    private double tippedTime;
 
     public AutoBalance(DriveTrain driveTrain, boolean isForward){
         mHasBeenTipped = false;
@@ -36,10 +38,11 @@ public class AutoBalance extends CommandBase {
             maxPitch = absolutePitch;
         }
         super.execute();
-        if(isTipped()){
+        if(isTipped() && !mHasBeenTipped){
             mHasBeenTipped = true;
+            tippedTime = Timer.getFPGATimestamp();
         } 
-        power = mHasBeenTipped?-mPid.calculate(mDriveTrain.getRobotPitch(), 0.0):(mIsForward?0.6:-0.6);
+        power = shouldSlowDown()?-mPid.calculate(mDriveTrain.getRobotPitch(), 0.0):(mIsForward?0.6:-0.6);
         mDriveTrain.setDriveMode((power), 0.0, false);
     }
 
@@ -48,6 +51,7 @@ public class AutoBalance extends CommandBase {
         mHasBeenTipped = false;
         mDriveTrain.setBrakeMode();
         mPid.reset();
+        tippedTime = Double.MAX_VALUE;
     }
 
     @Override
@@ -66,6 +70,10 @@ public class AutoBalance extends CommandBase {
 
     public boolean isLeveling(){
         return mDriveTrain.getRobotPitch() < maxPitch - 3.0;
+    }
+
+    public boolean shouldSlowDown(){
+        return Timer.getFPGATimestamp() > tippedTime + 0.5;
     }
         
 }

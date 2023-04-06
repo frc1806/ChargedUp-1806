@@ -41,8 +41,9 @@ public class FeederStationCone extends SequentialCommandGroup {
 
       ,      new ParallelRaceGroup(
           new SequentialCommandGroup(
-          new CloseClaw(RobotContainer.S_INTAKE)
-          , new WaitAndDoNothing(.125))
+           new CloseClaw(RobotContainer.S_INTAKE)
+          , new WaitAndDoNothing(.125)
+          , new ArmGoToAngle (Placement.FEEDER_STATION_CONE.getPivotAngle() - 10.0))
         , new TimedDriveCommand(RobotContainer.S_DRIVETRAIN, 3.0, 0.0))
     
       , new ParallelRaceGroup(

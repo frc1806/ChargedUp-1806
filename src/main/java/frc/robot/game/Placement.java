@@ -13,9 +13,9 @@ public class Placement {
         this.name = name;
     }
 
+    public static Placement LOW_PLACEMENT_CUBE = new Placement("Low Placement Cube", Constants.kProtruderDistanceAtFullRetract + 11.5,218.0);
     // TODO (preset placements)
     public static Placement HOME = new Placement("Home", Constants.kProtruderDistanceAtFullRetract, 185.0);
-    public static Placement LOW_PLACEMENT_CUBE = new Placement("Low Placement Cube", Constants.kProtruderDistanceAtFullRetract + 11.5,218.0);
     public static Placement LOW_PLACEMENT_CONE = new Placement("Low Placement Cone", Constants.kProtruderDistanceAtFullRetract + 13.0,224.0);
     public static Placement MED_PLACEMENT_CUBE = new Placement("Medium Placement Cube", Constants.kProtruderDistanceAtFullRetract + 23.0,257.0);
     public static Placement MED_PLACEMENT_CONE = new Placement("Medium Placement Cone", Constants.kProtruderDistanceAtFullRetract + 20.5,271.0);
