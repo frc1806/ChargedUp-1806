@@ -17,9 +17,14 @@ public class RobotMap {
     //Claw Spinner
     public static final int clawSpinMotor = 30;
 
+    //Fingers
+    public static final int robotGrabberMotor = 40;
+
     //Solenoids
     public static final int leftSolenoid = 0;
     public static final int rightSolenoid = 1;
+
+
 
     //Digital
     public static final int leftDriveEncoderA = 0;
