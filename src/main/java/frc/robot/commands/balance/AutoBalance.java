@@ -73,7 +73,7 @@ public class AutoBalance extends CommandBase {
     }
 
     public boolean shouldSlowDown(){
-        return Timer.getFPGATimestamp() > tippedTime + 0.5;
+        return Timer.getFPGATimestamp() > tippedTime + 0.375;
     }
         
 }

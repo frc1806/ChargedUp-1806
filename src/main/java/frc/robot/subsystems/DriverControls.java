@@ -9,6 +9,7 @@ import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.GamePieceMode;
 import frc.robot.commands.FalconPunch;
 import frc.robot.commands.FeederStationLineupDrive;
+import frc.robot.commands.ForceUpdateOdometryFromVision;
 import frc.robot.commands.MoveArmToPlacement;
 import frc.robot.commands.PlaceSequence;
 import frc.robot.commands.ScoringLineupDrive;
@@ -275,6 +276,10 @@ public class DriverControls extends SubsystemBase {
         return debugController.getRightTriggerDigital();
     }
 
+    public boolean d_getWantForceOdometryUpdate(){
+        return driverController.getBackButton();
+    }
+
     /*
     public double d_cymbalThrottle() {
         return debugController.getLeftY();
@@ -347,6 +352,7 @@ public class DriverControls extends SubsystemBase {
         //new Trigger(this::d_wantCymbalManual).whileTrue(new CymbalSpinManual(intake, this));
         new Trigger(this::d_wantManualExtend).whileTrue(new ManualExtend(protruder, this));
         new Trigger(this::d_toggleProtruderBrakeMode).onTrue(new ToggleProtruderBrake(protruder));
+        new Trigger(this::d_getWantForceOdometryUpdate).whileTrue(new ForceUpdateOdometryFromVision());
     }
 
     @Override
