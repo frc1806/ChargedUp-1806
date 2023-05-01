@@ -182,10 +182,10 @@ List<PathPlannerTrajectory> cableProtector2PiecePaths = PathPlanner.loadPathGrou
       mSendableChooser.addOption("Dead Reckoning No Obstacle", new DeadReckoningNoObstacle(S_DRIVETRAIN));
       mSendableChooser.addOption("PlaceCubeHigh", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new PlaceSequence()));
       mSendableChooser.addOption("PlaceCubeHighShortMobility", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new PlaceSequence()).andThen(new TimedDriveCommand(S_DRIVETRAIN, 2.5, 0.25)));
-      mSendableChooser.addOption("PlaceCubeHighLongMobility", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new PlaceSequence()).andThen(new TimedDriveCommand(S_DRIVETRAIN, 3.5, 0.25)));
+      mSendableChooser.addOption("PlaceCubeHighLongMobility", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new PlaceSequence()).andThen(new TimedDriveCommand(S_DRIVETRAIN, 4.0, 0.25)));
       mSendableChooser.addOption("PlaceCubeHighChargeStationMobility", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new PlaceSequence()).andThen(new TimedDriveCommand(S_DRIVETRAIN, 2.5, 0.4).andThen(new TimedDriveCommand(S_DRIVETRAIN, 0.1, -.2))));
       mSendableChooser.addOption("ShortSideMobilityOnly", new TimedDriveCommand(S_DRIVETRAIN, 2.5, 0.25));
-      mSendableChooser.addOption("LongSideMobilityOnly", new TimedDriveCommand(S_DRIVETRAIN, 3.5, 0.25));
+      mSendableChooser.addOption("LongSideMobilityOnly", new TimedDriveCommand(S_DRIVETRAIN, 4.0, 0.25));
       mSendableChooser.addOption("Desperation Mode",   new TimedDriveCommand(S_DRIVETRAIN, 1.0, -0.4).andThen(new TimedDriveCommand(S_DRIVETRAIN, 2.5, 0.4).andThen(new TimedDriveCommand(S_DRIVETRAIN, 0.1, -.2))));
       mSendableChooser.addOption("CableProtector2Cube+Balance", new MoveArmToPlacement(Placement.HIGH_PLACEMENT_CUBE).andThen(new PlaceSequence().andThen(autoBuilder.fullAuto(cableProtector2PiecePaths).andThen(new AutoBalance(S_DRIVETRAIN, true)))));
       mSendableChooser.addOption("Test Auto Balance Forward", new AutoBalance(S_DRIVETRAIN, true));

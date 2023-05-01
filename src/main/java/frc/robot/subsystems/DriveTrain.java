@@ -38,10 +38,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
+import frc.robot.util.SWATDifferentialDrive;
 
 public class DriveTrain extends SubsystemBase{
 
-    private DifferentialDrive mDifferentialDrive;
+    private SWATDifferentialDrive mDifferentialDrive;
     private DifferentialDrivePoseEstimator mDifferentialDrivePoseEstimator;
     public DifferentialDriveKinematics mDifferentialDriveKinematics;
     private MotorControllerGroup mLeftMotorGroup, mRightMotorGroup;
@@ -79,7 +80,7 @@ public class DriveTrain extends SubsystemBase{
         }
         
 
-        mDifferentialDrive = new DifferentialDrive(mLeftMotorGroup, mRightMotorGroup);
+        mDifferentialDrive = new SWATDifferentialDrive(mLeftMotorGroup, mRightMotorGroup);
         mDifferentialDriveKinematics = new DifferentialDriveKinematics(Constants.kDriveTrainTrackWidthMeters);
 
         mLeftLeader.setSmartCurrentLimit(Constants.kDriveTrainCurrentLimit);
@@ -136,13 +137,11 @@ public class DriveTrain extends SubsystemBase{
      * @param quickTurn Turn fast?
      */
     public void setDriveMode(double throttle, double steer, boolean quickTurn){
-        if(!powerBrake(steer, throttle, Constants.kDriveTrainRampPowerBrakePower))
-        {   if(quickTurn){
-            steer = steer *0.39;
-        }
-            mDifferentialDrive.curvatureDrive(throttle, steer * Constants.kDriveTurningSensitivity, quickTurn);
-        }
-        
+        mDifferentialDrive.curvatureDrive(throttle, steer * Constants.kDriveTurningSensitivity, quickTurn);
+    }
+
+    public void setTankDrive(double leftThrottle, double rightThrottle){
+        mDifferentialDrive.tankDrive(leftThrottle, rightThrottle);
     }
 
         /**

@@ -89,6 +89,14 @@ public class DriverControls extends SubsystemBase {
         }
     }
 
+    public double getLeftStick(){
+        return driverController.getLeftY();
+    }
+
+    public double getRightStick(){
+        return driverController.getRightY();
+    }
+
     /**
      * Get drivetrain turn control value For curvature drive, 1 is counterclockwise.
      * 
