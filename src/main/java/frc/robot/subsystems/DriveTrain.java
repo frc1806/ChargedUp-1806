@@ -140,6 +140,7 @@ public class DriveTrain extends SubsystemBase{
         mDifferentialDrive.curvatureDrive(throttle, steer * Constants.kDriveTurningSensitivity, quickTurn);
     }
 
+    //april fools update
     public void setTankDrive(double leftThrottle, double rightThrottle){
         mDifferentialDrive.tankDrive(leftThrottle, rightThrottle);
     }

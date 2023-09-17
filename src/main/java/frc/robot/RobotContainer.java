@@ -25,14 +25,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Drive;
 import frc.robot.commands.MoveArmToPlacement;
 import frc.robot.commands.PlaceSequence;
 import frc.robot.commands.TimedDriveCommand;
-import frc.robot.commands.ToggleIntake;
 import frc.robot.commands.AutoModes.DeadReckoningNoObstacle;
-import frc.robot.commands.DebugCommands.CymbalSpinManual;
 import frc.robot.commands.Intake.CloseClaw;
 import frc.robot.commands.Intake.GroundIntake;
 import frc.robot.commands.Intake.ManualRotateCone;
@@ -95,6 +92,7 @@ public class RobotContainer {
   public Compressor compressor;
 
   public RobotContainer() {
+
     mShuffleboardManager = new ShuffleboardManager();
     mShuffleboardManager.registerTabs();
 

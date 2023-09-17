@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.RobotContainer;
-import frc.robot.drivers.BeamBreak;
 import frc.robot.drivers.StringPotentiometer;
 import frc.robot.game.Placement;
 import frc.robot.shuffleboard.ShuffleboardTabBase;
