@@ -45,6 +45,12 @@ import frc.robot.subsystems.CymbalSpinner;
 import frc.robot.subsystems.Protruder;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Vision;
+import java.io.File;
+import java.io.IOException;
+
+import edu.wpi.first.wpilibj.Filesystem;
+import swervelib.parser.SwerveParser;
+import swervelib.SwerveDrive;
 
 public class RobotContainer {
 
@@ -91,7 +97,7 @@ public class RobotContainer {
   //Compressor
   public Compressor compressor;
 
-  public RobotContainer() {
+  public RobotContainer() throws IOException {
 
     mShuffleboardManager = new ShuffleboardManager();
     mShuffleboardManager.registerTabs();
@@ -109,8 +115,15 @@ public class RobotContainer {
 
     for(int port = 5800; port <= 5805; port++){
       PortForwarder.add(port, "limelight.local", port);
+
+  
     }
+  
+    File swerveJsonDirectory = new File(Filesystem.getDeployDirectory(),"swerve");
+    SwerveDrive swerveDrive = new SwerveParser(swerveJsonDirectory).createSwerveDrive();
   }
+
+
 
   /**
    * Set default commands for the subsystems.
