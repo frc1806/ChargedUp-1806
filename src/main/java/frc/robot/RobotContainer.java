@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,7 +20,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -35,6 +38,9 @@ import frc.robot.commands.Intake.GroundIntake;
 import frc.robot.commands.Intake.ManualRotateCone;
 import frc.robot.commands.Intake.OpenClaw;
 import frc.robot.commands.balance.AutoBalance;
+import frc.robot.commands.swerve.drivebase.AbsoluteDrive;
+import frc.robot.commands.swerve.drivebase.AbsoluteFieldDrive;
+import frc.robot.commands.swerve.drivebase.TeleopDrive;
 import frc.robot.game.Placement;
 import frc.robot.shuffleboard.ShuffleboardManager;
 import frc.robot.subsystems.DriveTrain;
@@ -43,12 +49,9 @@ import frc.robot.subsystems.PivotArm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.CymbalSpinner;
 import frc.robot.subsystems.Protruder;
+import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Vision;
-import java.io.File;
-import edu.wpi.first.wpilibj.Filesystem;
-import swervelib.parser.SwerveParser;
-import swervelib.SwerveDrive;
 
 public class RobotContainer {
 
@@ -63,6 +66,7 @@ public class RobotContainer {
   //DEFINE SUBSYSTEM INSTANCES
   public static final DriverControls S_DRIVECONTROLS = new DriverControls();
   public static final DriveTrain S_DRIVETRAIN = new DriveTrain();
+  public static final Swerve S_SWERVE = new Swerve(new File(Filesystem.getDeployDirectory(), "swerve"));
   public static final Vision S_REAR_VISION_SUBSYSTEM = new Vision("limelight");
   public static final Claw S_INTAKE = new Claw();
   public static final Protruder S_PROTRUDER = new Protruder();
@@ -113,12 +117,6 @@ public class RobotContainer {
 
     for(int port = 5800; port <= 5805; port++){
       PortForwarder.add(port, "limelight.local", port);
-    }
-    try {
-      File swerveJsonDirectory=new File(Filesystem.getDeployDirectory(),"swerve");
-      SwerveDrive swerveDrive=new SwerveParser(swerveJsonDirectory).createSwerveDrive();
-    } catch (Exception e){
-      System.out.println("There was an error parsing the swerve drive JSON file." + e.getMessage() + e.getStackTrace());
     }
 
   }
