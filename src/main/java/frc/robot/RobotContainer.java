@@ -43,7 +43,6 @@ import frc.robot.commands.swerve.drivebase.AbsoluteFieldDrive;
 import frc.robot.commands.swerve.drivebase.TeleopDrive;
 import frc.robot.game.Placement;
 import frc.robot.shuffleboard.ShuffleboardManager;
-import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.DriverControls;
 import frc.robot.subsystems.PivotArm;
 import frc.robot.subsystems.Claw;
@@ -52,6 +51,10 @@ import frc.robot.subsystems.Protruder;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Vision;
+<<<<<<< HEAD
+=======
+import swervelib.SwerveDrive;
+>>>>>>> dd4055614555579bb8f4c8e6886afd606f84902a
 
 public class RobotContainer {
 
@@ -65,8 +68,12 @@ public class RobotContainer {
   
   //DEFINE SUBSYSTEM INSTANCES
   public static final DriverControls S_DRIVECONTROLS = new DriverControls();
+<<<<<<< HEAD
   public static final DriveTrain S_DRIVETRAIN = new DriveTrain();
   public static final Swerve S_SWERVE = new Swerve(new File(Filesystem.getDeployDirectory(), "swerve"));
+=======
+  public static final SwerveDrive S_DRIVETRAIN = new SwerveDrive(null, null);
+>>>>>>> dd4055614555579bb8f4c8e6886afd606f84902a
   public static final Vision S_REAR_VISION_SUBSYSTEM = new Vision("limelight");
   public static final Claw S_INTAKE = new Claw();
   public static final Protruder S_PROTRUDER = new Protruder();
@@ -118,7 +125,10 @@ public class RobotContainer {
     for(int port = 5800; port <= 5805; port++){
       PortForwarder.add(port, "limelight.local", port);
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> dd4055614555579bb8f4c8e6886afd606f84902a
   }
 
   /**
