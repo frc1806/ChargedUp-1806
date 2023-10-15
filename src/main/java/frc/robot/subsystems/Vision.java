@@ -22,6 +22,7 @@ public class Vision extends SubsystemBase{
     private  double lastAllianceUpdate;
     private Alliance currentAlliance;
     private String limelightHostname;
+    private Boolean isSimMode = false;
 
     //SIMULATION
     private final Translation2d testNodePose = new Translation2d(15.77, 4.98);
@@ -75,6 +76,7 @@ public class Vision extends SubsystemBase{
      * @return
      */
     public Pose2d getBotPose(){
+        if(isSimMode) return null;
         switch(currentAlliance){
             case Blue:
 
@@ -104,7 +106,7 @@ public class Vision extends SubsystemBase{
 
     @Override
     public void simulationPeriodic(){
-
+        isSimMode = true;
         double angleToTestGoal = -testNodePose.minus(RobotContainer.S_DRIVETRAIN.getPose().getTranslation()).getAngle().getDegrees() + RobotContainer.S_DRIVETRAIN.getPose().getRotation().minus(new Rotation2d(Units.degreesToRadians(180.0))).getDegrees();
         if(RobotContainer.S_DRIVETRAIN.getPose().getTranslation().getDistance(testNodePose) < 8.0 && Math.abs(angleToTestGoal) < 27.0)
         {

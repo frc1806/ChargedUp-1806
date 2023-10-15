@@ -8,12 +8,14 @@ import frc.robot.game.PosesOfInterest;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.DriverControls;
 import frc.robot.subsystems.Vision;
+import frc.robot.util.TrapezoidalDiffDriveTurnPID;
 
 public class ScoringLineupDrive extends CommandBase{
     private DriveTrain mDriveTrain;
     private DriverControls mDriveControls;
     private Vision mVisionSubsystem;
     private Translation2d mNearestScoringLocation;
+    private TrapezoidalDiffDriveTurnPID trapezoidalDiffDriveTurnPID;
 
     public ScoringLineupDrive(DriveTrain drivetrain, DriverControls driveControls, Vision visionSubsystem) {
         // Use addRequirements() here to declare subsystem dependencies.
@@ -21,6 +23,7 @@ public class ScoringLineupDrive extends CommandBase{
         mDriveControls = driveControls;
         mVisionSubsystem = visionSubsystem;
         addRequirements(drivetrain);
+        trapezoidalDiffDriveTurnPID = new TrapezoidalDiffDriveTurnPID(drivetrain);
       }
 
 
@@ -41,6 +44,8 @@ public class ScoringLineupDrive extends CommandBase{
 
       
     }
+
+    trapezoidalDiffDriveTurnPID.initialize();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -49,10 +54,7 @@ public class ScoringLineupDrive extends CommandBase{
     Translation2d averagedXPointToTarget = new Translation2d( (.666* mNearestScoringLocation.getX()) + (.333*mDriveTrain.getPose().getTranslation().getX()), mNearestScoringLocation.getY() );
     Rotation2d robotToTarget = mDriveTrain.getPose().getTranslation().minus(averagedXPointToTarget).getAngle();
     Rotation2d yaw = robotToTarget.minus(mDriveTrain.getPose().getRotation());
-    double robotToTargetAngle = robotToTarget.getDegrees();
-    double driveTrainAngle = mDriveTrain.getPose().getRotation().getDegrees();
-    double error = yaw.getDegrees();
-    mDriveTrain.setDriveMode(mDriveControls.getThrottle(), -error * .0175, true);
+    mDriveTrain.setDriveMode(mDriveControls.getThrottle(), trapezoidalDiffDriveTurnPID.calculate(yaw.getRadians()), true);
     
   }
 

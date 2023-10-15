@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Drive;
+import frc.robot.commands.FieldOrientedDrive;
 import frc.robot.commands.MoveArmToPlacement;
 import frc.robot.commands.PlaceSequence;
 import frc.robot.commands.TimedDriveCommand;
@@ -60,8 +61,9 @@ public class RobotContainer {
   public static final SendableChooser<CommandBase> mSendableChooser = new SendableChooser<>();
   
   //DEFINE SUBSYSTEM INSTANCES
-  public static final DriverControls S_DRIVECONTROLS = new DriverControls();
+  
   public static final DriveTrain S_DRIVETRAIN = new DriveTrain();
+  public static final DriverControls S_DRIVECONTROLS = new DriverControls(() -> S_DRIVETRAIN.getPose().getRotation().getRadians());
   public static final Vision S_REAR_VISION_SUBSYSTEM = new Vision("limelight");
   public static final Claw S_INTAKE = new Claw();
   public static final Protruder S_PROTRUDER = new Protruder();
@@ -121,7 +123,8 @@ public class RobotContainer {
    * automatic driving classes.
    */
   private void setDefaultCommands(){
-    CommandScheduler.getInstance().setDefaultCommand(S_DRIVETRAIN, new Drive(S_DRIVETRAIN, S_DRIVECONTROLS));
+    //CommandScheduler.getInstance().setDefaultCommand(S_DRIVETRAIN, new Drive(S_DRIVETRAIN, S_DRIVECONTROLS));
+    CommandScheduler.getInstance().setDefaultCommand(S_DRIVETRAIN, new FieldOrientedDrive(S_DRIVETRAIN, S_DRIVECONTROLS));
     CommandScheduler.getInstance().setDefaultCommand(S_CYMBAL_SPEEEEEEN, new ManualRotateCone());
   }
 

@@ -66,9 +66,10 @@
   {
     "name": "/Shuffleboard/Driver Controller Configuration/Right X Linearity",
     "type": "double",
-    "value": 0.07213675213675214,
+    "value": 0.4163822395402824,
     "properties": {
-      "persistent": true
+      "persistent": true,
+      "retained": true
     }
   },
   {
@@ -82,17 +83,19 @@
   {
     "name": "/Shuffleboard/Driver Controller Configuration/Right Y Minimum Output",
     "type": "double",
-    "value": 0.09982905982905982,
+    "value": 0.052047486608328364,
     "properties": {
-      "persistent": true
+      "persistent": true,
+      "retained": true
     }
   },
   {
     "name": "/Shuffleboard/Driver Controller Configuration/Right Y Linearity",
     "type": "double",
-    "value": 0.14051282051282052,
+    "value": 0.40273035915231536,
     "properties": {
-      "persistent": true
+      "persistent": true,
+      "retained": true
     }
   },
   {

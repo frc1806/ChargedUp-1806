@@ -7,12 +7,14 @@ import frc.robot.game.PosesOfInterest;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.DriverControls;
 import frc.robot.subsystems.Vision;
+import frc.robot.util.TrapezoidalDiffDriveTurnPID;
 
 public class FeederStationLineupDrive extends CommandBase{
     private DriveTrain mDriveTrain;
     private DriverControls mDriveControls;
     private Vision mVisionSubsystem;
     private Translation2d mNearestFeederStation;
+    TrapezoidalDiffDriveTurnPID trapezoidalDiffDriveTurnPID;
 
     public FeederStationLineupDrive(DriveTrain drivetrain, DriverControls driveControls, Vision visionSubsystem) {
         // Use addRequirements() here to declare subsystem dependencies.
@@ -20,6 +22,7 @@ public class FeederStationLineupDrive extends CommandBase{
         mDriveControls = driveControls;
         mVisionSubsystem = visionSubsystem;
         addRequirements(drivetrain);
+        trapezoidalDiffDriveTurnPID = new TrapezoidalDiffDriveTurnPID(drivetrain);
       }
 
 
@@ -27,6 +30,7 @@ public class FeederStationLineupDrive extends CommandBase{
   @Override
   public void initialize() {
     mNearestFeederStation = PosesOfInterest.GetClosestFeederStation(mVisionSubsystem.getCurrentAlliance(), mDriveTrain.getPose());
+    trapezoidalDiffDriveTurnPID.initialize();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -34,10 +38,7 @@ public class FeederStationLineupDrive extends CommandBase{
   public void execute() {
     Rotation2d robotToTarget = mNearestFeederStation.minus(mDriveTrain.getPose().getTranslation()).getAngle();
     Rotation2d yaw = robotToTarget.minus(mDriveTrain.getPose().getRotation());
-    double robotToTargetAngle = robotToTarget.getDegrees();
-    double driveTrainAngle = mDriveTrain.getPose().getRotation().getDegrees();
-    double error = yaw.getDegrees();
-    mDriveTrain.setDriveMode(mDriveControls.getThrottle(), error * .0125, true);
+    mDriveTrain.setDriveMode(mDriveControls.getThrottle(), trapezoidalDiffDriveTurnPID.calculate(yaw.getRadians()), true);
     
   }
 

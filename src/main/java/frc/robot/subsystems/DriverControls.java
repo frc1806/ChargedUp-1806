@@ -1,12 +1,16 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.GamePieceMode;
+import frc.robot.commands.Drive;
 import frc.robot.commands.FalconPunch;
 import frc.robot.commands.FeederStationLineupDrive;
 import frc.robot.commands.ForceUpdateOdometryFromVision;
@@ -30,10 +34,14 @@ import frc.robot.shuffleboard.tabs.tabsUtil.XboxControllerConfigValues;
 import frc.robot.util.SWATXboxController;
 
 public class DriverControls extends SubsystemBase {
+    DoubleSupplier robotHeadingSupplier;
     private SWATXboxController driverController;
     private SWATXboxController operatorController;
     private SWATXboxController debugController;
     DriverControlType selectedControls;
+
+    double driverWantedRotationAngle;
+    boolean wasHeadingStickOutsideDeadzone;
 
     public static SendableChooser<DriverControlType> controllerConfigChooser;
 
@@ -46,7 +54,8 @@ public class DriverControls extends SubsystemBase {
      * Creates a DriverControls subsystem. The subsystem used to keep track of the
      * driver's controls based on the status of a sendable chooser.
      */
-    public DriverControls() {
+    public DriverControls(DoubleSupplier robotAngleRadiansSupplier) {
+        robotHeadingSupplier = robotAngleRadiansSupplier;
         driverController = new SWATXboxController(Constants.kDriverPort, "Driver",
                 XboxControllerConfigValues.kDriverControllerDefaultConfig);
         operatorController = new SWATXboxController(Constants.kOperatorPort, "Operator",
@@ -106,9 +115,9 @@ public class DriverControls extends SubsystemBase {
         switch (selectedControls) {
             default:
             case Classic:
-                return driverController.getRightX();
+                return -driverController.getRightX();
             case Forza:
-                return driverController.getLeftX();
+                return -driverController.getLeftX();
         }
     }
 
@@ -324,6 +333,36 @@ public class DriverControls extends SubsystemBase {
         return debugController.getStartButton() && debugController.getBackButton();
     }
 
+    //Field Oriented Functions
+
+    public double getWantedRadDriveRobotAngle(){
+        return driverWantedRotationAngle;
+    }
+
+
+    private boolean isRobotAngleJoystickOutsideDeadzone(){
+        return Math.hypot(driverController.getRightXRaw(), driverController.getRightYRaw()) > 0.8;
+    }
+
+    private double getCurrentHeadingJoystickAngle(){
+        return getWantedAngleFromJoystick(driverController.getRightYRaw(), -driverController.getRightXRaw());
+    }
+
+    private double getWantedAngleFromJoystick(double joystickFieldX, double joystickFieldY){
+        double xyMag = Math.hypot(joystickFieldX, joystickFieldY);
+        double angle = Math.acos(joystickFieldX / xyMag) * (joystickFieldY > 0? 1:-1);
+        return angle;
+    }
+
+        private double getNearest45inRadians(double input){
+        double fourtyFive = Math.PI / 4.0;
+        return Math.round(input / fourtyFive) * fourtyFive;
+    }
+
+    private boolean wantRobotOrientedControl(){
+        return driverController.getRightStickButton();
+    }
+
 
 
     /**
@@ -361,10 +400,26 @@ public class DriverControls extends SubsystemBase {
         new Trigger(this::d_wantManualExtend).whileTrue(new ManualExtend(protruder, this));
         new Trigger(this::d_toggleProtruderBrakeMode).onTrue(new ToggleProtruderBrake(protruder));
         new Trigger(this::d_getWantForceOdometryUpdate).whileTrue(new ForceUpdateOdometryFromVision());
+        new Trigger(this::wantRobotOrientedControl).whileTrue(new Drive(driveTrain, this));
     }
 
     @Override
     public void periodic() {
+        boolean outOfDeadzone = isRobotAngleJoystickOutsideDeadzone();
+        if(DriverStation.isDisabled() || wantRobotOrientedControl() || getFeederLineup() || getScoringLineup()){
+            driverWantedRotationAngle = robotHeadingSupplier.getAsDouble() % (2* Math.PI);
+        }
+        else{
+            if(outOfDeadzone)
+            {
+                driverWantedRotationAngle = getCurrentHeadingJoystickAngle();
+            }
+            else if (wasHeadingStickOutsideDeadzone)
+            {
+                driverWantedRotationAngle = getNearest45inRadians(driverWantedRotationAngle);
+            }
+        }
+        wasHeadingStickOutsideDeadzone = outOfDeadzone;
         if (controllerConfigChooser.getSelected() != null) {
             if (selectedControls != controllerConfigChooser.getSelected()) {
                 selectedControls = controllerConfigChooser.getSelected();

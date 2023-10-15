@@ -16,6 +16,7 @@ public class SWATDifferentialDrive extends DifferentialDrive {
 
     private final MotorControllerGroup m_leftMotor;
     private final MotorControllerGroup m_rightMotor;
+    private WheelSpeeds driveWheelSpeeds;
   
     private boolean m_reported;
 
@@ -46,6 +47,7 @@ public class SWATDifferentialDrive extends DifferentialDrive {
         SendableRegistry.addChild(this, m_rightMotor);
         instances++;
         SendableRegistry.addLW(this, "DifferentialDrive", instances);
+        driveWheelSpeeds = new WheelSpeeds(0.0, 0.0);
     }
 
     @Override
@@ -62,11 +64,16 @@ public class SWATDifferentialDrive extends DifferentialDrive {
         xSpeed = MathUtil.applyDeadband(xSpeed, m_deadband);
         zRotation = MathUtil.applyDeadband(zRotation, m_deadband);
     
-        var speeds = curvatureDriveIK(xSpeed, zRotation, allowTurnInPlace);
+        driveWheelSpeeds = curvatureDriveIK(xSpeed, zRotation, allowTurnInPlace);
     
-        m_leftMotor.setVoltage(speeds.left * 12);
-        m_rightMotor.setVoltage(speeds.right * 12);
+        m_leftMotor.setVoltage(driveWheelSpeeds.left * 12);
+        m_rightMotor.setVoltage(driveWheelSpeeds.right * 12);
     
         feed();
     }
+
+    public WheelSpeeds getWheelSpeeds(){
+        return driveWheelSpeeds;
+    }
+
 }

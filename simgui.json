@@ -34,9 +34,21 @@
       "/Shuffleboard/Main Competiton Tab/Driver Controls": "String Chooser",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Field": "Field2d"
+    },
+    "windows": {
+      "/SmartDashboard/Field": {
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables": {
+    "persistent": {
+      "Shuffleboard": {
+        "open": true
+      }
+    },
     "transitory": {
       "Shuffleboard": {
         "open": true

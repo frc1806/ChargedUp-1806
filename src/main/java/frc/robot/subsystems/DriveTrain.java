@@ -336,7 +336,7 @@ public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFir
 
     @Override
     public void simulationPeriodic() {
-        mDifferentialDrivetrainSim.setInputs(mLeftMotorGroup.get() * RobotController.getInputVoltage(), mRightMotorGroup.get() * RobotController.getInputVoltage());
+        mDifferentialDrivetrainSim.setInputs(mDifferentialDrive.getWheelSpeeds().left * RobotController.getInputVoltage(), mDifferentialDrive.getWheelSpeeds().right * RobotController.getInputVoltage());
         mDifferentialDrivetrainSim.update(0.02);
         mLeftEncoderSim.setDistance( mDifferentialDrivetrainSim.getLeftPositionMeters());
         mLeftEncoderSim.setRate(mDifferentialDrivetrainSim.getLeftVelocityMetersPerSecond());
