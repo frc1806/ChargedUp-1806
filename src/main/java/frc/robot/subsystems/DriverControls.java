@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.GamePieceMode;
-import frc.robot.commands.FalconPunch;
 import frc.robot.commands.FeederStationLineupDrive;
 import frc.robot.commands.ForceUpdateOdometryFromVision;
 import frc.robot.commands.MoveArmToPlacement;
@@ -25,6 +24,10 @@ import frc.robot.commands.Intake.FeederStation;
 import frc.robot.commands.Intake.FeederStationCone;
 import frc.robot.commands.Intake.GroundIntake;
 import frc.robot.commands.Intake.RotateCone;
+import frc.robot.commands.LED.larsonLED;
+import frc.robot.commands.LED.rainbowLED;
+import frc.robot.commands.LED.resetLED;
+import frc.robot.commands.LED.strobeLED;
 import frc.robot.game.Placement;
 import frc.robot.shuffleboard.tabs.tabsUtil.XboxControllerConfigValues;
 import frc.robot.util.SWATXboxController;
@@ -33,6 +36,7 @@ public class DriverControls extends SubsystemBase {
     private SWATXboxController driverController;
     private SWATXboxController operatorController;
     private SWATXboxController debugController;
+    private SWATXboxController colorController;
     DriverControlType selectedControls;
 
     public static SendableChooser<DriverControlType> controllerConfigChooser;
@@ -52,6 +56,8 @@ public class DriverControls extends SubsystemBase {
         operatorController = new SWATXboxController(Constants.kOperatorPort, "Operator",
                 XboxControllerConfigValues.kOperatorControllerDefaultConfig);
         debugController = new SWATXboxController(Constants.kDebugPort, "Debug",
+                XboxControllerConfigValues.kOperatorControllerDefaultConfig);
+        colorController = new SWATXboxController(Constants.kColorPort, "Color",
                 XboxControllerConfigValues.kOperatorControllerDefaultConfig);
 
         controllerConfigChooser = new SendableChooser<DriverControlType>();
@@ -201,11 +207,11 @@ public class DriverControls extends SubsystemBase {
     }
 
     public boolean o_feederStation(){
-        return operatorController.getAButton() && RobotContainer.GetCurrentGamePieceMode() == GamePieceMode.CubeMode;
+        return operatorController.getYButton() && RobotContainer.GetCurrentGamePieceMode() == GamePieceMode.CubeMode;
     }
 
     public boolean o_feederStationCone(){
-        return operatorController.getAButton() && RobotContainer.GetCurrentGamePieceMode() == GamePieceMode.ConeMode;
+        return operatorController.getYButton() && RobotContainer.GetCurrentGamePieceMode() == GamePieceMode.ConeMode;
     }
 
     public boolean o_goHome(){
@@ -240,11 +246,11 @@ public class DriverControls extends SubsystemBase {
     }
 
     public boolean o_getGroundIntakeCube(){
-        return operatorController.getYButton() && RobotContainer.GetCurrentGamePieceMode() == GamePieceMode.CubeMode;
+        return operatorController.getAButton() && RobotContainer.GetCurrentGamePieceMode() == GamePieceMode.CubeMode;
     }
 
     public boolean o_getGroundIntakeCone(){
-        return operatorController.getYButton() && RobotContainer.GetCurrentGamePieceMode() == GamePieceMode.ConeMode;
+        return operatorController.getAButton() && RobotContainer.GetCurrentGamePieceMode() == GamePieceMode.ConeMode;
     }
 
     public boolean o_throwGamePiece(){
@@ -310,6 +316,24 @@ public class DriverControls extends SubsystemBase {
     public boolean d_toggleProtruderBrakeMode(){
         return debugController.getXButton();
     }
+
+    // Color Controls
+
+    public boolean c_reset(){
+        return colorController.getStartButton();
+    }
+
+    public boolean c_wantRainbow(){
+        return colorController.getAButton();
+    }
+
+    public boolean c_wantLarson(){
+        return colorController.getBButton();
+    }
+
+    public boolean c_wantTest(){
+        return colorController.getYButton();
+    }
     // Debug Tabs
 
     public boolean debugTabs() {
@@ -361,6 +385,11 @@ public class DriverControls extends SubsystemBase {
         new Trigger(this::d_wantManualExtend).whileTrue(new ManualExtend(protruder, this));
         new Trigger(this::d_toggleProtruderBrakeMode).onTrue(new ToggleProtruderBrake(protruder));
         new Trigger(this::d_getWantForceOdometryUpdate).whileTrue(new ForceUpdateOdometryFromVision());
+        //Color
+        new Trigger(this::c_wantRainbow).onTrue(new rainbowLED(led));
+        new Trigger(this::c_wantLarson).onTrue(new larsonLED(led));
+        new Trigger(this::c_wantTest).onTrue(new strobeLED(led));
+        new Trigger(this::c_reset).onTrue(new resetLED(led));
     }
 
     @Override

@@ -15,6 +15,7 @@ public class Constants {
     public static final int kDriverPort = 0;
     public static final int kOperatorPort = 1;
     public static final int kDebugPort = 2;
+    public static final int kColorPort = 3;
 
     //Drive Train Constants
     public static final int kDriveTrainCurrentLimit = 85;

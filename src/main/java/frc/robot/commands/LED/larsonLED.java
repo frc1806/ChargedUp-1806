@@ -1,8 +1,14 @@
 package frc.robot.commands.LED;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.LED;
 
-public class CoolLED extends CommandBase {
+public class larsonLED extends CommandBase {
+    private LED mLED;
+
+    public larsonLED(LED led) {
+        mLED = led;
+    }
 
     @Override
     public void end(boolean interrupted) {
@@ -18,14 +24,12 @@ public class CoolLED extends CommandBase {
 
     @Override
     public void initialize() {
-        // TODO Auto-generated method stub
-        super.initialize();
+        mLED.setLarsonAnim();
     }
 
     @Override
     public boolean isFinished() {
-        // TODO Auto-generated method stub
-        return super.isFinished();
+        return true;
     }
     
 }

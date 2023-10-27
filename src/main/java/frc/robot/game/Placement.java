@@ -20,9 +20,9 @@ public class Placement {
     public static Placement MED_PLACEMENT_CUBE = new Placement("Medium Placement Cube", Constants.kProtruderDistanceAtFullRetract + 23.0,257.0);
     public static Placement MED_PLACEMENT_CONE = new Placement("Medium Placement Cone", Constants.kProtruderDistanceAtFullRetract + 20.5,271.0);
     public static Placement HIGH_PLACEMENT_CUBE = new Placement("High Placement Cube", Constants.kProtruderDistanceAtFullRetract + 37.0,274.0);
-    public static Placement HIGH_PLACEMENT_CONE = new Placement("High Placement Cone", Constants.kProtruderDistanceAtFullRetract + 38.0,281.0);
+    public static Placement HIGH_PLACEMENT_CONE = new Placement("High Placement Cone", Constants.kProtruderDistanceAtFullRetract + 38.0,283.0);
     public static Placement FEEDER_STATION = new Placement("Feeder Station Cube",  Constants.kProtruderDistanceAtFullRetract + 8.0,66.0);
-    public static Placement FEEDER_STATION_CONE = new Placement("Feeder Station Cone",  Constants.kProtruderDistanceAtFullRetract + 8.0,62.0);
+    public static Placement FEEDER_STATION_CONE = new Placement("Feeder Station Cone",  Constants.kProtruderDistanceAtFullRetract + 8.0,60.0);
     //public static Placement GROUND_INTAKE = new Placement("Ground Intake", Constants.kProtruderDistanceAtFullRetract + 14.0 ,122.0); Pre cymbal move
     public static Placement GROUND_INTAKE_CUBE = new Placement("Ground Intake Cube", Constants.kProtruderDistanceAtFullRetract + 20.0 ,121.0);
     public static Placement GROUND_INTAKE_CONE = new Placement("Ground Intake Cone", Constants.kProtruderDistanceAtFullRetract + 14.5 ,127.0); 

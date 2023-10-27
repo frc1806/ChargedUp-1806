@@ -51,11 +51,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
-    RobotContainer.S_DRIVETRAIN.setCoastMode();
-    RobotContainer.S_TWO_LED_SUBSYTEM.setTestAnim();
+    RobotContainer.S_TWO_LED_SUBSYTEM.setRainbowAnim();
   }
 
   @Override
